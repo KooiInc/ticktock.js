@@ -1,6 +1,6 @@
 ## TICKTOCK
 
-A nifty [Class Free Object Oriented]() ES20xx Date extension.
+A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx Date extension.
 
 It presents a wrapped locale sensitive `ES-Date`.
 
