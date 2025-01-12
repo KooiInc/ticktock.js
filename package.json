@@ -1,0 +1,11 @@
+{
+  "name": "ticktock",
+  "version": "1.0.0",
+  "description": "A Date utility library",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true
+}
