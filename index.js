@@ -1,8 +1,6 @@
 import { extendCTOR, localeValidator, retrieveDateValueFromInput as retrieveDateValue, } from "./src/genericHelpers.js";
 import { getTraps, wrapProxy, instanceCreator,} from "./src/instantiationHelpers.js";
-const xDate = XDateFactory();
-
-export default xDate;
+export default XDateFactory();
 
 function XDateFactory() {
   return extendCTOR(ctor);
