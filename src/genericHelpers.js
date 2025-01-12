@@ -123,7 +123,7 @@ function extendCTOR(ctor) {
 }
 
 function valiDate(date) {
-  return date?.constructor === Date && date || new Date();
+  return !Number.isNaN(+date) && date || new Date();
 }
 
 function retrieveDateValueFromInput(input) {
@@ -134,17 +134,8 @@ function retrieveDateValueFromInput(input) {
       return valiDate(new Date(input));
     case Array.isArray(input) && input.map(Number).length === input.length:
       return valiDate(new Date(...input));
-    case input?.constructor === Date || !Number.isNaN(new Date(input)):
-      return input;
+    case input?.constructor === Date:
+      return valiDate(input);
+    default: return now;
   }
-  
-  return now;
-}
-
-function copyObject(object) {
-  const copy = {};
-  Object.entries(Object.getOwnPropertyDescriptors(object))
-    .forEach( ([key, descriptor]) => Object.defineProperty(copy, key, descriptor));
-  
-  return copy;
 }

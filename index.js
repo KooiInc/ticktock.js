@@ -6,7 +6,7 @@ function XDateFactory() {
   return extendCTOR(ctor);
   
   function ctor(input, localeInfo) {
-    let maybeDate = retrieveDateValue(input) || new Date();
+    let maybeDate = input?.locale || input?.timeZone ? new Date() : retrieveDateValue(input);
     const instanceExtensions = instanceCreator();
     instanceExtensions.localeInfo = input?.locale || input?.timeZone
       ? input : localeInfo ? localeInfo : localeValidator();
