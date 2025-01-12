@@ -67,8 +67,8 @@ function daysUntil(instance, nextDate) {
   }
   
   const diffDays = dateDiff({
-    start: instance.clone().midNight(),
-    end: (nextDate || instance).clone().midNight()}).diffInDays;
+    start: instance.clone().midnight,
+    end: (nextDate || instance).clone().midnight}).diffInDays;
   const isNegative = diffDays > 0 && +nextDate < +instance;
   return isNegative ? -diffDays : diffDays;
 }
