@@ -48,7 +48,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get localeInfo() { return localeInfo },
     get timeZone() { return ( localeInfo || setLocaleInfo() ).timeZone; },
     get locale() { return ( localeInfo || setLocaleInfo() ).locale; },
-    get midnight() { instance.time = {hours: 0, minutes: 0, seconds: 0, milliseconds: 0}; return instance; },
+    get midnight() { instance.clone().time = {hours: 0, minutes: 0, seconds: 0, milliseconds: 0}; return instance; },
     get formatStr() { return localeFormats; },
     get year() { return +instance.getFullYear(); },
     get month() { return +instance.getMonth(); },
