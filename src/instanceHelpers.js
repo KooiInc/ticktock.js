@@ -2,7 +2,7 @@ import dateFormat from "./dateFormat.js";
 import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
-import {localeMonthnames, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
+import {localeMonthnames, localeValidator, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -41,6 +41,7 @@ export {
   hasDST,
   removeTime,
   DSTAcive,
+  cloneInstance,
 };
 
 function compareDates(instance, {start, end, before} = {}) {
@@ -187,6 +188,12 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
   isNumberOrString(seconds) && instance.setSeconds(seconds);
   isNumberOrString(milliseconds) && instance.setMilliseconds(milliseconds);
   return instance;
+}
+
+function cloneInstance(instance, date) {
+  date = new Date(date);
+  date = isNaN(date) ? instance.value : date;
+  return xDate(date, instance.localeInfo);
 }
 
 function weekdayFactory() {

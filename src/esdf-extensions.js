@@ -4,7 +4,7 @@ import {
   getDTValues, dateDiff, nextOrPrevious, setTimeParts, setDateParts,
   diffFromUTC, revalue, relocate, add2Date, extraHelpers,
   xDate, compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
-  getQuarter, hasDST, removeTime, DSTAcive,
+  getQuarter, hasDST, removeTime, DSTAcive, cloneInstance,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -13,13 +13,13 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
-    revalue(date) { instance = revalue(instance, date); return instance.clone(); },
+    revalue(date) { instance = revalue(instance, date); return instance; },
     firstWeekday({sunday = false, midnight = false} = {}) { return firstWeekday(instance, {sunday, midnight}); },
     next(day) { return nextOrPrevious(instance, {day, next: true}); },
     previous(day) { return nextOrPrevious(instance, {day}); },
     add(...args) { add2Date(instance, ...args); return instance.clone(); },
     subtract(...args) { add2Date(instance, ...[`subtract`].concat(args)); return instance.clone(); },
-    clone() { return xDate(new Date(instance), instance.localeInfo); },
+    clone(date) { return cloneInstance(instance, date); },
     differenceTo(date) { return dateDiff({start: instance.clone(), end: date}); },
     relocate({locale, timeZone} = {}) { localeInfo = relocate(instance, {locale, timeZone}); return instance.clone(); },
     offsetFrom(date) { return diffFromUTC(instance, date); },
@@ -78,7 +78,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get quarterNr() { return getQuarter(instance, true); },
     get hasDST() { return hasDST(instance); },
     get DSTActive() { return DSTAcive(instance); },
-    get value() { return instance.valueOf(); }
+    get value() { return new Date(instance); }
   };
   
   Object.defineProperties(extensions, {
