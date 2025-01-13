@@ -2,7 +2,7 @@ import dateFormat from "./dateFormat.js";
 import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
-import {localeMonthnames, localeWeekdays, setLocaleInfo,} from "./genericHelpers.js";
+import {localeMonthnames, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -38,6 +38,9 @@ export {
   getISO8601Weeknr,
   getWeeksInYear,
   getQuarter,
+  hasDST,
+  removeTime,
+  DSTAcive,
 };
 
 function compareDates(instance, {start, end, before} = {}) {
@@ -61,14 +64,16 @@ function format(instance, formatStr, moreOptions) {
   return dateFormat(new Date(instance), formatStr, moreOptions || instance.localeInfo.formatOptions);
 }
 
+function equalizeDateTimes(first, second) {
+  return {
+    first: xDate(first || new Date()).removeTime,
+    second: xDate(second || new Date()).removeTime,
+  };
+}
+
 function daysUntil(instance, nextDate) {
-  if (!nextDate?.clone) {
-    nextDate = instance.clone().revalue(nextDate || instance);
-  }
-  
-  const diffDays = dateDiff({
-    start: instance.clone().midnight,
-    end: (nextDate || instance).clone().midnight}).diffInDays;
+  const {first: start, second: end} = equalizeDateTimes(instance, nextDate);
+  const diffDays = dateDiff({start, end}).diffInDays;
   const isNegative = diffDays > 0 && +nextDate < +instance;
   return isNegative ? -diffDays : diffDays;
 }
@@ -121,7 +126,7 @@ function daysInMonth(instance) {
 
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
   let dayNr = weekdays(day?.toLowerCase());
-  const cloned = xDate(new Date(...instance.dateValues));
+  const cloned = xDate(new Date(...instance.dateValues), instance.localeInfo);
   
   if (dayNr < 0) { console.log(`wtf`, day, dayNr ); return cloned; }
   
@@ -173,6 +178,7 @@ function setDateParts(instance, {year, month, date} = {}) {
   if (isNumberOrString(year)) { instance.setFullYear(year); }
   if (isNumberOrString(date)) { instance.setDate(date); }
   if (isNumberOrString(month)) { instance.setMonth(month - 1); }
+  return instance;
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
@@ -197,64 +203,103 @@ function weekdayFactory() {
 }
 
 function setProxy(proxy) {
-  if (!proxy[Symbol.for(`ESD`)]) {
-    throw new TypeError(`ES-Date-Fiddler: invalid proxy`);
-  }
-  
   return proxy;
 }
 
 function extraHelpers(instance) {
   return {
     addYears(amount = 1) {
-      add2Date(instance, `${amount} years`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `${amount} years`);
+      return clone;
     },
     addMonths(amount = 1) {
-      add2Date(instance, `${amount} months`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `${amount} months`);
+      return clone;
     },
     addWeeks(amount = 1) {
-      add2Date(instance, `${amount * 7} days`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `${amount * 7} days`);
+      return clone;
     },
     addDays(amount = 1) {
-      add2Date(instance, `${amount} days`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `${amount} days`);
+      return clone;
     },
     get nextYear() {
-      add2Date(instance, `1 year`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `1 year`);
+      return clone;
     },
     get nextWeek() {
-      add2Date(instance, `7 days`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `7 days`);
+      return clone;
     },
     get previousWeek() {
-      add2Date(instance, "subtract, 7 days");
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, "subtract, 7 days");
+      return clone;
     },
     get previousYear() {
-      add2Date(instance, `subtract, 1 year`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `subtract, 1 year`);
+      return clone;
     },
     get nextMonth() {
-      add2Date(instance, `1 month`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `1 month`);
+      return clone;
     },
     get previousMonth() {
-      add2Date(instance, `subtract, 1 month`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `subtract, 1 month`);
+      return clone;
     },
     get tomorrow() {
-      add2Date(instance, `1 day`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `1 day`);
+      return clone;
     },
     get yesterday() {
-      add2Date(instance, `subtract, 1 day`);
-      return instance;
+      const clone = instance.clone();
+      add2Date(clone, `subtract, 1 day`);
+      return clone;
     },
   };
+}
+
+function offset2Number(dtStr) {
+  return +(dtStr.slice(dtStr.indexOf(`+`) + 1).replace(`:`, ``)) || 0;
+}
+
+function removeTime(instance) {
+  instance = instance || xDate();
+  return xDate(new Date(instance.year, instance.month, instance.date.date));
+}
+
+function hasDST(instance) {
+  const timeZone = instance.timeZone;
+  const dt1 = new Date(instance.year, 0, 1, 14);
+  const dt2 = new Date(new Date(dt1).setMonth(6));
+  const fmt = Intl.DateTimeFormat(`en-CA`, {
+    year: `numeric`,
+    timeZone: timeZone,
+    timeZoneName: "shortOffset",
+  });
+  const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
+  return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
+}
+
+function DSTAcive(instance) {
+  if (instance.hasDST) {
+    const dtJanuary = new Date(instance.year, 0, 1, 14, instance.hours, instance.minutes, instance.seconds);
+    return dtJanuary.hours !== instance.hours;
+  }
+  
+  return false;
 }
 
 function relocate(instance, {locale, timeZone} = {}) {
