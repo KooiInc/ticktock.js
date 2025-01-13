@@ -1,11 +1,25 @@
 import instanceCreator from "./esdf-extensions.js";
 Symbol.esdProxy = Symbol.for("esdProxy");
 
-export { getTraps, wrapProxy, instanceCreator, };
+export { getTraps, instanceCreator, };
 
 function getTraps(exts) {
   return {
-    get( target, key ) { return key in exts ? exts[key] : targetGetter(target, key); },
+    get( target, key ) {
+      if (key in target && target[key] instanceof Function) {
+        return (...args) => target[key](...args);
+      }
+      
+      if (key in target) {
+        return target[key];
+      }
+      
+      if (key in exts) {
+        return exts[key];
+      }
+      
+      return true;
+    },
     set( _, key, value ) {
       if (typeof key !== `symbol` && key in exts) {
         exts[key] = value;
@@ -17,17 +31,11 @@ function getTraps(exts) {
     has: (target, key) => key in exts || key in target,
   };
   
-  function targetGetter(target, key) {
+  function targetGetter(target, key, receiver) {
     if (key in target && target[key] instanceof Function) {
-      return target[key].bind(target);
+      return (...args) => target[key].call(target, ...args);
     }
     
     return target[key];
   }
-}
-
-function wrapProxy(target, traps) {
-  const wrapped = new Proxy(target, traps);
-  wrapped[Symbol.for(`ESD`)] = true;
-  return Object.freeze(wrapped);
 }
