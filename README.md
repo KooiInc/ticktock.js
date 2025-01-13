@@ -5,12 +5,19 @@ A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04
 It presents a wrapped *locale sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
 the instance's individual date/time/locale/timeZone values.
 
-For example
+### For example
 
 `[instance].year = [new value]` sets the year of the current instance
-<br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` relocates the current instance, but
+<br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` relocates the current instance,
+<br>`[instance].revalue([some date])` changes the current instance's Date value to [some date], but
+<br>`[instance].clone([some date])` delivers a *new* instance derived from the current instance with possibly a new date ([some date])
 <br>`[instance].UTC` delivers a *new* instance for the UTC timeZone derived from the current instance and
 <br>`[instance].add("1 year, 2 days, 13 hours")` delivers a *new* instance derived from the current instance
+
+## Instances are proxies
+An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 
+for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance. 
+This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
 
 ## Work in progress
 This library is the a rewrite from [es-date-fiddler](https://github.com/KooiInc/es-date-fiddler) based on evolvings insights. 
