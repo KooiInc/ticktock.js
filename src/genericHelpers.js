@@ -1,6 +1,6 @@
 export {
   dateFromString, localeWeekdays, localeMonthnames, extendCTOR, localeValidator,
-  setLocaleInfo, retrieveDateValueFromInput, };
+  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ};
 
 function dateFromString(dateString, YMDOrder = "ymd") {
   dateString = dateString?.trim();
@@ -138,4 +138,14 @@ function retrieveDateValueFromInput(input) {
       return valiDate(input);
     default: return now;
   }
+}
+
+function currentLocalTime4TZ(date, localeHere) {
+  const tzRemote = {timeZone: date.localeInfo.timeZone, hourCycle: `h23`};
+  const inTheZone = new Date(date.toLocaleString(`en-CA`, tzRemote));
+  console.log(inTheZone);
+  return {
+    localDate: inTheZone.toLocaleDateString(),
+    localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
+  };
 }
