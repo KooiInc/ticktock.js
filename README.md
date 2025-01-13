@@ -20,7 +20,7 @@ for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
 This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
 
 ## Work in progress
-This library is the a rewrite from [es-date-fiddler](https://github.com/KooiInc/es-date-fiddler) based on evolvings insights. 
+This library is a rewrite from [es-date-fiddler](https://github.com/KooiInc/es-date-fiddler) based on evolvings insights. 
 
 Currently a work in progress.
 
