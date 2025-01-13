@@ -30,12 +30,14 @@ Currently a work in progress.
 - `ageParts` (getter)
 - `between`
 - `clone`
-- `date` (getter)
+- `date` (getter/setter)
+   <br>&nbsp;&nbsp;**Note**: setter for month part is ***not*** zero based 
 - `dateSingle` (getter)
 - `dateTime` (getter)
 - `dateTimeValues` (getter)
 - `dateValues` (getter)
 - `day` (getter)
+- `dayName` (getter)
 - `daysInMonth` (getter)
 - `daysThisMonth`  (getter, alias for `daysInMonth`)
 - `daysUntil`
@@ -57,7 +59,8 @@ Currently a work in progress.
 - `midnight` (getter, returns a clone)
 - `milliseconds` (getter)
 - `minutes` (getter)
-- `month` (getter)
+- `month` (getter/setter)
+   <br>&nbsp;&nbsp;**Note**: setter is ***not*** zero based
 - `monthName` (getter)
 - `names` (getter)
 - `next`
