@@ -30,12 +30,4 @@ function getTraps(exts) {
     },
     has: (target, key) => key in exts || key in target,
   };
-  
-  function targetGetter(target, key, receiver) {
-    if (key in target && target[key] instanceof Function) {
-      return (...args) => target[key].call(target, ...args);
-    }
-    
-    return target[key];
-  }
 }
