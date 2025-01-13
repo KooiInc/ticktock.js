@@ -1,10 +1,10 @@
 import {
   daysInMonth, daysUntil, firstWeekday, format, getFullDate,
-  getNames,  getTime, toLocalString, getTimeValues, getDateValues,
+  getNames, getTime, toLocalString, getTimeValues, getDateValues,
   getDTValues, dateDiff, nextOrPrevious, setTimeParts, setDateParts,
-  diffFromUTC, revalue, relocate, setProxy, add2Date, extraHelpers,
+  diffFromUTC, revalue, relocate, add2Date, extraHelpers,
   xDate, compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
-  getQuarter,
+  getQuarter, hasDST, removeTime, DSTAcive,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -13,20 +13,21 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
-    revalue(date) { instance = revalue(instance, date); return instance; },
+    revalue(date) { instance = revalue(instance, date); return instance.clone(); },
     firstWeekday({sunday = false, midnight = false} = {}) { return firstWeekday(instance, {sunday, midnight}); },
     next(day) { return nextOrPrevious(instance, {day, next: true}); },
     previous(day) { return nextOrPrevious(instance, {day}); },
-    add(...args) { add2Date(instance, ...args); return instance; },
-    subtract(...args) { add2Date(instance, ...[`subtract`].concat(args)); return instance; },
+    add(...args) { add2Date(instance, ...args); return instance.clone(); },
+    subtract(...args) { add2Date(instance, ...[`subtract`].concat(args)); return instance.clone(); },
     clone() { return xDate(new Date(instance), instance.localeInfo); },
     differenceTo(date) { return dateDiff({start: instance.clone(), end: date}); },
-    relocate({locale, timeZone} = {}) { localeInfo = relocate(instance, {locale, timeZone}); return instance; },
+    relocate({locale, timeZone} = {}) { localeInfo = relocate(instance, {locale, timeZone}); return instance.clone(); },
     offsetFrom(date) { return diffFromUTC(instance, date); },
     between(date1, date2) { return compareDates(instance, {start: date1, end: date2}); },
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
-    
+
+    // NOT immutable
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
     set year(n) { isNumberOrString(n) && instance.setFullYear(+n); },
     set month(n) { isNumberOrString(n) && instance.setMonth(+n - 1); },
@@ -38,6 +39,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
     
     get age() { return instance.differenceTo(new Date()).years; },
+    get ageParts() { return instance.differenceTo(new Date()).full; },
     get localeString() { return toLocalString(instance); },
     get local() { return toLocalString(instance); },
     get ISO() { return instance.toISOString(); },
@@ -48,15 +50,15 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get localeInfo() { return localeInfo },
     get timeZone() { return ( localeInfo || setLocaleInfo() ).timeZone; },
     get locale() { return ( localeInfo || setLocaleInfo() ).locale; },
-    get midnight() { instance.clone().time = {hours: 0, minutes: 0, seconds: 0, milliseconds: 0}; return instance; },
     get formatStr() { return localeFormats; },
-    get year() { return +instance.getFullYear(); },
-    get month() { return +instance.getMonth(); },
-    get dateValue()  { return instance.getDate(); },
-    get hours() { return instance.getHours(); },
-    get minutes() { return instance.getMinutes(); },
-    get seconds() { return instance.getSeconds(); },
+    get year() { return instance.getFullYear(); },
+    get month() { return instance.date.month; },
+    get dateSingle()  { return instance.date.date; },
+    get hours() { return instance.time.hours; },
+    get minutes() { return instance.time.minutes; },
+    get seconds() { return instance.time.seconds; },
     get milliseconds() { return instance.getMilliseconds(); },
+    get removeTime() { return removeTime(instance); },
     get time() { return getTime(instance); },
     get timeValues() { return getTimeValues(instance); },
     get dateValues() { return getDateValues(instance); },
@@ -73,10 +75,13 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get monthName() { return instance.names.monthName; },
     get quarter() { return getQuarter(instance); },
     get quarterNr() { return getQuarter(instance, true); },
+    get hasDST() { return hasDST(instance); },
+    get DSTActive() { return DSTAcive(instance); },
+    get value() { return instance.valueOf(); }
   };
   
   Object.defineProperties(extensions, {
-    proxy: { value(prx) { instance = setProxy(prx); return instance; }, enumerable: false },
+    proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
     keys: { get() { return  Object.keys(extensions).sort( (a,b) => a.localeCompare(b)); } },
     addExtra: { value(instance) {
       const addHelpers = extraHelpers(instance);
