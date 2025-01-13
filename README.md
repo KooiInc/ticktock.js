@@ -95,6 +95,7 @@ Currently a work in progress.
 - `UTCDiff`
 - `weekDay` (getter)
 - `weeknr` (getter)
+  <br>**Note**: delivers the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) week number
 - `weeksInYear` (getter)
 - `year` (getter)
 - `yesterday` (getter, returns a clone)
