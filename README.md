@@ -1,9 +1,9 @@
 ## TICKTOCK
 
-A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx Date extension.
+A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
 It presents a wrapped *locale sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
-of the instance's individual date/time/locale/timeZone values.
+the instance's individual date/time/locale/timeZone values.
 
 For example
 
