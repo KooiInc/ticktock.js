@@ -69,6 +69,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get UTCDiff() { return diffFromUTC(instance); },
     get offsetFromUTC() { return diffFromUTC(instance); },
     get day() { return instance.getDay(); },
+    get dayName() { return instance.names.dayName; },
     get weeknr() { return getISO8601Weeknr(instance); },
     get weeksInYear() { return getWeeksInYear(instance.year, 31); },
     get weekDay() { return instance.names.dayName; },
