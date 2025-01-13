@@ -31,7 +31,7 @@ Currently a work in progress.
 - `between`
 - `clone`
 - `date` (getter/setter)
-   <br>&nbsp;&nbsp;**Note**: setter for month part is ***not*** zero based 
+   <br>**Note**: setter for month part is ***not*** zero based 
 - `dateSingle` (getter)
 - `dateTime` (getter)
 - `dateTimeValues` (getter)
@@ -60,7 +60,7 @@ Currently a work in progress.
 - `milliseconds` (getter)
 - `minutes` (getter)
 - `month` (getter/setter)
-   <br>&nbsp;&nbsp;**Note**: setter is ***not*** zero based
+   <br>**Note**: setter is ***not*** zero based
 - `monthName` (getter)
 - `names` (getter)
 - `next`
@@ -76,7 +76,8 @@ Currently a work in progress.
 - `quarter` (getter)
 - `quarterNr` (getter)
 - `relocate`
-- `revalue`
+- `revalue` (setter)
+   <br>**Note**: this setter *mutes the instance value*
 - `seconds` (getter)
 - `subtract`
 - `time` (getter)
