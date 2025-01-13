@@ -1,5 +1,5 @@
 import { extendCTOR, localeValidator, retrieveDateValueFromInput as retrieveDateValue, } from "./src/genericHelpers.js";
-import { getTraps, wrapProxy, instanceCreator,} from "./src/instantiationHelpers.js";
+import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
 export default XDateFactory();
 
 function XDateFactory() {
@@ -10,7 +10,7 @@ function XDateFactory() {
     const instanceExtensions = instanceCreator();
     instanceExtensions.localeInfo = input?.locale || input?.timeZone
       ? input : localeInfo ? localeInfo : localeValidator();
-    const instance = instanceExtensions.proxy(wrapProxy(new Date(maybeDate), getTraps(instanceExtensions)));
+    const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
     instance.addExtra(instance);
     
     return Object.freeze(instance);
