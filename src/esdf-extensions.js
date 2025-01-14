@@ -3,8 +3,9 @@ import {
   getNames, getTime, toLocalString, getTimeValues, getDateValues,
   getDTValues, dateDiff, nextOrPrevious, setTimeParts, setDateParts,
   diffFromUTC, revalue, relocate, add2Date, extraHelpers,
-  xDate, compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
+  compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
   getQuarter, hasDST, removeTime, DSTAcive, cloneInstance,
+  timezoneAwareDifferenceTo,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -20,7 +21,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     add(...args) { add2Date(instance, ...args); return instance.clone(); },
     subtract(...args) { add2Date(instance, ...[`subtract`].concat(args)); return instance.clone(); },
     clone(date) { return cloneInstance(instance, date); },
-    differenceTo(date) { return dateDiff({start: instance.clone(), end: date}); },
+    differenceTo(date) { return timezoneAwareDifferenceTo({start: instance.clone(), end: date}); },
     relocate({locale, timeZone} = {}) { localeInfo = relocate(instance, {locale, timeZone}); return instance.clone(); },
     offsetFrom(date) { return diffFromUTC(instance, date); },
     between(date1, date2) { return compareDates(instance, {start: date1, end: date2}); },

@@ -42,6 +42,7 @@ export {
   removeTime,
   DSTAcive,
   cloneInstance,
+  timezoneAwareDifferenceTo,
 };
 
 function compareDates(instance, {start, end, before} = {}) {
@@ -115,6 +116,13 @@ function getDateValues(instance) {
   const values = instance.format("yyyy-m-d").split(/-/).map(Number);
   values[1] -= 1;
   return values;
+}
+
+function timezoneAwareDifferenceTo({start, end} = {}) {
+  end = end?.clone?.() ?? xDate(end);
+  const instanceDate = new Date(...start.dateTimeValues);
+  const comparisonDate = new Date(...end.dateTimeValues);
+  return dateDiff({start: instanceDate, end: comparisonDate});
 }
 
 function getDTValues(instance) {
