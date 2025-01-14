@@ -2,8 +2,13 @@
 
 A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
-It presents a wrapped *locale sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
+It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
 the instance's individual date/time/locale/timeZone values.
+
+### locale and timezone sensitivity
+A ticktock date can be instantiated with locale and time zone information. That information will be embedded within 
+the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
+`[instance].local` or `[instance].localeString`).
 
 ### For example
 
