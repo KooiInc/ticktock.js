@@ -8,7 +8,7 @@ the instance's individual date/time/locale/timeZone values.
 The library has *no dependencies* and a *small footprint*. The bundled file size is around 14kb.
 
 ### locale and timezone sensitivity
-A ticktock date can be instantiated with locale and time zone information. That information will be embedded within 
+A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
 the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
 `[instance].local` or `[instance].localeString`). For example, when a ticktock date is instantiated with locale `pl-PL`, 
 the week day names for that instance can be retrieved as `[instance].names.dayNames.long`, resulting in an array with values
