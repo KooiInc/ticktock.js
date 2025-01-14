@@ -5,6 +5,8 @@ A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04
 It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
 the instance's individual date/time/locale/timeZone values.
 
+The library has *no dependencies* and a *small footprint*. The bundled file size is around 14kb.
+
 ### locale and timezone sensitivity
 A ticktock date can be instantiated with locale and time zone information. That information will be embedded within 
 the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
