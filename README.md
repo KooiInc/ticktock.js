@@ -14,8 +14,7 @@ the instance (retrievable by the instance property `localeInfo`) and used for (a
 the week day names for that instance can be retrieved as `[instance].names.dayNames.long`, resulting in an array with values
  *'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'* (starting with *sunday*). When an instance
  was instantiated with locale: 'zh' and timeZone "Asia/Chongqing", [instance].local will display the date and time *in
- that time zone* (so, UTC+0900). Calculating the difference between an instance date and another date 
- (`[instance].differenceTo([Date or ticktock instance])`) will also factor in the time zone(s) of both dates.
+ that time zone* (so, UTC+0900).
 
 ### For example
 
