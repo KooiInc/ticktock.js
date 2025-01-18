@@ -143,7 +143,7 @@ function retrieveDateValueFromInput(input) {
 function currentLocalTime4TZ(date, localeHere) {
   const tzRemote = {timeZone: date.localeInfo.timeZone, hourCycle: `h23`};
   const inTheZone = new Date(date.toLocaleString(`en-CA`, tzRemote));
-  console.log(inTheZone);
+  
   return {
     localDate: inTheZone.toLocaleDateString(),
     localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
