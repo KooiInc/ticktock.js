@@ -9,7 +9,7 @@ function XDateFactory() {
     let maybeDate = input?.locale || input?.timeZone ? new Date() : retrieveDateValue(input);
     const instanceExtensions = instanceCreator();
     instanceExtensions.localeInfo = input?.locale || input?.timeZone
-      ? input : localeInfo ? localeInfo : localeValidator();
+      ? localeValidator(input) : localeValidator(localeInfo);
     const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
     instance.addExtra(instance);
     
