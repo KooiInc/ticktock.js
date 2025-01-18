@@ -2,8 +2,8 @@ import {
   daysInMonth, daysUntil, firstWeekday, format, getFullDate,
   getNames, getTime, toLocalString, getTimeValues, getDateValues,
   getDTValues, nextOrPrevious, setTimeParts, setDateParts,
-  diffFromUTC, revalue, relocate, add2Date, aggregates,
-  compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
+  revalue, relocate, add2Date, aggregates, compareDates,
+  setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
   getQuarter, hasDST, removeTime, DSTAcive, cloneInstance,
   timezoneAwareDifferenceTo, offsetFrom,
 } from "./instanceHelpers.js";
@@ -31,12 +31,12 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
 
     // Mutes instance
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
-    set year(n) { setDateParts(instance, {year: n}); },
-    set month(n) { setDateParts(instance, {month: n}); },
-    set hours(n) { setTimeParts(instance, {hours: n}) },
-    set minutes(n) { setTimeParts(instance, {minutes: n}) },
-    set seconds(n) { setTimeParts(instance, {seconds: n}); },
-    set milliseconds(n) { setTimeParts(instance, {milliseconds: `${n}`}); },
+    set year(n) { return setDateParts(instance, {year: n}); },
+    set month(n) { return setDateParts(instance, {month: n}); },
+    set hours(n) { return setTimeParts(instance, {hours: n}); },
+    set minutes(n) { return setTimeParts(instance, {minutes: n}); },
+    set seconds(n) { return setTimeParts(instance, {seconds: n}); },
+    set milliseconds(n) { return setTimeParts(instance, {milliseconds: `${n}`}); },
     set time({hours, minutes, seconds, milliseconds} = {}) { return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
     
