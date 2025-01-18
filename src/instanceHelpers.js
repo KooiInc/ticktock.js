@@ -29,7 +29,6 @@ export {
   nextOrPrevious,
   setTimeParts,
   setDateParts,
-  diffFromUTC,
   revalue,
   relocate,
   setProxy,
@@ -232,35 +231,11 @@ function DTInTimezone(date, timeZoneID) {
   return new Date(new Date(date).toLocaleString(`en`, timeZoneInfo));
 }
 
-function diffFromUTC(instance, compareTo) {
-  return diffFromUTCTo(instance, compareTo ? compareTo : xDate({timeZone: `Etc/UTC`}));
-}
-
-function diffFromUTCTo(instance, compareTo) {
-  // if (!compareTo.clone) { return `00:00`; }
-  // const [instanceTime, compareTime] = [
-  //   time4TZ(instance, instance.localeInfo).localTime.split(`:`, 2).map(Number),
-  //   time4TZ(compareTo, compareTo.localeInfo).localTime.split(`:`, 2).map(Number)];
-  // console.log([instanceTime, compareTime].join(`\n`));
-  // const hourDiff = String(Math.abs(instanceTime[0] - compareTime[0])).padStart(2, `0`);
-  // const minutesDiff = String(Math.abs(instanceTime[1] - compareTime[1])).padStart(2, `0`);
-  // const sign =  instanceTime[0] === compareTime[0] ? `` : instanceTime[0] < compareTime[0] ? `-` : `+`;
-  // return `${sign}${hourDiff}:${minutesDiff}`;
-  //
-  const instanceDate = currentLocalTime4TZ(instance.timeZone);
-  const utcDate = currentLocalTime4TZ(compareTo.timeZone);
-  const diffDate = new Date(Math.abs(instanceDate - utcDate));
-  const isNegative = instanceDate < utcDate;
-  let [hours, minutes] = [`${diffDate.getHours()}`.padStart(2, `0`), `${diffDate.getMinutes()}`.padStart(2, `0`)];
-  const prefix = isNegative ? `-` : hours === `00` && minutes === `00` ? `` : `+`;
-  return `${prefix}${hours}:${minutes}`;
-}
-
 function setDateParts(instance, {year, month, date} = {}) {
   if (isNumberOrString(year)) { instance.setFullYear(year); }
   if (isNumberOrString(date)) { instance.setDate(date); }
   if (isNumberOrString(month)) { instance.setMonth(month - 1); }
-  return instance;
+  return true;
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
@@ -280,7 +255,7 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
     default: break;
   }
   
-  return instance;
+  return true;
 }
 
 function cloneInstance(instance, date) {
