@@ -50,6 +50,7 @@ Currently a work in progress.
 - `clone`
 - `date` (getter/setter)
    <br>**Note**: setter for month part is ***not*** zero based 
+   <br>**Note**: the setter *mutates the instance value*
 - `dateSingle` (getter)
 - `dateTime` (getter)
 - `dateTimeValues` (getter)
@@ -66,21 +67,25 @@ Currently a work in progress.
 - `format`
 - `formatStr` (getter)
 - `hasDST` (getter)
-- `hours` (getter)
+- `hours` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `isFuture` (getter)
 - `isLeapYear` (getter)
 - `ISO` (getter)
 - `isPast`
-- `isTT` (getter 'is ticktock instance')
+- `isTT` (this is a 'is ticktock instance')
 - `keys` (getter)
 - `local` (getter)
 - `locale` (getter)
 - `localeInfo` (setter)
 - `localeString` (getter)
 - `milliseconds` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `minutes` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `month` (getter/setter)
    <br>**Note**: setter is ***not*** zero based
+   <br>**Note**: the setter *mutates the instance value*
 - `monthName` (getter)
 - `names` (getter)
 - `next`
@@ -95,11 +100,14 @@ Currently a work in progress.
 - `quarter` (getter)
 - `quarterNr` (getter)
 - `relocate`
+   <br>**Note**: this setter *mutates the instance value*
 - `revalue` (setter)
-   <br>**Note**: this setter *mutes the instance value*
+   <br>**Note**: this setter *mutates the instance value*
 - `seconds` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `subtract`
-- `time` (getter)
+- `time` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `timeValues` (getter)
 - `timeZone` (getter)
 - `tomorrow` (getter, returns a clone)
@@ -110,4 +118,5 @@ Currently a work in progress.
   <br>**Note**: delivers the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) week number
 - `weeksInYear` (getter)
 - `year` (getter/setter)
+   <br>**Note**: the setter *mutates the instance value*
 - `yesterday` (getter, returns a clone)
