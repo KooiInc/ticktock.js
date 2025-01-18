@@ -2,7 +2,13 @@ import dateFormat from "./dateFormat.js";
 import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
-import {localeMonthnames, localeValidator, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
+import {
+  localeMonthnames,
+  localeWeekdays,
+  setLocaleInfo,
+  currentLocalTime4TZ as time4TZ,
+  localeValidator
+} from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -17,7 +23,6 @@ export {
   getFullDate,
   firstWeekday,
   daysInMonth,
-  dateDiff,
   getTimeValues,
   getDateValues,
   getDTValues,
@@ -29,10 +34,9 @@ export {
   relocate,
   setProxy,
   add2Date,
-  extraHelpers,
+  aggregates,
   localeWeekdays,
   localeMonthnames,
-  xDate,
   setLocaleInfo,
   compareDates,
   getISO8601Weeknr,
@@ -43,6 +47,7 @@ export {
   DSTAcive,
   cloneInstance,
   timezoneAwareDifferenceTo,
+  offsetFrom,
 };
 
 function compareDates(instance, {start, end, before} = {}) {
@@ -62,8 +67,8 @@ function format(instance, formatStr, moreOptions) {
   if (!instance.localeInfo) {
     instance.localeInfo = setLocaleInfo();
   }
-  
-  return dateFormat(new Date(instance), formatStr, moreOptions || instance.localeInfo.formatOptions);
+  moreOptions = moreOptions || instance.localeInfo.formatOptions;
+  return dateFormat(new Date(instance), formatStr, moreOptions);
 }
 
 function equalizeDateTimes(first, second) {
@@ -92,10 +97,19 @@ function getNames(instance) {
   };
 }
 
-function getTime(instance) {
-  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance);
+function getTime(instance, tz = false) {
+  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, tz);
   
   return Object.freeze({ hours, minutes, seconds, milliseconds, });
+}
+
+function getTimeValues(instance, tz = false) {
+  const tzOpt = tz ? `,tz:${instance.timeZone}` : ``;
+  const opts = `l:en-CA${tzOpt},hrc:23`;
+  return instance.format("hh-mmi-ss", opts)
+    .split(/-/)
+    .map(Number)
+    .concat(instance.getMilliseconds());
 }
 
 function getFullDate(instance) {
@@ -108,25 +122,71 @@ function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
   return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
 }
 
-function getTimeValues(instance) {
-  return instance.format("h-mi-s").split(/-/).map(Number).concat(instance.getMilliseconds());
-}
-
-function getDateValues(instance) {
-  const values = instance.format("yyyy-m-d").split(/-/).map(Number);
+function getDateValues(instance, local = true) {
+  if (local) {
+    return [instance.getFullYear(), instance.getMonth(), instance.getDate()];
+  }
+  
+  const values = instance.format("yyyy-m-d", instance.localeInfo.formatOptions).split(/-/).map(Number);
   values[1] -= 1;
   return values;
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
-  end = end?.clone?.() ?? xDate(end);
-  const instanceDate = new Date(...start.dateTimeValues);
-  const comparisonDate = new Date(...end.dateTimeValues);
-  return dateDiff({start: instanceDate, end: comparisonDate});
+  if (!end?.isTT) {
+    end = xDate(end, {timeZone: start.timeZone});
+  }
+  
+  if (!end) {
+    end = start.clone();
+  }
+  
+  start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
+  end = xDate(DTInTimezone(end, end.timeZone), {timeZone: end.timeZone});
+  
+  return dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
 }
 
-function getDTValues(instance) {
-  return instance.format("yyyy-m-d-h-mi-s").split(/-/).map(Number).concat(instance.getMilliseconds());
+function offsetFrom(instance, from) {
+  const instanceClone = instance.clone();
+  
+  if (from instanceof Date && !from?.isTT) {
+    from = xDate(instanceClone, {timeZone: `Etc/UTC`});
+  }
+
+  if (!from) {
+    from = instanceClone.clone().relocate({timeZone: `Etc/UTC`});
+  }
+  
+  from = from.revalue(instanceClone.value);
+  const diff = timezoneAwareDifferenceTo({start: instanceClone, end: from});
+  
+  return `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
+}
+
+function pad0(number2Pad, n = 2) {
+  return `${number2Pad}`.padStart(n, `0`);
+}
+
+function getDTValues(instance, local = true) {
+  if (local) {
+    return [
+      instance.getFullYear(),
+      instance.getMonth(),
+      instance.getDate(),
+      instance.getHours(),
+      instance.getMinutes(),
+      instance.getSeconds(),
+      instance.getMilliseconds()
+    ]
+  }
+  
+  const numbers = instance.format("yyyy-m-d-hh-mmi-ss", `${instance.localeInfo.formatOptions},hrc23:true`)
+    .split(/-/)
+    .map(Number)
+    .concat(instance.getMilliseconds());
+  numbers[1] -= 1;
+  return numbers;
 }
 
 function daysInMonth(instance) {
@@ -137,7 +197,7 @@ function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} =
   let dayNr = weekdays(day?.toLowerCase());
   const cloned = xDate(new Date(...instance.dateValues), instance.localeInfo);
   
-  if (dayNr < 0) { console.log(`wtf`, day, dayNr ); return cloned; }
+  if (dayNr < 0) { return cloned; }
   
   let today = cloned.getDay();
   
@@ -167,13 +227,26 @@ function currentLocalTime4TZ(timeZoneID) {
   return new Date(new Date().toLocaleString(`en`, timeZoneID));
 }
 
+function DTInTimezone(date, timeZoneID) {
+  const timeZoneInfo = {timeZone: timeZoneID, hourCycle: `h23`};
+  return new Date(new Date(date).toLocaleString(`en`, timeZoneInfo));
+}
+
 function diffFromUTC(instance, compareTo) {
   return diffFromUTCTo(instance, compareTo ? compareTo : xDate({timeZone: `Etc/UTC`}));
 }
 
 function diffFromUTCTo(instance, compareTo) {
-  if (!compareTo.clone) { return `00:00`; }
-  
+  // if (!compareTo.clone) { return `00:00`; }
+  // const [instanceTime, compareTime] = [
+  //   time4TZ(instance, instance.localeInfo).localTime.split(`:`, 2).map(Number),
+  //   time4TZ(compareTo, compareTo.localeInfo).localTime.split(`:`, 2).map(Number)];
+  // console.log([instanceTime, compareTime].join(`\n`));
+  // const hourDiff = String(Math.abs(instanceTime[0] - compareTime[0])).padStart(2, `0`);
+  // const minutesDiff = String(Math.abs(instanceTime[1] - compareTime[1])).padStart(2, `0`);
+  // const sign =  instanceTime[0] === compareTime[0] ? `` : instanceTime[0] < compareTime[0] ? `-` : `+`;
+  // return `${sign}${hourDiff}:${minutesDiff}`;
+  //
   const instanceDate = currentLocalTime4TZ(instance.timeZone);
   const utcDate = currentLocalTime4TZ(compareTo.timeZone);
   const diffDate = new Date(Math.abs(instanceDate - utcDate));
@@ -191,16 +264,28 @@ function setDateParts(instance, {year, month, date} = {}) {
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
-  isNumberOrString(hours) && instance.setHours(hours);
-  isNumberOrString(minutes) && instance.setMinutes(minutes);
-  isNumberOrString(seconds) && instance.setSeconds(seconds);
-  isNumberOrString(milliseconds) && instance.setMilliseconds(milliseconds);
+  switch (true) {
+    case isNumberOrString(hours):
+      instance.setHours(hours);
+      break;
+    case isNumberOrString(minutes):
+      instance.setMinutes(minutes);
+      break;
+    case isNumberOrString(seconds):
+      return instance.setSeconds(seconds);
+      break;
+    case isNumberOrString(milliseconds):
+      instance.setMilliseconds(milliseconds);
+      break;
+    default: break;
+  }
+  
   return instance;
 }
 
 function cloneInstance(instance, date) {
   date = new Date(date);
-  date = isNaN(date) ? instance.value : date;
+  date = !isNaN(date) ? date : new Date();
   return xDate(date, instance.localeInfo);
 }
 
@@ -221,7 +306,7 @@ function setProxy(proxy) {
   return proxy;
 }
 
-function extraHelpers(instance) {
+function aggregates(instance) {
   return {
     addYears(amount = 1) {
       const clone = instance.clone();
@@ -310,25 +395,29 @@ function hasDST(instance) {
 
 function DSTAcive(instance) {
   if (instance.hasDST) {
-    const dtJanuary = new Date(instance.year, 0, 1, 14, instance.hours, instance.minutes, instance.seconds);
-    return dtJanuary.hours !== instance.hours;
+    const dtJanuary = instance.clone();
+    dtJanuary.month = 1;
+    dtJanuary.date = 1;
+    
+    return dtJanuary.format(`tz`, `${dtJanuary.localeInfo.formatOptions},tzn:shortOffset`) !==
+      instance.format(`tz`, `${instance.localeInfo.formatOptions},tzn:shortOffset`);
   }
   
   return false;
 }
 
 function relocate(instance, {locale, timeZone} = {}) {
-  const localeInfo = {
+  instance.localeInfo = localeValidator({
     locale: locale || instance.locale,
     timeZone: timeZone || instance.timeZone
-  };
+  });
   
-  return setLocaleInfo(localeInfo);
+  return instance;
 }
 
 function revalue(instance, date) {
-  if (!date instanceof Date) { return instance; }
-  return xDate(date, instance.localeInfo);
+  if (date?.constructor !== Date) { return instance; }
+  return xDate(date, date.localeInfo || instance.localeInfo);
 }
 
 function isNumberOrString(value) {
