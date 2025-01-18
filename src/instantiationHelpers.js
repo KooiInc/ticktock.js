@@ -6,7 +6,7 @@ export { getTraps, instanceCreator, };
 function getTraps(exts) {
   return {
     get( target, key ) {
-      if (key in target && target[key] instanceof Function) {
+      if (key in target && target[key]?.constructor === Function) {
         return (...args) => target[key](...args);
       }
       
@@ -23,7 +23,7 @@ function getTraps(exts) {
     set( _, key, value ) {
       if (typeof key !== `symbol` && key in exts) {
         exts[key] = value;
-        return value ?? true;
+        return value || true;
       }
       
       return Reflect.set(...arguments);
