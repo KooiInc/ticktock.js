@@ -4,11 +4,6 @@ function dateDiffFactory() {
   const checkParams = (start, end) => {
     const noStart = isNaN(new Date(start));
     const noEnd = isNaN(new Date(end));
-    if (noStart && !noEnd) {
-      const [message, full, clean] = Array(3).fill(`start- and/or end date are not valid`);
-      return { error: true, message, full, clean };
-    }
-    
     if (noEnd) {
       const [message, full, clean] = Array(3).fill(`end date not valid`);
       return { error: true, message, full, clean };
@@ -19,15 +14,20 @@ function dateDiffFactory() {
       return { error: true, message, full, clean };
     }
     
+    if (noStart && !noEnd) {
+      const [message, full, clean] = Array(3).fill(`start- and/or end date are not valid`);
+      return { error: true, message, full, clean };
+    }
     return { error: false };
   };
   
   const stringify = stringifyComposed();
   
-  return function getDifference({start, end} = {}) {
+  return function getDifference({start, end, diffs = {}} = {}) {
     const checks = checkParams(start, end);
-    
     if (checks.error) { return checks; }
+    const diffRaw = start - end;
+    const sign = diffRaw === 0 ? `` : diffRaw < 0 ? `-` : `+`;
     const differenceMs = Math.abs(start - end);
     const differenceDate = new Date(differenceMs);
     const years = differenceDate.getUTCFullYear() - 1970;
@@ -38,7 +38,19 @@ function dateDiffFactory() {
     const seconds = differenceDate.getUTCSeconds();
     const milliseconds = differenceDate.getUTCMilliseconds();
     const diffInDays = Math.floor(differenceMs/1000/60/1440);
-    const diffs = { from: start, to: end, years, months, days, hours, minutes, seconds, milliseconds, diffInDays };
+    diffs = {
+      ...diffs,
+      fromUTC: start,
+      toUTC: end,
+      sign,
+      years,
+      months,
+      days,
+      hours,
+      minutes,
+      seconds,
+      milliseconds,
+      diffInDays };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
     return diffs;
