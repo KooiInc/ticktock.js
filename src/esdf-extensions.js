@@ -1,11 +1,11 @@
 import {
   daysInMonth, daysUntil, firstWeekday, format, getFullDate,
   getNames, getTime, toLocalString, getTimeValues, getDateValues,
-  getDTValues, dateDiff, nextOrPrevious, setTimeParts, setDateParts,
-  diffFromUTC, revalue, relocate, add2Date, extraHelpers,
+  getDTValues, nextOrPrevious, setTimeParts, setDateParts,
+  diffFromUTC, revalue, relocate, add2Date, aggregates,
   compareDates, setLocaleInfo, getISO8601Weeknr, getWeeksInYear,
   getQuarter, hasDST, removeTime, DSTAcive, cloneInstance,
-  timezoneAwareDifferenceTo,
+  timezoneAwareDifferenceTo, offsetFrom,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -21,21 +21,22 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     add(...args) { add2Date(instance, ...args); return instance.clone(); },
     subtract(...args) { add2Date(instance, ...[`subtract`].concat(args)); return instance.clone(); },
     clone(date) { return cloneInstance(instance, date); },
-    differenceTo(date) { return timezoneAwareDifferenceTo({start: instance.clone(), end: date}); },
-    relocate({locale, timeZone} = {}) { localeInfo = relocate(instance, {locale, timeZone}); return instance.clone(); },
-    offsetFrom(date) { return diffFromUTC(instance, date); },
+    differenceTo(date) { return timezoneAwareDifferenceTo({start: instance, end: date}); },
+    relocate({locale, timeZone} = {}) { return relocate(instance, {locale, timeZone}); },
+    offsetFrom(date) { return offsetFrom(instance, date); },
     between(date1, date2) { return compareDates(instance, {start: date1, end: date2}); },
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
+    DTLocalValues() { return getDTValues(instance, true); },
 
-    // NOT immutable
+    // Mutes instance
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
-    set year(n) { isNumberOrString(n) && instance.setFullYear(+n); },
-    set month(n) { isNumberOrString(n) && instance.setMonth(+n - 1); },
-    set hours(n) { isNumberOrString(n) && instance.setHours(+n); },
-    set minutes(n) { isNumberOrString(n) && instance.setMinutes(+n); },
-    set seconds(n) { isNumberOrString(n) && instance.setSeconds(+n); },
-    set milliseconds(n) { isNumberOrString(n) && instance.setMilliseconds(+n); },
+    set year(n) { setDateParts(instance, {year: n}); },
+    set month(n) { setDateParts(instance, {month: n}); },
+    set hours(n) { setTimeParts(instance, {hours: n}) },
+    set minutes(n) { setTimeParts(instance, {minutes: n}) },
+    set seconds(n) { setTimeParts(instance, {seconds: n}); },
+    set milliseconds(n) { setTimeParts(instance, {milliseconds: `${n}`}); },
     set time({hours, minutes, seconds, milliseconds} = {}) { return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
     
@@ -61,14 +62,14 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get milliseconds() { return instance.getMilliseconds(); },
     get removeTime() { return removeTime(instance); },
     get time() { return getTime(instance); },
+    get zoneTime() { return getTime(instance, true); },
     get timeValues() { return getTimeValues(instance); },
     get dateValues() { return getDateValues(instance); },
     get dateTimeValues() { return getDTValues(instance); },
     get date() { return getFullDate(instance); },
     get dateTime() { return Object.freeze({...instance.date, ...instance.time}); },
     get UTC() { return instance.clone().relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
-    get UTCDiff() { return diffFromUTC(instance); },
-    get offsetFromUTC() { return diffFromUTC(instance); },
+    get UTCOffset() { return offsetFrom(instance); },
     get day() { return instance.getDay(); },
     get dayName() { return instance.names.dayName; },
     get weeknr() { return getISO8601Weeknr(instance); },
@@ -79,15 +80,16 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get quarterNr() { return getQuarter(instance, true); },
     get hasDST() { return hasDST(instance); },
     get DSTActive() { return DSTAcive(instance); },
-    get value() { return new Date(instance); }
+    get value() { return new Date(instance); },
   };
   
   Object.defineProperties(extensions, {
+    isTT: {get() { return true; }, enumerable: true },
     proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
-    keys: { get() { return  Object.keys(extensions).sort( (a,b) => a.localeCompare(b)); } },
-    addExtra: { value(instance) {
-      const addHelpers = extraHelpers(instance);
-      Object.entries(Object.getOwnPropertyDescriptors(addHelpers))
+    keys: { get() { return  Object.keys(extensions).sort( (a,b) => a.localeCompare(b)); }, enumerable: true },
+    addAggregates: { value(instance) {
+      const aggregates2Add = aggregates(instance);
+      Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
         .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
     }, enumerable: false },
   });
