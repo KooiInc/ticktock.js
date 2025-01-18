@@ -11,7 +11,7 @@ function XDateFactory() {
     instanceExtensions.localeInfo = input?.locale || input?.timeZone
       ? localeValidator(input) : localeValidator(localeInfo);
     const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
-    instance.addExtra(instance);
+    instance.addAggregates(instance);
     
     return Object.freeze(instance);
   }
