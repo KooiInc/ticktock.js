@@ -61,6 +61,8 @@ Currently a work in progress.
 - `daysThisMonth`  (getter, alias for `daysInMonth`)
 - `daysUntil`
 - `differenceTo`
+- `DSTActive` (getter)
+- `DTLocalValues` (getter)
 - `firstWeekday`
 - `format`
 - `formatStr` (getter)
@@ -70,14 +72,14 @@ Currently a work in progress.
 - `isLeapYear` (getter)
 - `ISO` (getter)
 - `isPast`
+- `isTT` (getter 'is ticktock instance')
 - `keys` (getter)
 - `local` (getter)
 - `locale` (getter)
 - `localeInfo` (setter)
 - `localeString` (getter)
-- `midnight` (getter, returns a clone)
-- `milliseconds` (getter)
-- `minutes` (getter)
+- `milliseconds` (getter/setter)
+- `minutes` (getter/setter)
 - `month` (getter/setter)
    <br>**Note**: setter is ***not*** zero based
 - `monthName` (getter)
@@ -87,7 +89,6 @@ Currently a work in progress.
 - `nextWeek` (getter, returns a clone)
 - `nextYear` (getter, returns a clone)
 - `offsetFrom`
-- `offsetFromUTC` (getter)
 - `previous`
 - `previousMonth` (getter, returns a clone)
 - `previousWeek` (getter, returns a clone)
@@ -97,17 +98,17 @@ Currently a work in progress.
 - `relocate`
 - `revalue` (setter)
    <br>**Note**: this setter *mutes the instance value*
-- `seconds` (getter)
+- `seconds` (getter/setter)
 - `subtract`
 - `time` (getter)
 - `timeValues` (getter)
 - `timeZone` (getter)
 - `tomorrow` (getter, returns a clone)
-- `UTC` (getter)
-- `UTCDiff`
+- `UTC` (getter, returns a clone))
+- `UTCOffset` (getter)
 - `weekDay` (getter)
 - `weeknr` (getter)
   <br>**Note**: delivers the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) week number
 - `weeksInYear` (getter)
-- `year` (getter)
+- `year` (getter/setter)
 - `yesterday` (getter, returns a clone)
