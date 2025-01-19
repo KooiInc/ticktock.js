@@ -199,11 +199,11 @@ function getAggregates(instance, customExtras) {
   };
   
   if (Object.keys(customExtras || {}).length > 0) {
-    Object.entries(customExtras).forEach(([key, fnObj]) =>
+    Object.entries(customExtras).forEach(([methodName, methodContainer]) =>
       Object.defineProperty(
-        aggregates, key, {
-          value(...args) { return fnObj.fn(instance, ...args); },
-          enumerable: fnObj.enumerable,
+        aggregates, methodName, {
+          value(...args) { return methodContainer.method(instance, ...args); },
+          enumerable: methodContainer.enumerable,
         } ),
     );
   }

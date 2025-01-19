@@ -86,9 +86,7 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
 
   Object.defineProperties(extensions, {
     proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
-    keys: { get() { return  Object.keys(extensions).sort( (a,b) => a.localeCompare(b)); }, enumerable: true },
     addAggregates: { value(instance, aggregates2Add) {
-      //const aggregates2Add = aggregates(instance);
       Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
         .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
     }, enumerable: false },
