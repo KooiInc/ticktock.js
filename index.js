@@ -55,7 +55,15 @@ function XDateFactory() {
       addMethod: {
         value(name, method, enumerable = false) { customMethods[name] = { method, enumerable }; }
       },
-      keys: { get() { return Object.keys(instanceCreator()).sort( (a,b) => a.localeCompare(b)); } },
+      keys: {
+        get() {
+          const allKeys = [
+            ...Object.keys(instanceCreator()),
+            ...Object.keys(getAggregates())
+          ];
+          return allKeys.sort( (a,b) => a.localeCompare(b));
+        }
+      },
     });
     
     return ctor;
