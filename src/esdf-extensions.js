@@ -81,10 +81,10 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     get hasDST() { return hasDST(instance); },
     get DSTActive() { return DSTAcive(instance); },
     get value() { return new Date(instance); },
+    get isTT() { return true; },
   };
 
   Object.defineProperties(extensions, {
-    isTT: {get() { return true; }, enumerable: true },
     proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
     keys: { get() { return  Object.keys(extensions).sort( (a,b) => a.localeCompare(b)); }, enumerable: true },
     addAggregates: { value(instance) {
