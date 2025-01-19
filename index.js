@@ -25,7 +25,7 @@ function XDateFactory() {
   function extendCTOR(ctor) {
     Object.defineProperties(ctor, {
       now: {
-        get() { return ctor(); }
+        get() { return ctor(new Date()); }
       },
       parse: {
         value(string, ymdOrder = `ymd`) {

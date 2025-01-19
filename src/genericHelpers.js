@@ -14,6 +14,11 @@ function dateFromString(dateString, YMDOrder = "ymd") {
     const formatMap = [...YMDOrder].reduce((a, b, i) => (a[b] = i, a), {});
     const datePart = dsArray.slice(0, 3);
     const timePart = dsArray.slice(3);
+    
+    if (/PM/.test(timePart.slice(-1))) {
+      timePart[0] = (+timePart[0] + 12);
+    }
+    
     const [year, month, date, hours, minutes, seconds, milliseconds] =
       [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
         .concat([...Array(4)].map( (_, i) => +timePart[i] || 0 ) );
