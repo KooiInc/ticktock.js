@@ -32,7 +32,6 @@ export {
   relocate,
   setProxy,
   add2Date,
-  aggregates,
   localeWeekdays,
   localeMonthnames,
   setLocaleInfo,
@@ -258,8 +257,7 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function cloneInstance(instance, date) {
-  date = new Date(date);
-  date = !isNaN(date) ? date : new Date();
+  date = date && new Date(date) || instance.value;
   return xDate(date, instance.localeInfo);
 }
 
@@ -278,71 +276,6 @@ function weekdayFactory() {
 
 function setProxy(proxy) {
   return proxy;
-}
-
-function aggregates(instance) {
-  return {
-    addYears(amount = 1) {
-      const clone = instance.clone();
-      add2Date(clone, `${amount} years`);
-      return clone;
-    },
-    addMonths(amount = 1) {
-      const clone = instance.clone();
-      add2Date(clone, `${amount} months`);
-      return clone;
-    },
-    addWeeks(amount = 1) {
-      const clone = instance.clone();
-      add2Date(clone, `${amount * 7} days`);
-      return clone;
-    },
-    addDays(amount = 1) {
-      const clone = instance.clone();
-      add2Date(clone, `${amount} days`);
-      return clone;
-    },
-    get nextYear() {
-      const clone = instance.clone();
-      add2Date(clone, `1 year`);
-      return clone;
-    },
-    get nextWeek() {
-      const clone = instance.clone();
-      add2Date(clone, `7 days`);
-      return clone;
-    },
-    get previousWeek() {
-      const clone = instance.clone();
-      add2Date(clone, "subtract, 7 days");
-      return clone;
-    },
-    get previousYear() {
-      const clone = instance.clone();
-      add2Date(clone, `subtract, 1 year`);
-      return clone;
-    },
-    get nextMonth() {
-      const clone = instance.clone();
-      add2Date(clone, `1 month`);
-      return clone;
-    },
-    get previousMonth() {
-      const clone = instance.clone();
-      add2Date(clone, `subtract, 1 month`);
-      return clone;
-    },
-    get tomorrow() {
-      const clone = instance.clone();
-      add2Date(clone, `1 day`);
-      return clone;
-    },
-    get yesterday() {
-      const clone = instance.clone();
-      add2Date(clone, `subtract, 1 day`);
-      return clone;
-    },
-  };
 }
 
 function offset2Number(dtStr) {

@@ -1,6 +1,8 @@
+import {add2Date} from "./instanceHelpers.js";
+
 export {
-  dateFromString, localeWeekdays, localeMonthnames, extendCTOR, localeValidator,
-  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ};
+  dateFromString, localeWeekdays, localeMonthnames, /*extendCTOR,*/ localeValidator,
+  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,};
 
 function dateFromString(dateString, YMDOrder = "ymd") {
   dateString = dateString?.trim();
@@ -86,7 +88,7 @@ function setLocaleInfo({locale, timeZone} = {}) {
   return Object.freeze({...info, formatOptions: retrieveFormattingFormats(info.locale, info.timeZone)});
 }
 
-function extendCTOR(ctor) {
+function _extendCTOR(ctor) {
   Object.defineProperties(ctor, {
     clone: {
       value: function clone(instance) { return instance?.clone() || ctor(); },
@@ -116,7 +118,8 @@ function extendCTOR(ctor) {
         }
         return `${monthIndex} not between 1 and 12`;
       },
-    }
+    },
+    xtend: { value(name, fn) { aggregates.addFn(name, fn); } },
   });
   
   return ctor;
@@ -148,4 +151,57 @@ function currentLocalTime4TZ(date, localeHere) {
     localDate: inTheZone.toLocaleDateString(),
     localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
   };
+}
+
+function getAggregates(instance, customExtras) {
+  const aggregates = {
+    addYears(amount = 1) {
+      return add2Date(instance.clone(), `${amount} years`);
+    },
+    addMonths(amount = 1) {
+      return add2Date(instance.clone(), `${amount} months`);
+    },
+    addWeeks(amount = 1) {
+      return add2Date(instance.clone(), `${amount * 7} days`);
+    },
+    addDays(amount = 1) {
+      return add2Date(instance.clone(), `${amount} days`);
+    },
+    get nextYear() {
+      return add2Date(instance.clone(), `1 year`);
+    },
+    get nextWeek() {
+      return add2Date(instance.clone(), `7 days`);
+    },
+    get previousWeek() {
+      return add2Date(instance.clone(), "-7 days");
+    },
+    get previousYear() {
+      return add2Date(instance.clone(), `-1 year`);
+    },
+    get nextMonth() {
+      return add2Date(instance.clone(), `1 month`);
+    },
+    get previousMonth() {
+      return add2Date(instance.clone(), `-1 month`);
+    },
+    get tomorrow() {
+      return add2Date(instance.clone(), `1 day`);
+    },
+    get yesterday() {
+      return add2Date(instance.clone(), `-1 day`);
+    },
+  };
+  
+  if (Object.keys(customExtras || {}).length > 0) {
+    Object.entries(customExtras).forEach(([key, fnObj]) =>
+      Object.defineProperty(
+        aggregates, key, {
+          value(...args) { return fnObj.fn(instance, ...args); },
+          enumerable: fnObj.enumerable,
+        } ),
+    );
+  }
+  
+  return aggregates;
 }
