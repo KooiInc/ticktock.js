@@ -31,6 +31,7 @@ export {
   revalue,
   relocate,
   setProxy,
+  addParts2Date,
   add2Date,
   localeWeekdays,
   localeMonthnames,
@@ -47,7 +48,12 @@ export {
   offsetFrom,
 };
 
-function compareDates(instance, {start, end, before} = {}) {
+function addParts2Date(instance, parts2Add) {
+  const clone = instance.clone();
+  add2Date(clone, parts2Add);
+  return clone;
+}
+function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone().UTC;
   start = xDate(start).UTC;
   
@@ -57,7 +63,8 @@ function compareDates(instance, {start, end, before} = {}) {
   
   end = xDate(end).UTC;
   
-  return +instnc > +start && +instnc < +end;
+  return (include.start ? +instnc >= +start : +instnc > +start) &&
+    (include.end ? +instnc <= +end : +instnc < +end);
 }
 
 function format(instance, formatStr, moreOptions) {
@@ -76,10 +83,10 @@ function equalizeDateTimes(first, second) {
 }
 
 function daysUntil(instance, nextDate) {
-  const {first: start, second: end} = equalizeDateTimes(instance, nextDate);
-  const diffDays = dateDiff({start, end}).diffInDays;
-  const isNegative = diffDays > 0 && +nextDate < +instance;
-  return isNegative ? -diffDays : diffDays;
+  //const {first: start, second: end} = equalizeDateTimes(instance, nextDate);
+  const diff = dateDiff({start: instance, end: nextDate || instance});
+  const isNegative = diff.sign === `-`;
+  return isNegative ? -diff.diffInDays : diff.diffInDays;
 }
 
 function getNames(instance) {

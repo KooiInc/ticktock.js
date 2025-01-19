@@ -1,7 +1,7 @@
 import {add2Date} from "./instanceHelpers.js";
 
 export {
-  dateFromString, localeWeekdays, localeMonthnames, /*extendCTOR,*/ localeValidator,
+  dateFromString, localeWeekdays, localeMonthnames, localeValidator,
   setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,};
 
 function dateFromString(dateString, YMDOrder = "ymd") {
@@ -161,40 +161,52 @@ function currentLocalTime4TZ(date, localeHere) {
 function getAggregates(instance, customExtras) {
   const aggregates = {
     addYears(amount = 1) {
-      return add2Date(instance.clone(), `${amount} years`);
+      const clone = instance.clone();
+      return add2Date(clone, `${amount} years`);
     },
     addMonths(amount = 1) {
-      return add2Date(instance.clone(), `${amount} months`);
+      const clone = instance.clone();
+      return add2Date(clone, `${amount} months`);
     },
     addWeeks(amount = 1) {
-      return add2Date(instance.clone(), `${amount * 7} days`);
+      const clone = instance.clone();
+      return add2Date(clone, `${amount * 7} days`);
     },
     addDays(amount = 1) {
-      return add2Date(instance.clone(), `${amount} days`);
+      const clone = instance.clone();
+      return add2Date(clone, `${amount} days`);
     },
     get nextYear() {
-      return add2Date(instance.clone(), `1 year`);
+      const clone = instance.clone();
+      return add2Date(clone, `1 year`);
     },
     get nextWeek() {
-      return add2Date(instance.clone(), `7 days`);
+      const clone = instance.clone();
+      return add2Date(clone, `7 days`);
     },
     get previousWeek() {
-      return add2Date(instance.clone(), "-7 days");
+      const clone = instance.clone();
+      return add2Date(clone, "-7 days");
     },
     get previousYear() {
-      return add2Date(instance.clone(), `-1 year`);
+      const clone = instance.clone();
+      return add2Date(clone, `-1 year`);
     },
     get nextMonth() {
-      return add2Date(instance.clone(), `1 month`);
+      const clone = instance.clone();
+      return add2Date(clone, `1 month`);
     },
     get previousMonth() {
-      return add2Date(instance.clone(), `-1 month`);
+      const clone = instance.clone();
+      return add2Date(clone, `-1 month`);
     },
     get tomorrow() {
-      return add2Date(instance.clone(), `1 day`);
+      const clone = instance.clone();
+      return add2Date(clone, `1 day`);
     },
     get yesterday() {
-      return add2Date(instance.clone(), `-1 day`);
+      const clone = instance.clone();
+      return add2Date(clone, `-1 day`);
     },
   };
   
