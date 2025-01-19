@@ -6,7 +6,6 @@ import {
   localeMonthnames,
   localeWeekdays,
   setLocaleInfo,
-  currentLocalTime4TZ as time4TZ,
   localeValidator
 } from "./genericHelpers.js";
 
