@@ -8,7 +8,7 @@ import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
 export default XDateFactory();
 
 function XDateFactory() {
-  const addedCustomFns = {};
+  const customMethods = {};
   return extendCTOR(ctor);
   
   function ctor(input, localeInfo) {
@@ -17,7 +17,7 @@ function XDateFactory() {
     instanceExtensions.localeInfo = input?.locale || input?.timeZone
       ? localeValidator(input) : localeValidator(localeInfo);
     const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
-    const instanceAggregates = getAggregates(instance, addedCustomFns);
+    const instanceAggregates = getAggregates(instance, customMethods);
     instance.addAggregates(instance, instanceAggregates);
     return Object.freeze(instance);
   }
@@ -25,7 +25,9 @@ function XDateFactory() {
   function extendCTOR(ctor) {
     Object.defineProperties(ctor, {
       now: {
-        get() { return ctor(new Date()); }
+        get() {
+          return ctor(new Date());
+        }
       },
       parse: {
         value(string, ymdOrder = `ymd`) {
@@ -50,9 +52,10 @@ function XDateFactory() {
           return `${monthIndex} not between 1 and 12`;
         },
       },
-      customFn: { value(name, fn, enumerable = false) {
-        addedCustomFns[name] = { fn, enumerable }; },
+      addMethod: {
+        value(name, method, enumerable = false) { customMethods[name] = { method, enumerable }; }
       },
+      keys: { get() { return Object.keys(instanceCreator()).sort( (a,b) => a.localeCompare(b)); } },
     });
     
     return ctor;
