@@ -10,7 +10,7 @@ import {
 
 export default instanceCreator;
 
-function instanceCreator({instance,localeFormats, localeInfo} = {}) {
+function instanceCreator({instance, localeFormats, localeInfo} = {}) {
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
@@ -29,7 +29,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
     DTLocalValues() { return getDTValues(instance, true); },
 
-    // Mutes instance
+    // instance setters mutate
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
     set year(n) { return setDateParts(instance, {year: n}); },
     set month(n) { return setDateParts(instance, {month: n}); },
@@ -82,7 +82,7 @@ function instanceCreator({instance,localeFormats, localeInfo} = {}) {
     get DSTActive() { return DSTAcive(instance); },
     get value() { return new Date(instance); },
   };
-  
+
   Object.defineProperties(extensions, {
     isTT: {get() { return true; }, enumerable: true },
     proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
