@@ -18,12 +18,12 @@ function getTraps(exts) {
         return exts[key];
       }
       
-      return true;
+      return undefined;
     },
     set( _, key, value ) {
       if (typeof key !== `symbol` && key in exts) {
         exts[key] = value;
-        return value || true;
+        return true;
       }
       
       return Reflect.set(...arguments);
