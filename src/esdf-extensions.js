@@ -27,8 +27,7 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
-    DTLocalValues() { return getDTValues(instance, true); },
-
+    
     // instance setters mutate
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
     set year(n) { return setDateParts(instance, {year: n}); },
@@ -64,7 +63,8 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     get zoneTime() { return getTime(instance, true); },
     get timeValues() { return getTimeValues(instance); },
     get dateValues() { return getDateValues(instance); },
-    get dateTimeValues() { return getDTValues(instance); },
+    get dateTimeValues() { return getDTValues(instance, false); },
+    get localDateTimeValues() { return getDTValues(instance, true); },
     get date() { return getFullDate(instance); },
     get dateTime() { return Object.freeze({...instance.date, ...instance.time}); },
     get UTC() { return instance.clone().relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
