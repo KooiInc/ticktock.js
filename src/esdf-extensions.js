@@ -66,6 +66,7 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     get dateTimeValues() { return getDTValues(instance, false); },
     get localDateTimeValues() { return getDTValues(instance, true); },
     get date() { return getFullDate(instance); },
+    get zoneDate() { return getFullDate(instance, true); },
     get dateTime() { return Object.freeze({...instance.date, ...instance.time}); },
     get UTC() { return instance.clone().relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
     get UTCOffset() { return offsetFrom(instance); },

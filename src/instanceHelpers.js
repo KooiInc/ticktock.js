@@ -103,8 +103,10 @@ function getNames(instance) {
 
 function getTime(instance, tz = false) {
   const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, tz);
+  const values4Timezone = tz ? instance.timeZone : localeValidator().timeZone
+  const returnValue = { values4Timezone, hours, minutes, seconds, milliseconds };
   
-  return Object.freeze({ hours, minutes, seconds, milliseconds, });
+  return Object.freeze(returnValue);
 }
 
 function getTimeValues(instance, tz = false) {
@@ -116,14 +118,10 @@ function getTimeValues(instance, tz = false) {
     .concat(instance.getMilliseconds());
 }
 
-function getFullDate(instance) {
-  const [year, month, date] = getDateValues(instance);
-  
-  return Object.freeze({ year, month, date, });
-}
-
-function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
-  return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
+function getFullDate(instance, local) {
+  const [year, month, date] = getDateValues(instance, local);
+  const values4Timezone = local ? instance.timeZone : localeValidator().timeZone;
+  return Object.freeze({ values4Timezone, year, month, date, });
 }
 
 function getDateValues(instance, local = true) {
@@ -134,6 +132,10 @@ function getDateValues(instance, local = true) {
   const values = instance.format("yyyy-m-d", instance.localeInfo.formatOptions).split(/-/).map(Number);
   values[1] -= 1;
   return values;
+}
+
+function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
+  return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
