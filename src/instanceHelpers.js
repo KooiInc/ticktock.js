@@ -46,6 +46,9 @@ export {
   cloneInstance,
   timezoneAwareDifferenceTo,
   offsetFrom,
+  getAggregatedInfo,
+  localeValidator,
+  toJSDateString,
 };
 
 function addParts2Date(instance, parts2Add) {
@@ -56,13 +59,13 @@ function addParts2Date(instance, parts2Add) {
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone().UTC;
   start = xDate(start).UTC;
-  
+
   if (!Number.isNaN(+start) && !end) {
     return before ? +instnc < +start : +instnc > +start
   }
-  
+
   end = xDate(end).UTC;
-  
+
   return (include.start ? +instnc >= +start : +instnc > +start) &&
     (include.end ? +instnc <= +end : +instnc < +end);
 }
@@ -92,7 +95,7 @@ function daysUntil(instance, nextDate) {
 function getNames(instance) {
   const {locale, timeZone, formats} = instance.localeInfo;
   const monthAndDay = instance.format(`MM|WD`, formats).split(`|`);
-  
+
   return { locale, timeZone,
     monthName: monthAndDay[0],
     dayName: monthAndDay[1],
@@ -105,7 +108,7 @@ function getTime(instance, tz = false) {
   const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, tz);
   const values4Timezone = tz ? instance.timeZone : localeValidator().timeZone
   const returnValue = { values4Timezone, hours, minutes, seconds, milliseconds };
-  
+
   return Object.freeze(returnValue);
 }
 
@@ -128,7 +131,7 @@ function getDateValues(instance, local = true) {
   if (local) {
     return [instance.getFullYear(), instance.getMonth(), instance.getDate()];
   }
-  
+
   const values = instance.format("yyyy-m-d", instance.localeInfo.formatOptions).split(/-/).map(Number);
   values[1] -= 1;
   return values;
@@ -142,20 +145,20 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   if (!end?.isTT) {
     end = xDate(end, {timeZone: start.timeZone});
   }
-  
+
   if (!end) {
     end = start.clone();
   }
-  
+
   start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
   end = xDate(DTInTimezone(end, end.timeZone), {timeZone: end.timeZone});
-  
+
   return dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
 }
 
 function offsetFrom(instance, from) {
   const instanceClone = instance.clone();
-  
+
   if (from instanceof Date && !from?.isTT) {
     from = xDate(instanceClone, {timeZone: `Etc/UTC`});
   }
@@ -163,15 +166,54 @@ function offsetFrom(instance, from) {
   if (!from) {
     from = instanceClone.clone().relocate({timeZone: `Etc/UTC`});
   }
-  
+
   from = from.revalue(instanceClone.value);
   const diff = timezoneAwareDifferenceTo({start: instanceClone, end: from});
-  
+
   return `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
 }
 
 function pad0(number2Pad, n = 2) {
   return `${number2Pad}`.padStart(n, `0`);
+}
+
+function maybePlural(value, word) {
+  return `${word}${value > 1 ? `s` : ``}`;
+}
+
+function timeDiffenceInWords(diffInfo, timeZone) {
+  if (/00:00/.test(diffInfo)) { return `no time diffence`; }
+  const hoursAndMinutes = diffInfo.slice(1).split(`:`).map(Number);
+  const [hours, minutes] = hoursAndMinutes;
+  const later = diffInfo.at(0) === `+`;
+  return `${timeZone}: ` + (minutes > 0
+    ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${maybePlural(minutes, `minute`)} ${later ? `later`: `earlier`}`
+    : `${hours} ${maybePlural(hours, `hour`)} ${later ? `later`: `earlier`}`);
+}
+
+function toJSDateString(instance) {
+  const instanceEN = instance.clone().relocate({locale: `en-CA`});
+  const gmtString = instanceEN.format(`tz`, instanceEN.localeInfo.formatOptions + `,tzn:longOffset`).replace(`:`, ``);
+  const formatString = `wd M d yyyy hh:mmi:ss ${gmtString} (tz)`;
+  return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:long,hrc:23`);
+}
+
+function getAggregatedInfo(instance) {
+  const localInstance = instance.clone()
+    .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
+  const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance);
+  const local = instance.userLocaleInfo;
+  const remote = instance.localeInfo;
+  const aggregated = {
+    userLocale: {locale: local.locale, timeZone: local.timeZone, JSString: localInstance.toString()},
+    instanceLocale: {locale: remote.locale, timeZone: remote.timeZone, string: instance.toString()},
+    dateTimeUserTimezone: instance.dateTime,
+    dateTimeInstanceTimezone: {...instance.zoneDate, ...instance.zoneTime },
+    offsetFromLocal: timeDiffenceInWords(timeDifferenceUserLocal2Remote, instance.timeZone),
+    offsetFromUTC: timeDiffenceInWords(instance.UTCOffset, `Etc/UTC`),
+  };
+
+  return aggregated;
 }
 
 function getDTValues(instance, local = true) {
@@ -186,7 +228,7 @@ function getDTValues(instance, local = true) {
       instance.getMilliseconds()
     ]
   }
-  
+
   const numbers = instance.format("yyyy-m-d-hh-mmi-ss", `${instance.localeInfo.formatOptions},hrc23:true`)
     .split(/-/)
     .map(Number)
@@ -202,17 +244,17 @@ function daysInMonth(instance) {
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
   let dayNr = weekdays(day?.toLowerCase());
   const cloned = xDate(new Date(...instance.dateValues), instance.localeInfo);
-  
+
   if (dayNr < 0) { return cloned; }
-  
+
   let today = cloned.getDay();
-  
+
   if (forFirstWeekday && today === dayNr) { return instance; }
-  
+
   let addTerm = next ? 1 : -1 ;
-  
+
   return findDayRecursive(today);
-  
+
   function findDayRecursive(day) {
     return day !== dayNr
       ? findDayRecursive(cloned.add(`${addTerm} days`).getDay())
@@ -261,7 +303,7 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
       break;
     default: break;
   }
-  
+
   return true;
 }
 
@@ -275,7 +317,7 @@ function weekdayFactory() {
     short: `sun,mon,tue,wed,thu,fri,sat`.split(`,`),
     long: `sunday,monday,tuesday,wednesday,thursday,friday,saturday`.split(`,`),
   };
-  
+
   return function(day) {
     if (!day) { return -1 }
     let dayNr = dow.short.indexOf(day);
@@ -314,11 +356,11 @@ function DSTAcive(instance) {
     const dtJanuary = instance.clone();
     dtJanuary.month = 1;
     dtJanuary.date = 1;
-    
+
     return dtJanuary.format(`tz`, `${dtJanuary.localeInfo.formatOptions},tzn:shortOffset`) !==
       instance.format(`tz`, `${instance.localeInfo.formatOptions},tzn:shortOffset`);
   }
-  
+
   return false;
 }
 
@@ -327,7 +369,7 @@ function relocate(instance, {locale, timeZone} = {}) {
     locale: locale || instance.locale,
     timeZone: timeZone || instance.timeZone
   });
-  
+
   return instance;
 }
 
@@ -361,10 +403,10 @@ function getISO8601Weeknr(instance) {
   clone.setDate(clone.getDate() - dayn + 3);
   const firstThursday = clone.valueOf();
   clone.setMonth(0, 1);
-  
+
   if (clone.getDay() !== 4) {
     clone.setMonth(0, 1 + ((4 - clone.getDay()) + 7) % 7);
   }
-  
+
   return 1 + Math.ceil((firstThursday - clone) / 604800000);
 }

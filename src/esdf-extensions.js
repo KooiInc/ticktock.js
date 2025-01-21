@@ -5,12 +5,13 @@ import {
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
   removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
-  offsetFrom,
+  offsetFrom, getAggregatedInfo, localeValidator, toJSDateString,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
 
 function instanceCreator({instance, localeFormats, localeInfo} = {}) {
+  const userLocale = localeValidator();
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
@@ -27,7 +28,8 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
-    
+    toString() { return toJSDateString(instance); },
+
     // instance setters mutate
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
     set year(n) { return setDateParts(instance, {year: n}); },
@@ -38,10 +40,11 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     set milliseconds(n) { return setTimeParts(instance, {milliseconds: `${n}`}); },
     set time({hours, minutes, seconds, milliseconds} = {}) { return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
-    
+
     get age() { return instance.differenceTo(new Date()).years; },
     get ageParts() { return instance.differenceTo(new Date()).full; },
     get localeString() { return toLocalString(instance); },
+    get userLocaleInfo() { return userLocale; },
     get local() { return toLocalString(instance); },
     get ISO() { return instance.toISOString(); },
     get isLeapYear() { return new Date(instance.getFullYear(), 2, 0).getDate() === 29; },
@@ -83,6 +86,7 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     get hasDST() { return hasDST(instance); },
     get DSTActive() { return DSTAcive(instance); },
     get value() { return new Date(instance); },
+    get info() { return getAggregatedInfo(instance); },
     get isTT() { return true; },
   };
 
@@ -93,6 +97,6 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
         .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
     }, enumerable: false },
   });
-  
+
   return extensions;
 }
