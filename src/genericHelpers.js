@@ -6,27 +6,27 @@ export {
 
 function dateFromString(dateString, YMDOrder = "ymd") {
   dateString = dateString?.trim();
-  
+
   if (!dateString) { return new Date(); }
-  
+
   const dsArray = dateString?.split(/[T :\-\/.,]/g).filter(v => !!(v.trim()));
   const getResult = () => {
     const formatMap = [...YMDOrder].reduce((a, b, i) => (a[b] = i, a), {});
     const datePart = dsArray.slice(0, 3);
     const timePart = dsArray.slice(3);
-    
+
     if (/PM/.test(timePart.slice(-1))) {
       timePart[0] = (+timePart[0] + 12);
     }
-    
+
     const [year, month, date, hours, minutes, seconds, milliseconds] =
       [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
         .concat([...Array(4)].map( (_, i) => +timePart[i] || 0 ) );
-    
+
     if (year < 1900) {
       return new Date(new Date( year, month, date, hours, minutes, seconds, milliseconds ).setFullYear(year) );
     }
-    
+
     return new Date( year, month, date, hours, minutes, seconds, milliseconds );
   };
   const convert = {
@@ -40,7 +40,7 @@ function dateFromString(dateString, YMDOrder = "ymd") {
       }
     },
   }
-  
+
   return convert.cannot ? new Date() : convert.cando;
 }
 
@@ -65,7 +65,7 @@ function localeWeekdays(locale = `en-GB`) {
 
 function localeMonthnames(locale = "en-GB") {
   locale = localeValidator({locale}).locale;
-  
+
   return {
     long: [...Array(12).keys()]
     .map( v => new Date(Date.UTC(1970, v, 1) )
@@ -126,7 +126,7 @@ function _extendCTOR(ctor) {
     },
     xtend: { value(name, fn) { aggregates.addFn(name, fn); } },
   });
-  
+
   return ctor;
 }
 
@@ -136,7 +136,7 @@ function valiDate(date) {
 
 function retrieveDateValueFromInput(input) {
   const now = new Date();
-  
+
   switch(true) {
     case input?.constructor === String:
       return valiDate(new Date(input));
@@ -151,7 +151,7 @@ function retrieveDateValueFromInput(input) {
 function currentLocalTime4TZ(date, localeHere) {
   const tzRemote = {timeZone: date.localeInfo.timeZone, hourCycle: `h23`};
   const inTheZone = new Date(date.toLocaleString(`en-CA`, tzRemote));
-  
+
   return {
     localDate: inTheZone.toLocaleDateString(),
     localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
@@ -209,7 +209,7 @@ function getAggregates(instance, customExtras) {
       return add2Date(clone, `-1 day`);
     },
   };
-  
+
   if (Object.keys(customExtras || {}).length > 0) {
     Object.entries(customExtras).forEach(([methodName, methodContainer]) =>
       Object.defineProperty(
@@ -219,6 +219,6 @@ function getAggregates(instance, customExtras) {
         } ),
     );
   }
-  
+
   return aggregates;
 }

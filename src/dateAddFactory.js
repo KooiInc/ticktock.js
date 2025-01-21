@@ -11,17 +11,17 @@ function dateAddFactory() {
   const aggregateArguments = function(...argsRaw) {
     const singleArgument = argsRaw.length === 1;
     let subtract = argsRaw[0].trim().startsWith(`subtract`);
-    
+
     if (subtract) {
       argsRaw = singleArgument
         ? argsRaw[0].trim().replace(/^subtract./i, ``).split(`, `).map(v => v.trim())
         : argsRaw.slice(1);
     }
-    
+
     if (singleArgument && !subtract) {
       argsRaw = argsRaw[0].split(`,`).map(v => v.trim());
     }
-    
+
    return argsRaw
       .map(function(a) {
         if (!a) { return false; }
@@ -37,9 +37,9 @@ function dateAddFactory() {
 
   return function(date, ...args) {
     if (args.length < 1) { return date; }
-    
+
     let aggregated = aggregateArguments(...args);
-    
+
     if (aggregated.length) {
       aggregated.forEach( ([n, part]) => {
         part = parts[part];
@@ -48,7 +48,7 @@ function dateAddFactory() {
         }
       } );
     }
-    
+
     return date;
   };
 }

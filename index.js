@@ -2,7 +2,9 @@ import {
   localeValidator,
   retrieveDateValueFromInput as retrieveDateValue,
   getAggregates,
-  dateFromString, localeWeekdays, localeMonthnames,
+  dateFromString,
+  localeWeekdays,
+  localeMonthnames,
 } from "./src/genericHelpers.js";
 import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
 export default XDateFactory();
@@ -10,7 +12,7 @@ export default XDateFactory();
 function XDateFactory() {
   const customMethods = {};
   return extendCTOR(ctor);
-  
+
   function ctor(input, localeInfo) {
     let maybeDate = input?.locale || input?.timeZone ? new Date() : retrieveDateValue(input);
     const instanceExtensions = instanceCreator();
@@ -21,7 +23,7 @@ function XDateFactory() {
     instance.addAggregates(instance, instanceAggregates);
     return Object.freeze(instance);
   }
-  
+
   function extendCTOR(ctor) {
     Object.defineProperties(ctor, {
       now: {
@@ -65,7 +67,7 @@ function XDateFactory() {
         }
       },
     });
-    
+
     return ctor;
   }
 }

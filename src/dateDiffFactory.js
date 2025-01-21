@@ -8,21 +8,21 @@ function dateDiffFactory() {
       const [message, full, clean] = Array(3).fill(`end date not valid`);
       return { error: true, message, full, clean };
     }
-    
+
     if (noStart) {
       const [message, full, clean] = Array(3).fill(`start date not valid`);
       return { error: true, message, full, clean };
     }
-    
+
     if (noStart && !noEnd) {
       const [message, full, clean] = Array(3).fill(`start- and/or end date are not valid`);
       return { error: true, message, full, clean };
     }
     return { error: false };
   };
-  
+
   const stringify = stringifyComposed();
-  
+
   return function getDifference({start, end, diffs = {}} = {}) {
     const checks = checkParams(start, end);
     if (checks.error) { return checks; }
@@ -55,7 +55,7 @@ function dateDiffFactory() {
     diffs.clean = stringify({ values: diffs });
     return diffs;
   };
-  
+
   function stringifyComposed() {
     const pipe = (...functions) => initial => functions.reduce((param, func) => func(param), initial);
     const singleOrMultiple = (numberOf, term) => (numberOf === 1 ? term.slice(0, -1) : term);

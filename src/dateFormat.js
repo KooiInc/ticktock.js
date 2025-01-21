@@ -94,16 +94,16 @@ function DateFormatFactory() {
         ((v.type === `literal` && /[ ,/-]/.test(v.value)) ? parts : {...parts, [v.type]: checkNumeric(v.type, v.value) } ), {} );
     opts.ms = optsCollected.fractionalSecondDigits ? opts.msp : opts.ms;
     opts.yyyy = dtf.relatedYear ? opts.ry : opts.yyyy;
-    
+
     xTemplate.formatStr = xTemplate.formatStr
       .replace(dtfOptions.re, dtUnit =>
         /^(M|MM)$/.test(dtUnit)
           ? getMonthName(date, optsCollected.locale, optsCollected.timeZone, /^M$/.test(dtUnit))
           : dtf[Object.keys(opts[dtUnit]).shift()] || dtUnit);
-    
+
     return xTemplate.finalize(...[undefined, dtf.dayPeriod, dtf.era, dtf.yearName]);
   }
-  
+
   return (date, template, moreOptions = `l:default`) => (/ds:|ts:/.test(moreOptions))
     ? dtNoParts(...[date, extractFromTemplate(undefined), moreOptions])
     : dtFormatted(...[date, extractFromTemplate(template || undefined), moreOptions]);
