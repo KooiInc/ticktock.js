@@ -62,7 +62,6 @@ Currently a work in progress.
 - `daysUntil`
 - `differenceTo`
 - `DSTActive` (getter)
-- `DTLocalValues` (getter)
 - `firstWeekday`
 - `format`
 - `formatStr` (getter)
@@ -120,4 +119,6 @@ Currently a work in progress.
 - `year` (getter/setter)
    <br>**Note**: the setter *mutates the instance value*
 - `yesterday` (getter, returns a clone)
+- `zoneDate` (getter)
+- `zoneDateTimeValues` (getter)
 - `zoneTime` (getter)
