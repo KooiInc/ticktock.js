@@ -68,13 +68,14 @@ Currently a work in progress.
 - `hasDST` (getter)
 - `hours` (getter/setter)
    <br>**Note**: the setter *mutates the instance value*
+- `info` (gettter)
 - `isFuture` (getter)
 - `isLeapYear` (getter)
 - `ISO` (getter)
 - `isPast`
 - `isTT` (this is a 'is ticktock instance')
 - `keys` (getter)
-- `local` (getter)
+- `local` (getter, alias for `[instance].localString`)
 - `locale` (getter)
 - `localeInfo` (setter)
 - `localeString` (getter)
@@ -110,6 +111,8 @@ Currently a work in progress.
 - `timeValues` (getter)
 - `timeZone` (getter)
 - `tomorrow` (getter, returns a clone)
+- `toString` (method),
+   <br>**Note**: overrides native `Date.prototype.toString`, the resulting string is for the embedded instance locale/timeZone
 - `UTC` (getter, returns a clone))
 - `UTCOffset` (getter)
 - `weekDay` (getter)
@@ -122,3 +125,4 @@ Currently a work in progress.
 - `zoneDate` (getter)
 - `zoneDateTimeValues` (getter)
 - `zoneTime` (getter)
+- `zoneTimeValue` (getter)
