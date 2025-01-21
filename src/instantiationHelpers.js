@@ -6,18 +6,19 @@ export { getTraps, instanceCreator, };
 function getTraps(exts) {
   return {
     get( target, key ) {
-      if (key in target && target[key]?.constructor === Function) {
-        return (...args) => target[key](...args);
+      if (key !== `toString`) {
+        if (key in target && target[key]?.constructor === Function) {
+          return (...args) => target[key](...args);
+        }
+
+        if (key in target) {
+          return target[key];
+        }
       }
-      
-      if (key in target) {
-        return target[key];
-      }
-      
       if (key in exts) {
         return exts[key];
       }
-      
+
       return undefined;
     },
     set( _, key, value ) {
@@ -25,7 +26,7 @@ function getTraps(exts) {
         exts[key] = value;
         return true;
       }
-      
+
       return Reflect.set(...arguments);
     },
     has: (target, key) => key in exts || key in target,
