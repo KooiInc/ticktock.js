@@ -181,14 +181,14 @@ function maybePlural(value, word) {
   return `${word}${value > 1 ? `s` : ``}`;
 }
 
-function timeDiffenceInWords(diffInfo, timeZone) {
+function timeDiffenceInWords(diffInfo) {
   if (/00:00/.test(diffInfo)) { return `no time diffence`; }
   const hoursAndMinutes = diffInfo.slice(1).split(`:`).map(Number);
   const [hours, minutes] = hoursAndMinutes;
   const later = diffInfo.at(0) === `+`;
-  return `${timeZone}: ` + (minutes > 0
+  return minutes > 0
     ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${maybePlural(minutes, `minute`)} ${later ? `later`: `earlier`}`
-    : `${hours} ${maybePlural(hours, `hour`)} ${later ? `later`: `earlier`}`);
+    : `${hours} ${maybePlural(hours, `hour`)} ${later ? `later`: `earlier`}`;
 }
 
 function toJSDateString(instance) {
@@ -217,8 +217,9 @@ function getAggregatedInfo(instance) {
       remote: { ...instance.zoneDate, ...instance.zoneTime },
     },
     offset: {
-      fromUserTime: timeDiffenceInWords(timeDifferenceUserLocal2Remote, instance.timeZone),
-      fromUTC: timeDiffenceInWords(instance.UTCOffset, `Etc/UTC`)
+      fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceUserLocal2Remote)
+        + ` than ${localInstance.timeZone}`,
+      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset) + ` than GMT`
     },
     monthName: { user: localInstance.monthName, remote: instance.monthName },
     dayName: { user: localInstance.dayName, remote: instance.dayName },
