@@ -224,6 +224,10 @@ function getAggregatedInfo(instance) {
     monthName: { user: localInstance.monthName, remote: instance.monthName },
     dayName: { user: localInstance.dayName, remote: instance.dayName },
     dayPeriodTime: { user: pmLocal, remote: pmRemote },
+    DST: {
+      user: {hasDST: localInstance.hasDST, active: localInstance.DSTActive},
+      remote: {hasDST: instance.hasDST, active: instance.DSTActive},
+    }
   };
   
   return aggregated;
