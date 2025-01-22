@@ -99,6 +99,16 @@ Result (my time zone is Europe/Amsterdam)
   "dayPeriodTime": {
     "user": "11:07:22 AM",
     "remote": "06:07:22 PM"
+  },
+  "DST": {
+   "user": {
+      "hasDST": true,
+      "active": false
+    },
+   "remote": {
+      "hasDST": false,
+      "active": false
+    }
   }
 }
  */
