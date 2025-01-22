@@ -207,12 +207,16 @@ function getAggregatedInfo(instance) {
   const aggregated = {
     userLocale: {locale: local.locale, timeZone: local.timeZone, JSString: localInstance.toString()},
     instanceLocale: {locale: remote.locale, timeZone: remote.timeZone, string: instance.toString()},
-    dateTimeUserTimezone: instance.dateTime,
-    dateTimeInstanceTimezone: {...instance.zoneDate, ...instance.zoneTime },
-    offsetFromLocal: timeDiffenceInWords(timeDifferenceUserLocal2Remote, instance.timeZone),
-    offsetFromUTC: timeDiffenceInWords(instance.UTCOffset, `Etc/UTC`),
+    inUserTimezone: instance.dateTime,
+    inInstanceTimezone: {...instance.zoneDate, ...instance.zoneTime },
+    offsetFromUserTime: timeDiffenceInWords(timeDifferenceUserLocal2Remote, instance.timeZone),
+    offsetFromUTCTime: timeDiffenceInWords(instance.UTCOffset, `Etc/UTC`),
+    monthNameUser: localInstance.monthName,
+    dayNameUser: localInstance.dayName,
+    monthNameRemote: instance.monthName,
+    dayNameRemote: instance.dayName,
   };
-
+  
   return aggregated;
 }
 
