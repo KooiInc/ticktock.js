@@ -126,3 +126,73 @@ Currently a work in progress.
 - `zoneDateTimeValues` (getter)
 - `zoneTime` (getter)
 - `zoneTimeValue` (getter)
+
+## Example
+
+The `[instance].info` method may explain what this library is about
+
+```javascript
+import $Date from "[location of the library]";
+
+// create an instance for the current date, within a different timeZone
+const inChina = $Date({locale: `zh`, timeZone: 'Asia/Shanghai'});
+
+console.log(JSON.stringify(inChina.info, null, 2));
+/**
+ result (note: my time zone is Europe/Amsterdam, locale )
+   {
+     "note": "'user' are values for your locale/timeZone, 'remote' idem for the instance",
+     "locales": {
+       "user": {
+         "locale": "en-US",
+         "timeZone": "Europe/Amsterdam",
+         "string": "Wed Jan 22 2025 11:07:22 GMT+0100 (Central European Standard Time)"
+       },
+       "remote": {
+         "locale": "zh",
+         "timeZone": "Asia/Shanghai",
+         "string": "Wed Jan 22 2025 18:07:22 GMT+0800 (China Standard Time)"
+       }
+     },
+     "dateTime": {
+       "user": {
+         "values4Timezone": "Europe/Amsterdam",
+         "year": 2025,
+         "month": 0,
+         "date": 22,
+         "hours": 11,
+         "minutes": 7,
+         "seconds": 22,
+         "milliseconds": 0
+       },
+       "remote": {
+         "values4Timezone": "Asia/Shanghai",
+         "year": 2025,
+         "month": 0,
+         "date": 22,
+         "hours": 18,
+         "minutes": 7,
+         "seconds": 22,
+         "milliseconds": 0
+       }
+     },
+     "offset": {
+       "fromUserTime": "Asia/Shanghai 7 hours later than Europe/Amsterdam",
+       "fromUTC": "Asia/Shanghai 8 hours later than GMT"
+     },
+     "monthName": {
+       "user": "January",
+       "remote": "一月"
+     },
+     "dayName": {
+       "user": "Wednesday",
+       "remote": "星期三"
+     },
+     "dayPeriodTime": {
+       "user": "11:07:22 AM",
+       "remote": "06:07:22 PM"
+     }
+   }
+ */
+
+```
