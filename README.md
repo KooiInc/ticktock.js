@@ -129,7 +129,7 @@ Currently a work in progress.
 
 ## Example
 
-The `[instance].info` method may explain what this library is about
+The `[instance].info` getter may explain what this library is about
 
 ```javascript
 import $Date from "[location of the library]";
