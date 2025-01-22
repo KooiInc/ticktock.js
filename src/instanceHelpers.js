@@ -207,12 +207,15 @@ function getAggregatedInfo(instance) {
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
   const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
   const aggregated = {
+    note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
       user: {locale: local.locale, timeZone: local.timeZone, string: localInstance.toString()},
       remote: {locale: remote.locale, timeZone: remote.timeZone, string: instance.toString()}
     },
-    inUserTimezone: instance.dateTime,
-    inInstanceTimezone: { ...instance.zoneDate, ...instance.zoneTime },
+    dateTime: {
+      user: instance.dateTime,
+      remote: { ...instance.zoneDate, ...instance.zoneTime },
+    },
     offset: {
       fromUserTime: timeDiffenceInWords(timeDifferenceUserLocal2Remote, instance.timeZone),
       fromUTC: timeDiffenceInWords(instance.UTCOffset, `Etc/UTC`)
@@ -221,7 +224,7 @@ function getAggregatedInfo(instance) {
     dayName: { user: localInstance.dayName, remote: instance.dayName },
     dayPeriodTime: { user: pmLocal, remote: pmRemote },
   };
-  console.log(aggregated);
+  
   return aggregated;
 }
 
