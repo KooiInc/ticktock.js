@@ -42,76 +42,59 @@ The `[instance].info` getter may explain what this library is about
 ```javascript
 import $Date from "[location of the library]";
 
-// create an instance for the current date, within a different timeZone
-const inChina = $Date({locale: `zh`, timeZone: 'Asia/Shanghai'});
+// create an instance, within a different timeZone
+const inChina = $Date(new Date(`2025/01/23 22:00:00`), {locale: `zh`, timeZone: 'Asia/Shanghai'});
 
 console.log(JSON.stringify(inChina.info, null, 2));
 /**
-Result (my time zone is Europe/Amsterdam)
-{
-  "note": "'user' are values for your locale/timeZone, 'remote' idem for the instance",
-  "locales": {
-    "user": {
-      "locale": "en-US",
-      "timeZone": "Europe/Amsterdam",
-      "string": "Wed Jan 22 2025 11:07:22 GMT+0100 (Central European Standard Time)"
-    },
-    "remote": {
-      "locale": "zh",
-      "timeZone": "Asia/Shanghai",
-      "string": "Wed Jan 22 2025 18:07:22 GMT+0800 (China Standard Time)"
-    }
-  },
-  "dateTime": {
-    "user": {
-      "values4Timezone": "Europe/Amsterdam",
-      "year": 2025,
-      "month": 0,
-      "date": 22,
-      "hours": 11,
-      "minutes": 7,
-      "seconds": 22,
-      "milliseconds": 0
-    },
-    "remote": {
-      "values4Timezone": "Asia/Shanghai",
-      "year": 2025,
-      "month": 0,
-      "date": 22,
-      "hours": 18,
-      "minutes": 7,
-      "seconds": 22,
-      "milliseconds": 0
-    }
-  },
-  "offset": {
-    "fromUserTime": "Asia/Shanghai 7 hours later than Europe/Amsterdam",
-    "fromUTC": "Asia/Shanghai 8 hours later than GMT"
-  },
-  "monthName": {
-    "user": "January",
-    "remote": "一月"
-  },
-  "dayName": {
-    "user": "Wednesday",
-    "remote": "星期三"
-  },
-  "dayPeriodTime": {
-    "user": "11:07:22 AM",
-    "remote": "06:07:22 PM"
-  },
-  "DST": {
-   "user": {
-      "hasDST": true,
-      "active": false
-    },
-   "remote": {
-      "hasDST": false,
-      "active": false
-    }
-  }
-}
- */
+   Result (my time zone is Europe/Amsterdam, so the date wraps because of the time difference)
+   --------------------------------------------------------------------------------------------    
+   {
+     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
+     locales: {
+       user: { locale: 'en-US', timeZone: 'Europe/Amsterdam' },
+       remote: { locale: 'zh', timeZone: 'Asia/Shanghai' }
+     },
+     dateTime: {
+       user: {
+         values4Timezone: 'Europe/Amsterdam',
+         year: 2025,
+         month: 0,
+         date: 23,
+         hours: 22,
+         minutes: 0,
+         seconds: 0,
+         milliseconds: 0,
+         monthName: 'January',
+         dayName: 'Thursday',
+         dayPeriodTime: '10:00:00 PM',
+         hasDST: true,
+         DSTActive: false,
+         string: 'Thu Jan 23 2025 22:00:00 GMT+0100 (Central European Standard Time)'
+       },
+       remote: {
+         values4Timezone: 'Asia/Shanghai',
+         year: 2025,
+         month: 0,
+         date: 24,
+         hours: 5,
+         minutes: 0,
+         seconds: 0,
+         milliseconds: 0,
+         monthName: '一月',
+         dayName: '星期五',
+         dayPeriodTime: '05:00:00 AM',
+         hasDST: false,
+         DSTActive: false,
+         string: 'Fri Jan 24 2025 05:00:00 GMT+0800 (China Standard Time)'
+       }
+     },
+     offset: {
+       fromUserTime: 'Asia/Shanghai 7 hours later than Europe/Amsterdam',
+       fromUTC: 'Asia/Shanghai 8 hours later than GMT'
+     }
+   }
+*/
 ```
 
 ## Current extensions for a wrapped date
