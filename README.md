@@ -90,8 +90,8 @@ console.log(inChina.info);
        }
      },
      offset: {
-       fromUserTime: 'Asia/Shanghai 7 hours later than Europe/Amsterdam',
-       fromUTC: 'Asia/Shanghai 8 hours later than GMT'
+       fromUserTime: 'Asia/Shanghai 7 hours ahead of Europe/Amsterdam',
+       fromUTC: 'Asia/Shanghai 8 hours ahead of GMT'
      }
    }
 */
