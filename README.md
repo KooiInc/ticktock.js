@@ -185,6 +185,8 @@ console.log(inChina.info);
    <br>**Note**: the setter *mutates the instance value*
 - `yesterday` (getter, returns a clone)
 - `zoneDate` (getter)
+- `zoneDateValues` (getter)
+- `zoneDateTime` (getter)
 - `zoneDateTimeValues` (getter)
 - `zoneTime` (getter)
-- `zoneTimeValue` (getter)
+- `zoneTimeValues` (getter)
