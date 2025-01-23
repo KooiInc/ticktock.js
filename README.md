@@ -45,7 +45,7 @@ import $Date from "[location of the library]";
 // create an instance, within a different timeZone
 const inChina = $Date(new Date(`2025/01/23 22:00:00`), {locale: `zh`, timeZone: 'Asia/Shanghai'});
 
-console.log(JSON.stringify(inChina.info, null, 2));
+console.log(inChina.info);
 /**
    Result (my time zone is Europe/Amsterdam, so the date wraps because of the time difference)
    --------------------------------------------------------------------------------------------    
