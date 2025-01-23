@@ -2,12 +2,7 @@ import dateFormat from "./dateFormat.js";
 import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
-import {
-  localeMonthnames,
-  localeWeekdays,
-  setLocaleInfo,
-  localeValidator
-} from "./genericHelpers.js";
+import {localeMonthnames, localeValidator, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -78,15 +73,7 @@ function format(instance, formatStr, moreOptions) {
   return dateFormat(new Date(instance), formatStr, moreOptions);
 }
 
-function equalizeDateTimes(first, second) {
-  return {
-    first: xDate(first || new Date()).removeTime,
-    second: xDate(second || new Date()).removeTime,
-  };
-}
-
 function daysUntil(instance, nextDate) {
-  //const {first: start, second: end} = equalizeDateTimes(instance, nextDate);
   const diff = dateDiff({start: instance, end: nextDate || instance});
   const isNegative = diff.sign === `-`;
   return isNegative ? -diff.diffInDays : diff.diffInDays;
@@ -122,7 +109,9 @@ function getTimeValues(instance, tz = false) {
 }
 
 function getFullDate(instance, local) {
-  const [year, month, date] = getDateValues(instance, local);
+  const tzOpt = !local ? `,tz:${instance.timeZone}` : `tz:${localeValidator().timeZone}`;
+  let [year, month, date] = instance.format(`yyyy-mm-dd`, tzOpt).split(/-/) .map(Number);
+  month -= 1;
   const values4Timezone = local ? instance.timeZone : localeValidator().timeZone;
   return Object.freeze({ values4Timezone, year, month, date, });
 }
@@ -206,31 +195,36 @@ function getAggregatedInfo(instance) {
   const remote = instance.localeInfo;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
   const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
-  const aggregated = {
+  return {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
       user: {locale: local.locale, timeZone: local.timeZone, string: localInstance.toString()},
       remote: {locale: remote.locale, timeZone: remote.timeZone, string: instance.toString()}
     },
     dateTime: {
-      user: instance.dateTime,
-      remote: { ...instance.zoneDate, ...instance.zoneTime },
+      user: {
+        ...instance.dateTime,
+        monthName: localInstance.monthName,
+        dayName: localInstance.dayName,
+        dayPeriodTime: pmLocal,
+        hasDST: localInstance.hasDST,
+        DSTActive: localInstance.DSTActive
+      },
+      remote: {
+        ...instance.zoneDateTime,
+        monthName: instance.monthName,
+        dayName: instance.dayName,
+        dayPeriodTime: pmRemote,
+        hasDST: instance.hasDST,
+        DSTActive: instance.DSTActive
+      },
     },
     offset: {
       fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceUserLocal2Remote)
         + ` than ${localInstance.timeZone}`,
       fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset) + ` than GMT`
     },
-    monthName: { user: localInstance.monthName, remote: instance.monthName },
-    dayName: { user: localInstance.dayName, remote: instance.dayName },
-    dayPeriodTime: { user: pmLocal, remote: pmRemote },
-    DST: {
-      user: {hasDST: localInstance.hasDST, active: localInstance.DSTActive},
-      remote: {hasDST: instance.hasDST, active: instance.DSTActive},
-    }
   };
-  
-  return aggregated;
 }
 
 function getDTValues(instance, local = true) {
@@ -287,11 +281,6 @@ function toLocalString(instance) {
   return new Date(instance).toLocaleString(locale, {timeZone});
 }
 
-function currentLocalTime4TZ(timeZoneID) {
-  timeZoneID = {timeZone: timeZoneID, hourCycle: `h23`};
-  return new Date(new Date().toLocaleString(`en`, timeZoneID));
-}
-
 function DTInTimezone(date, timeZoneID) {
   const timeZoneInfo = {timeZone: timeZoneID, hourCycle: `h23`};
   return new Date(new Date(date).toLocaleString(`en`, timeZoneInfo));
@@ -313,12 +302,11 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
       instance.setMinutes(minutes);
       break;
     case isNumberOrString(seconds):
-      return instance.setSeconds(seconds);
+      instance.setSeconds(seconds);
       break;
     case isNumberOrString(milliseconds):
       instance.setMilliseconds(milliseconds);
       break;
-    default: break;
   }
 
   return true;
