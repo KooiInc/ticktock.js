@@ -198,8 +198,8 @@ function getAggregatedInfo(instance) {
   return {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
-      user: {locale: local.locale, timeZone: local.timeZone, string: localInstance.toString()},
-      remote: {locale: remote.locale, timeZone: remote.timeZone, string: instance.toString()}
+      user: {locale: local.locale, timeZone: local.timeZone },
+      remote: {locale: remote.locale, timeZone: remote.timeZone }
     },
     dateTime: {
       user: {
@@ -208,7 +208,8 @@ function getAggregatedInfo(instance) {
         dayName: localInstance.dayName,
         dayPeriodTime: pmLocal,
         hasDST: localInstance.hasDST,
-        DSTActive: localInstance.DSTActive
+        DSTActive: localInstance.DSTActive,
+        string: localInstance.toString(),
       },
       remote: {
         ...instance.zoneDateTime,
@@ -216,7 +217,8 @@ function getAggregatedInfo(instance) {
         dayName: instance.dayName,
         dayPeriodTime: pmRemote,
         hasDST: instance.hasDST,
-        DSTActive: instance.DSTActive
+        DSTActive: instance.DSTActive,
+        string: instance.toString(),
       },
     },
     offset: {
