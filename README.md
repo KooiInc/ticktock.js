@@ -126,7 +126,6 @@ console.log(inChina.info);
 - `DSTActive` (getter)
 - `firstWeekday`
 - `format`
-- `formatStr` (getter)
 - `hasDST` (getter)
 - `hours` (getter/setter)
    <br>**Note**: the setter *mutates the instance value*

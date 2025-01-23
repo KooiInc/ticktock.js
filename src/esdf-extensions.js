@@ -10,7 +10,7 @@ import {
 
 export default instanceCreator;
 
-function instanceCreator({instance, localeFormats, localeInfo} = {}) {
+function instanceCreator({instance, localeInfo} = {}) {
   const userLocale = localeValidator();
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
@@ -53,7 +53,6 @@ function instanceCreator({instance, localeFormats, localeInfo} = {}) {
     get localeInfo() { return localeInfo },
     get timeZone() { return ( localeInfo || setLocaleInfo() ).timeZone; },
     get locale() { return ( localeInfo || setLocaleInfo() ).locale; },
-    get formatStr() { return localeFormats; },
     get year() { return instance.getFullYear(); },
     get month() { return instance.date.month; },
     get dateSingle()  { return instance.date.date; },
