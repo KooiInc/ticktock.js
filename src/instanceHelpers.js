@@ -159,7 +159,11 @@ function offsetFrom(instance, from) {
   from = from.revalue(instanceClone.value);
   const diff = timezoneAwareDifferenceTo({start: instanceClone, end: from});
 
-  return `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
+  return {
+    from: instanceClone.timeZone,
+    to: from.timeZone,
+    offset: `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
+  };
 }
 
 function pad0(number2Pad, n = 2) {
@@ -190,7 +194,7 @@ function toJSDateString(instance) {
 function getAggregatedInfo(instance) {
   const localInstance = instance.clone()
     .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
-  const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance);
+  const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance).offset;
   const local = instance.userLocaleInfo;
   const remote = instance.localeInfo;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
@@ -224,7 +228,7 @@ function getAggregatedInfo(instance) {
     offset: {
       fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceUserLocal2Remote)
         + ` ${localInstance.timeZone}`,
-      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset) + ` GMT`
+      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset.offset) + ` GMT`
     },
   };
 }
