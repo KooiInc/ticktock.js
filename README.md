@@ -134,7 +134,6 @@ console.log(inChina.info);
 - `isLeapYear` (getter)
 - `ISO` (getter)
 - `isPast`
-- `isTT` (this is a 'is ticktock instance')
 - `keys` (getter)
 - `local` (getter, alias for `[instance].localString`)
 - `locale` (getter)

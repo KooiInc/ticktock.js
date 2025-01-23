@@ -131,7 +131,7 @@ function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
-  if (!end?.isTT) {
+  if (!end?.clone) {
     end = xDate(end, {timeZone: start.timeZone});
   }
 
@@ -148,7 +148,7 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
 function offsetFrom(instance, from) {
   const instanceClone = instance.clone();
 
-  if (from instanceof Date && !from?.isTT) {
+  if (from instanceof Date && !from?.clone) {
     from = xDate(instanceClone, {timeZone: `Etc/UTC`});
   }
 

@@ -87,7 +87,6 @@ function instanceCreator({instance, localeInfo} = {}) {
     get DSTActive() { return DSTAcive(instance); },
     get value() { return new Date(instance); },
     get info() { return getAggregatedInfo(instance); },
-    get isTT() { return true; },
   };
 
   Object.defineProperties(extensions, {
