@@ -176,8 +176,8 @@ function timeDiffenceInWords(diffInfo) {
   const [hours, minutes] = hoursAndMinutes;
   const later = diffInfo.at(0) === `+`;
   return minutes > 0
-    ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${maybePlural(minutes, `minute`)} ${later ? `later`: `earlier`}`
-    : `${hours} ${maybePlural(hours, `hour`)} ${later ? `later`: `earlier`}`;
+    ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${maybePlural(minutes, `minute`)} ${later ? `ahead of`: `behind`}`
+    : `${hours} ${maybePlural(hours, `hour`)} ${later ? `ahead of`: `behind`}`;
 }
 
 function toJSDateString(instance) {
@@ -223,8 +223,8 @@ function getAggregatedInfo(instance) {
     },
     offset: {
       fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceUserLocal2Remote)
-        + ` than ${localInstance.timeZone}`,
-      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset) + ` than GMT`
+        + ` ${localInstance.timeZone}`,
+      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset) + ` GMT`
     },
   };
 }
