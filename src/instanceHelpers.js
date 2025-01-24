@@ -44,6 +44,7 @@ export {
   getAggregatedInfo,
   localeValidator,
   toJSDateString,
+  getDowNumber,
 };
 
 function addParts2Date(instance, parts2Add) {
@@ -79,15 +80,15 @@ function daysUntil(instance, nextDate) {
   return isNegative ? -diff.diffInDays : diff.diffInDays;
 }
 
-function getNames(instance) {
-  const {locale, timeZone, formats} = instance.localeInfo;
-  const monthAndDay = instance.format(`MM|WD`, formats).split(`|`);
+function getNames(instance, remote = false) {
+  const {locale, timeZone, formatOptions} = remote ? instance.localeInfo : xDate().localeInfo;
+  const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
   return { locale, timeZone,
     monthName: monthAndDay[0],
     dayName: monthAndDay[1],
-    dayNames: localeWeekdays(instance.locale),
-    monthNames: localeMonthnames(instance.locale),
+    dayNames: localeWeekdays(locale),
+    monthNames: localeMonthnames(locale),
   };
 }
 
@@ -99,9 +100,10 @@ function getTime(instance, tz = false) {
   return Object.freeze(returnValue);
 }
 
-function getTimeValues(instance, tz = false) {
-  const tzOpt = tz ? `,tz:${instance.timeZone}` : ``;
+function getTimeValues(instance, remote = false) {
+  const tzOpt = remote ? `,tz:${instance.timeZone}` : `,tz:${localeValidator().timeZone}`;
   const opts = `l:en-CA${tzOpt},hrc:23`;
+  
   return instance.format("hh-mmi-ss", opts)
     .split(/-/)
     .map(Number)
@@ -191,6 +193,15 @@ function toJSDateString(instance) {
   return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:long,hrc:23`);
 }
 
+function getDowNumber(instance, remote = false) {
+  const dayFormat = Intl.DateTimeFormat(`en-CA`, {
+    timeZone: remote ? instance.timeZone : localeValidator().timeZone,
+    weekday: "short",
+  });
+  
+  return weekdays(dayFormat.format(instance).toLowerCase());
+}
+
 function getAggregatedInfo(instance) {
   const localInstance = instance.clone()
     .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
@@ -199,6 +210,7 @@ function getAggregatedInfo(instance) {
   const remote = instance.localeInfo;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
   const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
+  
   return {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
@@ -209,7 +221,8 @@ function getAggregatedInfo(instance) {
       user: {
         ...instance.dateTime,
         monthName: localInstance.monthName,
-        dayName: localInstance.dayName,
+        weekdayNr: getDowNumber(localInstance),
+        weekdayName: localInstance.dayName,
         dayPeriodTime: pmLocal,
         hasDST: localInstance.hasDST,
         DSTActive: localInstance.DSTActive,
@@ -218,7 +231,8 @@ function getAggregatedInfo(instance) {
       remote: {
         ...instance.zoneDateTime,
         monthName: instance.monthName,
-        dayName: instance.dayName,
+        weekdayNr: getDowNumber(instance, true),
+        weekdayName: instance.dayName,
         dayPeriodTime: pmRemote,
         hasDST: instance.hasDST,
         DSTActive: instance.DSTActive,
@@ -346,7 +360,7 @@ function offset2Number(dtStr) {
 
 function removeTime(instance) {
   instance = instance || xDate();
-  return xDate(new Date(instance.year, instance.month, instance.date.date));
+  return xDate(new Date(instance.year, instance.month, instance.zoneDate.date), instance.localeInfo);
 }
 
 function hasDST(instance) {
