@@ -163,6 +163,7 @@ console.log(inChina.info);
 - `quarterNr` (getter)
 - `relocate`
    <br>**Note**: this setter *mutates the instance value*
+- `removeTime` (getter)
 - `revalue` (setter)
    <br>**Note**: this setter *mutates the instance value*
 - `seconds` (getter/setter)
