@@ -341,7 +341,7 @@ function setProxy(proxy) {
 }
 
 function offset2Number(dtStr) {
-  return +(dtStr.slice(dtStr.indexOf(`+`) + 1).replace(`:`, ``)) || 0;
+  return Number(dtStr.split(/[+-]/).slice(-1)[0].replace(/:/, ``));
 }
 
 function removeTime(instance) {
@@ -358,8 +358,9 @@ function hasDST(instance) {
     timeZone: timeZone,
     timeZoneName: "shortOffset",
   });
-  const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
-  return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
+  const [fmt1, fmt2] = [offset2Number(fmt.format(dt1)), offset2Number(fmt.format(dt2))];
+  
+  return fmt1 - fmt2 !== 0;
 }
 
 function DSTAcive(instance) {
