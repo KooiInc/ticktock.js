@@ -21,13 +21,14 @@ function getTraps(exts) {
 
       return undefined;
     },
-    set( _, key, value ) {
+    set( target, key, value ) {
       if (typeof key !== `symbol` && key in exts) {
         exts[key] = value;
         return true;
       }
 
-      return Reflect.set(...arguments);
+      target[key] = value;
+      return true;
     },
     has: (target, key) => key in exts || key in target,
   };
