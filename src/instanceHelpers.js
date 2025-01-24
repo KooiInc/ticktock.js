@@ -47,9 +47,9 @@ export {
   getDowNumber,
 };
 
-function addParts2Date(instance, parts2Add) {
+function addParts2Date(instance, ...parts2Add) {
   const clone = instance.clone();
-  add2Date(clone, parts2Add);
+  add2Date(clone, ...parts2Add);
   return clone;
 }
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
