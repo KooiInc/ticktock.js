@@ -177,6 +177,7 @@ console.log(inChina.info);
    <br>**Note**: overrides native `Date.prototype.toString`, the resulting string is for the embedded instance locale/timeZone
 - `UTC` (getter, returns a clone))
 - `UTCOffset` (getter)
+- `value` (getter)
 - `weekDay` (getter)
 - `weeknr` (getter)
   <br>**Note**: delivers the [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) week number
@@ -185,8 +186,16 @@ console.log(inChina.info);
    <br>**Note**: the setter *mutates the instance value*
 - `yesterday` (getter, returns a clone)
 - `zoneDate` (getter)
-- `zoneDateValues` (getter)
+- `zoneDateSingle` (getter)
 - `zoneDateTime` (getter)
 - `zoneDateTimeValues` (getter)
+- `zoneDateValues` (getter)
+- `zoneDay` (getter)
+- `zoneHours` (getter)
+- `zoneMinutes` (getter)
+- `zoneMonth` (getter)
+- `zoneNames` (getter)
+- `zoneSeconds` (getter)
 - `zoneTime` (getter)
 - `zoneTimeValues` (getter)
+- `zoneYear` (getter)
