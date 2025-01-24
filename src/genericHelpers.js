@@ -1,8 +1,10 @@
 import {add2Date} from "./instanceHelpers.js";
+import {instanceCreator} from "./instantiationHelpers.js";
 
 export {
   dateFromString, localeWeekdays, localeMonthnames, localeValidator,
-  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,};
+  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,
+  extendCTOR, };
 
 function dateFromString(dateString, YMDOrder = "ymd") {
   dateString = dateString?.trim();
@@ -233,4 +235,55 @@ function getAggregates(instance, customExtras) {
   }
 
   return aggregates;
+}
+
+function extendCTOR(ctor, customMethods) {
+  Object.defineProperties(ctor, {
+    now: {
+      get() {
+        return ctor(new Date());
+      }
+    },
+    parse: {
+      value(string, ymdOrder = `ymd`) {
+        return ctor(dateFromString(string, ymdOrder));
+      }
+    },
+    localWeekdayNames: {
+      value(locale) {
+        return localeWeekdays(locale);
+      }
+    },
+    localMonthNames: {
+      value(locale) {
+        return localeMonthnames(locale);
+      }
+    },
+    daysInMonth: {
+      value(monthIndex) {
+        if (monthIndex >= 1 && monthIndex <= 12) {
+          return new Date(1970, monthIndex, 0).getDate();
+        }
+        return `${monthIndex} not between 1 and 12`;
+      },
+    },
+    addCustom: {
+      value( { name, method, enumerable = false, isGetter = false } = {} ) {
+        if (name?.constructor === String && method?.constructor === Function && method.length > 0) {
+          customMethods[name] = { method, enumerable, isGetter };
+        }
+      }
+    },
+    keys: {
+      get() {
+        const allKeys = [
+          ...Object.keys(instanceCreator()),
+          ...Object.keys(getAggregates())
+        ];
+        return allKeys.sort( (a,b) => a.localeCompare(b));
+      }
+    },
+  });
+  
+  return ctor;
 }
