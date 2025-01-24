@@ -54,8 +54,12 @@ function XDateFactory() {
           return `${monthIndex} not between 1 and 12`;
         },
       },
-      addMethod: {
-        value(name, method, enumerable = false) { customMethods[name] = { method, enumerable }; }
+      addCustom: {
+        value( { name, method, enumerable = false, isGetter = false } = {} ) {
+          if (name?.constructor === String && method?.constructor === Function && method.length > 0) {
+            customMethods[name] = { method, enumerable, isGetter };
+          }
+        }
       },
       keys: {
         get() {

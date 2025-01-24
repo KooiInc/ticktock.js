@@ -211,13 +211,25 @@ function getAggregates(instance, customExtras) {
   };
 
   if (Object.keys(customExtras || {}).length > 0) {
-    Object.entries(customExtras).forEach(([methodName, methodContainer]) =>
+    customExtras.instance = instance;
+    Object.entries(customExtras).forEach(([methodName, methodContainer]) => {
+      if (customExtras[methodName].isGetter) {
+        Object.defineProperty(
+          aggregates,
+          methodName, {
+            get() { return methodContainer.method(instance); },
+            enumerable: false,
+          });
+        return false;
+      }
+      
       Object.defineProperty(
-        aggregates, methodName, {
+        aggregates,
+        methodName, {
           value(...args) { return methodContainer.method(instance, ...args); },
           enumerable: methodContainer.enumerable,
-        } ),
-    );
+        });
+    });
   }
 
   return aggregates;
