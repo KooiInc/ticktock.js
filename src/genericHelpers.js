@@ -220,7 +220,7 @@ function getAggregates(instance, customExtras) {
           aggregates,
           methodName, {
             get() { return methodContainer.method(instance); },
-            enumerable: false,
+            enumerable: methodContainer.enumerable,
           });
         return false;
       }
@@ -276,11 +276,15 @@ function extendCTOR(ctor, customMethods) {
     },
     keys: {
       get() {
+        const customEnumerables = Object.fromEntries(
+          Object.entries(customMethods).filter( ([_, v]) => v.enumerable === true )
+        );
         const allKeys = [
           ...Object.keys(instanceCreator()),
-          ...Object.keys(getAggregates())
+          ...Object.keys(getAggregates()),
+          ...Object.keys(customEnumerables),
         ];
-        return allKeys.sort( (a,b) => a.localeCompare(b));
+        return allKeys.sort( (a,b) => a.localeCompare(b) );
       }
     },
   });
