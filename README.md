@@ -196,6 +196,7 @@ console.log(inChina.info);
 - `zoneDateValues` (getter)
 - `zoneDay` (getter)
 - `zoneHours` (getter)
+- `zoneISO` (getter)
 - `zoneMinutes` (getter)
 - `zoneMonth` (getter)
 - `zoneNames` (getter)
