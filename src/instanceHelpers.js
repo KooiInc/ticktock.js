@@ -239,9 +239,9 @@ function getAggregatedInfo(instance) {
       },
       remote: {
         ...instance.zoneDateTime,
-        monthName: instance.monthName,
+        monthName: instance.zoneNames.monthName,
         weekdayNr: getDowNumber(instance, true),
-        weekdayName: instance.dayName,
+        weekdayName: instance.zoneNames.dayName,
         dayPeriodTime: pmRemote,
         hasDST: instance.hasDST,
         DSTActive: instance.DSTActive,
