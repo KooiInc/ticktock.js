@@ -33,6 +33,7 @@ function dateDiffFactory() {
     const years = differenceDate.getUTCFullYear() - 1970;
     const months = differenceDate.getUTCMonth();
     const days = differenceDate.getUTCDate() - 1;
+    const durationDays = days % 7;
     const weeks = Math.floor(days / 7);
     let hours = differenceDate.getUTCHours();
     let minutes = differenceDate.getUTCMinutes();
@@ -54,15 +55,14 @@ function dateDiffFactory() {
       diffInDays };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
-    diffs.isoDuration = `${sign}P${
+    diffs.ISODuration = `${sign}P${
       years > 0 ? `${years}Y` : ``}${
       months > 0 ? `${months}M` : ``}${
       weeks > 0 ? `${weeks}W` : ``}${
-      days > 0 ? `${days%7}D` : ``}${
+      durationDays > 0 ? `${durationDays}D` : ``}${
       hours > 0 ? `${hours}H` : ``}${
       minutes > 0 ? `${minutes}M` : ``}${
       seconds > 0 ? `${seconds}S` : ``}`;
-    console.log(weeks, days % 7);
     return diffs;
   };
 
