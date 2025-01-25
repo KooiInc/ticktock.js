@@ -6,7 +6,7 @@ import {
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
   removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
   offsetFrom, getAggregatedInfo, localeValidator, toJSDateString,
-  getDowNumber,
+  getDowNumber, toISOString,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -22,7 +22,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     previous(day) { return nextOrPrevious(instance, {day}); },
     add(...args) { return addParts2Date(instance, ...args); },
     subtract(...args) { return addParts2Date(instance, ...[`subtract`].concat(args)); },
-    clone(date) { return cloneInstance(instance, date); },
+    cloneWith(date) { return cloneInstance(instance, date); },
     differenceTo(date) { return timezoneAwareDifferenceTo({start: instance, end: date}); },
     relocate({locale, timeZone} = {}) { return relocate(instance, {locale, timeZone}); },
     offsetFrom(date) { return offsetFrom(instance, date); },
@@ -43,11 +43,13 @@ function instanceCreator({instance, localeInfo} = {}) {
     set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
 
     get age() { return instance.differenceTo(new Date()).years; },
+    get clone() { return cloneInstance(instance); },
     get ageParts() { return instance.differenceTo(new Date()).full; },
     get localeString() { return toLocalString(instance); },
     get userLocaleInfo() { return userLocale; },
     get local() { return toLocalString(instance); },
-    get ISO() { return instance.toISOString(); },
+    get ISO() { return toISOString(instance); },
+    get zoneISO() { return toISOString(instance, false); },
     get isLeapYear() { return new Date(instance.getFullYear(), 2, 0).getDate() === 29; },
     get names() { return getNames(instance); },
     get zoneNames() { return getNames(instance, true); },
@@ -96,6 +98,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get DSTActive() { return DSTAcive(instance); },
     get value() { return new Date(instance); },
     get info() { return getAggregatedInfo(instance); },
+    get unixEpochTimestamp() { return Math.floor(+instance/1000); }
   };
 
   Object.defineProperties(extensions, {
