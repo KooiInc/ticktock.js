@@ -111,7 +111,8 @@ console.log(inChina.info);
 - `age` (getter)
 - `ageParts` (getter)
 - `between`
-- `clone`
+- `clone` (getter)
+- `cloneWith`
 - `date` (getter/setter)
    <br>**Note**: setter for month part is ***not*** zero based 
    <br>**Note**: the setter *mutates the instance value*
@@ -135,6 +136,7 @@ console.log(inChina.info);
 - `isFuture` (getter)
 - `isLeapYear` (getter)
 - `ISO` (getter)
+- `zoneISO` (getter)
 - `isPast`
 - `keys` (getter)
 - `local` (getter, alias for `[instance].localString`)
@@ -176,6 +178,7 @@ console.log(inChina.info);
 - `tomorrow` (getter, returns a clone)
 - `toString` (method),
    <br>**Note**: overrides native `Date.prototype.toString`, the resulting string is for the embedded instance locale/timeZone
+- `unixEpochTimestamp` (getter)
 - `UTC` (getter, returns a clone))
 - `UTCOffset` (getter)
 - `value` (getter)
