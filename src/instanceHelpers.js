@@ -45,15 +45,16 @@ export {
   localeValidator,
   toJSDateString,
   getDowNumber,
+  toISOString,
 };
 
 function addParts2Date(instance, ...parts2Add) {
-  const clone = instance.clone();
+  const clone = instance.clone;
   add2Date(clone, ...parts2Add);
   return clone;
 }
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
-  const instnc = instance.clone().UTC;
+  const instnc = instance.clone.UTC;
   start = xDate(start).UTC;
 
   if (!Number.isNaN(+start) && !end) {
@@ -132,13 +133,21 @@ function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
   return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
 }
 
+function toISOString(instance, local = true) {
+  if (local) {
+    return instance.toISOString();
+  }
+  const ms = instance.milliseconds;
+  return instance.format(`yyyy-mm-dd~T~hh:mmi:ss.${ms}`, instance.localeInfo.formatOptions);
+}
+
 function timezoneAwareDifferenceTo({start, end} = {}) {
   if (!end?.clone) {
     end = xDate(end, {timeZone: start.timeZone});
   }
 
   if (!end) {
-    end = start.clone();
+    end = start.clone;
   }
 
   start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
@@ -148,14 +157,14 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
 }
 
 function offsetFrom(instance, from) {
-  const instanceClone = instance.clone();
+  const instanceClone = instance.clone;
 
   if (from instanceof Date && !from?.clone) {
     from = xDate(instanceClone, {timeZone: `Etc/UTC`});
   }
 
   if (!from) {
-    from = instanceClone.clone().relocate({timeZone: `Etc/UTC`});
+    from = instanceClone.clone.relocate({timeZone: `Etc/UTC`});
   }
 
   from = from.revalue(instanceClone.value);
@@ -187,7 +196,7 @@ function timeDiffenceInWords(diffInfo) {
 }
 
 function toJSDateString(instance) {
-  const instanceEN = instance.clone().relocate({locale: `en-CA`});
+  const instanceEN = instance.clone.relocate({locale: `en-CA`});
   const gmtString = instanceEN.format(`tz`, instanceEN.localeInfo.formatOptions + `,tzn:longOffset`).replace(`:`, ``);
   const formatString = `wd M d yyyy hh:mmi:ss ${gmtString} (tz)`;
   return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:long,hrc:23`);
@@ -203,7 +212,7 @@ function getDowNumber(instance, remote = false) {
 }
 
 function getAggregatedInfo(instance) {
-  const localInstance = instance.clone()
+  const localInstance = instance.clone
     .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
   const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance).offset;
   const local = instance.userLocaleInfo;
@@ -379,7 +388,7 @@ function hasDST(instance) {
 
 function DSTAcive(instance) {
   if (instance.hasDST) {
-    const dtJanuary = instance.clone();
+    const dtJanuary = instance.clone;
     dtJanuary.month = 1;
     dtJanuary.date = 1;
 
