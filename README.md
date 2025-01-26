@@ -191,6 +191,7 @@ console.log(inChina.info);
    <br>**Note**: the setter *mutates the instance value*
 - `yesterday` (getter, returns a clone)
 - `zoneDate` (getter)
+- `zoneDayName` (getter)
 - `zoneDateSingle` (getter)
 - `zoneDateTime` (getter)
 - `zoneDateTimeValues` (getter)
@@ -200,6 +201,7 @@ console.log(inChina.info);
 - `zoneISO` (getter)
 - `zoneMinutes` (getter)
 - `zoneMonth` (getter)
+- `zoneMonthName` (getter)
 - `zoneNames` (getter)
 - `zoneSeconds` (getter)
 - `zoneTime` (getter)
