@@ -369,7 +369,7 @@ function offset2Number(dtStr) {
 
 function removeTime(instance) {
   instance = instance || xDate();
-  return xDate(new Date(instance.year, instance.month, instance.zoneDate.date), instance.localeInfo);
+  return xDate(new Date(...instance.dateValues), instance.localeInfo);
 }
 
 function hasDST(instance) {
