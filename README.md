@@ -20,7 +20,8 @@ the week day names for that instance can be retrieved as `[instance].names.dayNa
 
 `[instance].year = [new value]` sets the year of the current instance
 <br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` relocates the current instance,
-<br>`[instance].revalue([some date])` changes the current instance's Date value to [some date], but
+<br>`[instance].revalue([some date])` changes the current instance's Date value to [some date], 
+<br>but
 <br>`[instance].clone([some date])` delivers a *new* instance derived from the current instance with possibly a new date ([some date])
 <br>`[instance].UTC` delivers a *new* instance for the UTC timeZone derived from the current instance and
 <br>`[instance].add("1 year, 2 days, 13 hours")` delivers a *new* instance derived from the current instance
