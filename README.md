@@ -277,4 +277,3 @@ console.log(inChina.info);
   <br>returns [hours:Number, minutes:Number, seconds:Number, milliseconds:Number]
 - `zoneYear`<br>Returns value within the *instance* timeZone
   <br>returns Number
-- <!--end-->
