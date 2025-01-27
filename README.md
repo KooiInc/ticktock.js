@@ -111,7 +111,8 @@ console.log(inChina.info);
 <!--LIST-->
 ☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;adds `whatToAdd` to the instance Date value.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'),
+<br>&nbsp;&nbsp;&nbsp;&nbsp;or 1 or more strings (e.g. '2 years', '1 month')
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `whatToAdd`
 
 
@@ -165,7 +166,7 @@ console.log(inChina.info);
 
 ☑️ `date` <ins>getter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;date values in *user* timeZone, use `[instance].zoneDate` for values in *instance* timeZone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]> {year, month, date}`
 
 
 ☑️ `dateSingle` <ins>getter</ins>
@@ -176,7 +177,7 @@ console.log(inChina.info);
 ☑️ `dateTime` <ins>getter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;date and time values in *user* timeZone, use `[instance].zoneDateTime` for *instance* timeZone.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: month value is zero based (january = 0)
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliSeconds:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]> {year, month, date, hours, minutes, seconds, milliSeconds}`
 
 
 ☑️ `dateTimeValues` <ins>getter</ins>
@@ -213,7 +214,8 @@ console.log(inChina.info);
 
 ☑️ `differenceTo(differenceToDate:Date|instance)` <ins>method</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;the difference of the instance Date with `differenceToDate` in years, months ... etc.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: timeZone specific for both the instance Date and `differenceToDate`. In other words, will accurately calculate the difference between two dates in different time zones.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: timeZone specific for both the instance Date and `differenceToDate`.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;In other words, will accurately calculate the difference between two dates in different time zones.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object`
 
 
@@ -228,7 +230,8 @@ console.log(inChina.info);
 
 
 ☑️ `format(template:String, formatOptions:String)` <ins>method</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;Formats the date according to the parameters. `formatOptions` is encapsulated in the instance, based on its localeInfo values and will be used as default value.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Formats the date according to the parameters. `formatOptions` is encapsulated in the instance,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;based on its localeInfo values and will be used as default value.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;Based on the [dateformat](https://github.com/KooiInc/dateformat) library, see README.MD up there
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
 
@@ -280,7 +283,7 @@ console.log(inChina.info);
 
 ☑️ `localeInfo` <ins>getter/setter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;the locale/timeZone information encapsulated within the instance.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{locale:String, timeZone:String, calendar:String, numberingSystem:String, year:String, month:String, day:String}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<String[]} {locale, timeZone, calendar, numberingSystem year, month, day}`
 
 
 ☑️ `localeString` <ins>getter</ins>
@@ -299,7 +302,8 @@ console.log(inChina.info);
 
 
 ☑️ `month` <ins>getter/setter</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns zero based value for *user* timeZone (use `[instance].zoneMonth` for the value in the *instance* timeZone), but setter is not zero based (so january is 1)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns zero based value for *user* timeZone (use `[instance].zoneMonth` for the value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;in the *instance* timeZone),but setter is not zero based (so january is 1)
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
 
 
@@ -309,12 +313,14 @@ console.log(inChina.info);
 
 
 ☑️ `names` <ins>getter</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;names for months (short/long), weekdays (short/long), month, weekday within the *user* locale/timeZone. Use `[instance].zoneNames` for the same within the *instance* locale/timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;names for months (short/long), weekdays (short/long), month, weekday within the *user* locale/timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Use `[instance].zoneNames` for the same within the *instance* locale/timeZone.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object`
 
 
 ☑️ `next(day:String)` <ins>method</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for next `day` (the english weekday name, either short or long, case insensitive, e.g. 'mon' or 'MONDAY')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for next `day` (the english weekday name, either short or long,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;case insensitive, e.g. 'mon' or 'MONDAY')
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the first day *after* the instance Date
 
 
@@ -382,13 +388,14 @@ console.log(inChina.info);
 
 ☑️ `subtract(whatToSubtract:String|String[])` <ins>method</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;subtracts `whatToSubtract` to the instance Date value.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToSubtract` Can be a single string (e.g. '1 week, 3 hours, 5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToSubtract` Can be a single string
+<br>&nbsp;&nbsp;&nbsp;&nbsp;(e.g. '1 week, 3 hours, 5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance with Date value according to subtracted values
 
 
 ☑️ `time` <ins>getter/setter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;getter returns values for *user* timeZone, use `[instance].zoneTime` for localized time values.
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]} {hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `timeValues` <ins>getter</ins>
@@ -444,7 +451,8 @@ console.log(inChina.info);
 
 
 ☑️ `year` <ins>getter/setter</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns year in *user* timeZone, use `[instance].zoneYear` getter for year in the *instance* timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns year in *user* timeZone, use `[instance].zoneYear` getter
+<br>&nbsp;&nbsp;&nbsp;&nbsp;for year in the *instance* timeZone.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
 
 
@@ -454,7 +462,7 @@ console.log(inChina.info);
 
 ☑️ `zoneDate` <ins>getter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;Returns Date values Object for *instance* timeZone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]> {year, month, date}`
 
 
 ☑️ `zoneDateSingle` <ins>getter</ins>
@@ -464,7 +472,7 @@ console.log(inChina.info);
 
 ☑️ `zoneDateTime` <ins>getter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;Returns values for *instance* timeZone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]> {year, month, date, hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `zoneDateTimeValues` <ins>getter</ins>
