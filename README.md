@@ -342,7 +342,8 @@ console.log(inChina.info);
 
 
 ☑️ `previous(day:String)` <ins>method</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for previous `day` (the english weekday name, either short or long, case insensitive, e.g. 'mon' or 'MONDAY')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for previous `day` (the english weekday name,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;either short or long, case insensitive, e.g. 'mon' or 'MONDAY')
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the first day *before* the instance Date
 
 
@@ -520,7 +521,7 @@ console.log(inChina.info);
 
 
 ☑️ `zoneNames` <ins>getter</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{locale:String, dayName:String, dayNames:{long:Array<String>, short:Array<String>}, montName:String, monthNames:{long:Array<String>, short:Array<String>},timeZone:String}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object {locale, timeZone, dayName, dayNames:{long, short}, montName, monthNames:{long, short}}`
 
 
 ☑️ `zoneSeconds` <ins>getter</ins>
@@ -530,7 +531,7 @@ console.log(inChina.info);
 
 ☑️ `zoneTime` <ins>getter</ins>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date time values within the *instance* timeZone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<Number[]> {hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `zoneTimeValues` <ins>getter</ins>
