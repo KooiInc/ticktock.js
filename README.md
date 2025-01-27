@@ -100,180 +100,436 @@ console.log(inChina.info);
 */
 ```
 
-## Current extensions for a wrapped date
+## Current extensions for a TickTock instance (a wrapped `Date`)
 
-***Note**: documentation follows*
+### Notes
+- in the following list the TickTock constructor is referred to as `$D`.
+- getters for date values return a zero based month (like `[date instance]getMonth()`, january = 0). Setters for `month` are not zero based. So `[instance].month = 1` sets the month to january.
+- getters for date values (e.g. `[instance]month`) return the value within the *user* timeZone. For each of these getters, a getter preceded with `zone` is available to retrieve the value for the *instance* Timezone, for example `[instance.zoneYear]` or `[instance].zoneTimeValues`.
+- setters for date values are changing (*mutatating*) the instance Date.
+
 <!--LIST-->
-- `add(whatToAdd:String|String[])`<br>adds [whatToAd] to the instance Date value.
-  `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')`
-      <br>returns new TickTock `instance` with Date + [whatToAdd]
-- `addDays(nDays:Number)`<br>adds [nDays] days to the instance Date value
-  <br>returns new TickTock `instance` with Date + [nDays] days
-- `addMonths(nMonths:Number)`<br>adds [nMonths] months to the instance Date value
-  <br>returns new TickTock `instance` with Date + [nMonths] months
-- `addWeeks(nWeeks:Number)`<br>adds [nWeeks] weeks to the instance Date value
-  <br>returns new TickTock `instance` with Date + [nWeeks] days
-- `addYears(nYears:Number)`<br>adds [nYears] years to the instance Date value
-  <br>returns new TickTock `instance` with Date + [nYears] years
-- `age`<br>the current age, based on the instance Date (vs now). Absolute, so future Dates will also show a value
-  <br>returns `Number`
-- `ageParts`<br>the current age for all parts (years, months, days, hours, etc), based on the instance Date (vs now). Absolute, so future Dates will also show a value
-  <br>returns `String`
-- `between({start:Date|instance, end:Date|instance, include: {start:boolean=false, end:boolean=false}})`<br>does the instance Date fall between [start] and [end]. Optionally include [include.start/-end]
-  <br>returns `Boolean`
-- `clone`<br>clone the instance, preserving the instance locale and timeZone information
-  <br>returns new TickTock `instance`
-- `cloneWith(withDate:Date|instance)`<br>clone the instance with [withDate], preserving the instance locale and timeZone information. In absence of [withDate] will be equivalent to [instance].clone
-  <br>returns new TickTock `instance`
-- `date`<br>date values in *user* timeZone, use `zoneDate` for values in *instance* timeZone
-  <br>returns `{year:Number, month:Number, date:Number}`
-- `dateSingle`<br>the date value in *user* timeZone, use `zoneDateSingle` for date in *instance* timeZone
-  <br>returns `Number`
-- `dateTime`<br>date and time values in *user* timeZone, use `zoneDateTime` for *instance* timeZone
-  <br>returns `{year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliSeconds:Number}`
-- `dateTimeValues`<br>values for *user* timeZone, use `zoneDateTimeValues` for *instance* timeZone
-  <br>returns `Number[]` [year, month (zero based), date, hours, minutes, seconds, milliseconds]
-- `dateValues`<br>values for *user* timeZone, use zoneDateValues for *instance* timeZone
-  <br>returns `Number[]` [year, month (zero based), date]
-- `day`<br>weekday value for *user* timeZone, use `zoneDay` for value in *instance* timeZone
-  <br>returns `Number`
-- `dayName`<br>the name of the instances' Date weekday. Value for *user* locale, use zoneDayName for locale specific name
-  <br>returns `String`
-- `daysThisMonth`<br>the number of days in the month of the instance Date
-  <br>returns `Number`
-- `daysUntil(untilDate:Date|instance)`<br>the number of full days until [untilDate]. May be negative.
-  <br>returns `Number`
-- `differenceTo(differenceToDate:Date|instance)`<br>the difference of the instance Date with [differenceToDate] in years, months ... etc.
-  <br>returns `{years:Number, months:Number, days:Number, hours:Number, minutes:Number, seconds:Number, milliseconds:Number,<br> sign:String, ISOPeriod:String, jsPeriod:String,fromUTC:String,toUTC:string, timeZoneStart:String, timeZoneEnd:String, clean:String, full:String}`
-- `DSTActive`<br>is Daylight Saving Time active for the instance Date in its timeZone (see also `hasDST` getter)
-  <br>returns `Boolean`
-- `firstWeekday({sunday = false})`<br>the Date of the first day of the week (monday by default) of the instance Date
-  <br>returns a new TickTock `instance`
-- `format(template: string, formatOptions: string)`<br>Formats the date according to the parameters. [formatOptions] is encapsulated in the instance, based on its localeInfo values.<br>Based on the [dateformat](https://github.com/KooiInc/dateformat) library
-  <br>returns `String`
-- `hasDST`<br>is Daylight Saving Time used in the *instance* timeZone?
-  <br>returns `Boolean`
-- `hours`<br>value for user locale, use zoneHours for *instance* timeZone specific name
-  <br>returns Number
-- `info`<br>aggregated information about the instance (for user and instance locale/timeZone).
-  <br>returns `Object` See example above
-- `isFuture`<br>is the instance Date in the future?
-  <br>returns `Boolean`
-- `isLeapYear`<br>is the instance Date in a leap year?
-  <br>returns `Boolean`
-- `ISO`<br>shorthand for toISOString()
-  <br>returns `String`
-- `isPast`<br>is the instance Date in the past?
-  <br>returns `Boolean`
-- `local`<br>shorthand for `toLocaleString` (using the *instance* locale and timeZone)
-  <br>returns String
-- `locale`<br>what is the instances encapsulated locale?
-  <br>returns `String` (e.g. 'en-CA', 'fr')
-- `localeInfo`<br>the locale/timeZone information encapsulated within the instance. **note**: the setter mutates instance Date value.
-  <br>returns `{locale:String, timeZone:String, calendar:String, numberingSystem:String, year:String, month:String, day:String}`
-- `localeString`<br>shorthand for `toLocaleString` (using the instance locale and timeZone). Alias: [instance].local
-  <br>returns `String`
-- `milliseconds`<br>The number of milliseconds of the instance Date. **note**: the setter mutates instance Date value.
-  <br>returns Number
-- `minutes`<br>getter returns value for *user* timeZone (use `zoneMinutes` for the *instance* timeZone). **note**: the setter mutates instance Date value.
-  <br>returns Number
-- `month`<br>**note**: getter returns zero based value for *user* timeZone (see also zoneMonth), but setter is not zero based (so january is 1)
-  <br>returns Number
-- `monthName`<br>**note**: for user locale, use zoneMonthName for instance locale
-  <br>returns String
-- `names`<br>names for months (short/long), weekdays (short/long), month, weekday within the user locale/timeZone. See zoneNames for the same within the instance locale/timeZone
-  <br>returns {locale:String, dayName:String, dayNames:{long:Array<String>, short:Array<String>}, montName:String, monthNames:{long:Array<String>, short:Array<String>},timeZone:String}
-- `next(day:String (english weekday name, either short or long, case insensitive, e.g. 'mon' or 'MONDAY'))`
-  <br>returns new TickTock instance derived from the instance for the first [day] after the instance Date
-- `nextMonth`
-  <br>returns new TickTock instance derived from the instance for the instance Date + one month
-- `nextWeek`
-  <br>returns new TickTock instance derived from the instance for the instance Date + one week
-- `nextYear`
-  <br>returns new TickTock instance derived from the instance for the instance Date + one year
-- `offsetFrom(fromDate: Date|TickTock instance|undefined)`<br>**note**: assumes 'GMT' Date with a plain Date parameter [fromDate] or without [fromDate]
-  <br>returns Object {from:String (timeZone), to:String (timeZone), offset:String}
-- `previous(day:String (english weekday name, either short or long, case insensitive, e.g. 'sat' or 'saturDAY'))`
-  <br>returns new TickTock instance derived from the instance for the first [day] before the instance Date
-- `previousMonth`
-  <br>returns new TickTock instance derived from the instance for the instance Date - one month
-- `previousWeek`
-  <br>returns new TickTock instance derived from the instance for the instance Date - one week
-- `previousYear`
-  <br>returns new TickTock instance derived from the instance for the instance Date - one year
-- `quarter`
-  <br>returns String (First, Second ...)
-- `quarterNr`
-  <br>returns Number
-- `relocate({locale:String, timeZone:String})`<br>Mutates, can also be done with the <code>localeInfo</code> setter
-  <br>returns instance with locale/timeZone from parameters
-- `removeTime`
-  <br>returns new TickTock instance derived from the instance without time 00:00:00
-- `revalue(newValue:Date)`<br>Mutates
-  <br>returns The instance with Date from [newValue]
-- `seconds`
-  <br>returns Number
-- `subtract`
-  <br>returns new TickTock instance derived from the instance with Date value according to subtracted values
-- `time`<br>getter returns values for *user* timeZone, use zoneTime for localized time values
-  <br>returns {hours:Number, minutes:Number, seconds:Number, milliseconds:Number}
-- `timeValues`<br>Returns values for *user* timeZone, use zoneTimeValues for localized time values
-  <br>returns [hours:Number, minutes:Number, seconds:Number, milliseconds:Number]
-- `timeZone`
-  <br>returns String
-- `tomorrow`
-  <br>returns new TickTock instance with Date + one day
-- `unixEpochTimestamp`
-  <br>returns Number
-- `userLocaleInfo`
-  <br>returns Object
-- `UTC`
-  <br>returns new TickTock instance within the GMT timeZone
-- `UTCOffset`
-  <br>returns {from:String, to:String ('UTC'), offset:String}
-- `value`
-  <br>returns Date
-- `weekDay`<br>**note**: returns weekday number (zero based) in *user* timeZone, use zoneWeekday for *instance* timeZone
-  <br>returns Number
-- `weeknr`
-  <br>returns Number
-- `weeksInYear`
-  <br>returns Number
-- `year`<br>**note**: getter returns year in *user* timeZone, see also zoneYear getter
-  <br>returns Number
-- `yesterday`
-  <br>returns new TickTock instance with Date - one day
-- `zoneDate`<br>Returns Date values for *instance* timeZone
-  <br>returns {year:Number, month:Number, date:Number}
-- `zoneDateSingle`<br>Returns value for *instance* timeZone
-  <br>returns Number
-- `zoneDateTime`<br>Returns values for *instance* timeZone
-  <br>returns {year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliseconds:Number}
-- `zoneDateTimeValues`
-  <br>returns [year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliseconds:Number]
-- `zoneDateValues`<br>Returns Date values for *instance* timeZone
-  <br>returns [year:Number, month:Number, date:Number]
-- `zoneDay`<br>Returns (zero based) weekday value from *instance* timeZone
-  <br>returns Number
-- `zoneDayname`<br>Returns weekday name from instance locale
-  <br>returns String
-- `zoneHours`<br>Returns value within the *instance* timeZone
-  <br>returns Number
-- `zoneISO`<br>returns ISO string for *instance* timeZone
-  <br>returns String
-- `zoneMinutes`<br>Returns value within the *instance* timeZone
-  <br>returns Number
-- `zoneMonth`<br>Returns (zero based) month value within the *instance* timeZone
-  <br>returns Number
-- `zoneMonthname`<br>Returns month name from the instance locale
-  <br>returns String
-- `zoneNames`
-  <br>returns {locale:String, dayName:String, dayNames:{long:Array<String>, short:Array<String>}, montName:String, monthNames:{long:Array<String>, short:Array<String>},timeZone:String}
-- `zoneSeconds`<br>Returns value within the *instance* timeZone
-  <br>returns Number
-- `zoneTime`<br>Returns values within the *instance* timeZone
-  <br>returns {hours:Number, minutes:Number, seconds:Number, milliseconds:Number}
-- `zoneTimeValues`<br>Returns values within the *instance* timeZone
-  <br>returns [hours:Number, minutes:Number, seconds:Number, milliseconds:Number]
-- `zoneYear`<br>Returns value within the *instance* timeZone
-  <br>returns Number
+☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;adds `whatToAdd` to the instance Date value.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `whatToAdd`
+
+
+☑️ `addDays(nDays:Number)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;adds `nDays` days to the instance Date value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `nDays` days
+
+
+☑️ `addMonths(nMonths:Number)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;adds `nMonths` months to the instance Date value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `nMonths` months
+
+
+☑️ `addWeeks(nWeeks:Number)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;adds `nWeeks` weeks to the instance Date value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `nWeeks` days
+
+
+☑️ `addYears(nYears:Number)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;adds `nYears` years to the instance Date value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date + `nYears` years
+
+
+☑️ `age` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the age in years from the instance date to now.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: absolute, future instance Dates will also show a value, e.g. `$D().add('1 year').age` => 1
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `ageParts` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the current age for all parts (years, months, days, hours, etc), from the instance Date to now.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: absolute, future instance Dates will also show a value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `between({start:Date|instance, end:Date|instance, include: {start:boolean=false, end:boolean=false}})` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;does the instance Date fall between `start` and `end`? Optionally include `include.start` and/or `include.end`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `clone` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;clone the instance, preserving the *instance* locale and timeZone information
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance
+
+
+☑️ `cloneWith(withDate:Date|instance)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;clone the instance and revalue to `withDate`, preserving the *instance* locale and timeZone information.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: will, in absence of `withDate`, be equivalent to `instance.clone`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance
+
+
+☑️ `date` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;date values in *user* timeZone, use `[instance].zoneDate` for values in *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number}`
+
+
+☑️ `dateSingle` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the date value in *user* timeZone, use `[instance].zoneDateSingle` for date in *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `dateTime` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;date and time values in *user* timeZone, use `[instance].zoneDateTime` for *instance* timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: month value is zero based (january = 0)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliSeconds:Number}`
+
+
+☑️ `dateTimeValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;values for *user* timeZone, use `zoneDateTimeValues` for *instance* timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: month value is zero based (january = 0)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number[] [year, month, date, hours, minutes, seconds, milliseconds]`
+
+
+☑️ `dateValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;values for *user* timeZone, use zoneDateValues for *instance* timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: month value is zero based (january = 0)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number[] [year, month, date]`
+
+
+☑️ `day` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;weekday value for *user* timeZone, use `zoneDay` for value in *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `dayName` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the name of the instances' Date weekday. Value for *user* locale, use zoneDayName for locale specific name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `daysThisMonth` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the number of days in the month of the instance Date
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number` (28 - 31)
+
+
+☑️ `daysUntil(untilDate:Date|instance)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the number of full days until `untilDate`. May be negative.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `differenceTo(differenceToDate:Date|instance)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the difference of the instance Date with `differenceToDate` in years, months ... etc.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: timeZone specific for both the instance Date and `differenceToDate`. In other words, will accurately calculate the difference between two dates in different time zones.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object`
+
+
+☑️ `DSTActive` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;is **D**aylight **S**aving **T**ime active for the instance Date in its timeZone (see also `hasDST` getter)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `firstWeekday({sunday = false})` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the Date of the first day of the week (monday by default) of the instance Date
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> a new TickTock instance
+
+
+☑️ `format(template:String, formatOptions:String)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Formats the date according to the parameters. `formatOptions` is encapsulated in the instance, based on its localeInfo values and will be used as default value.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Based on the [dateformat](https://github.com/KooiInc/dateformat) library, see README.MD up there
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `hasDST` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;is **D**aylight **S**aving **T**ime used in the *instance* timeZone?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `hours` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;value for *user* locale, use `[instance].zoneHours` for *instance* timeZone specific name
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `info` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;aggregated information about the instance (for user and *instance* locale/timeZone).
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object` See example above
+
+
+☑️ `isFuture` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;is the instance Date in the future?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `isLeapYear` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;is the instance Date in a leap year?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `ISO` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;shorthand for toISOString()
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `isPast` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;is the instance Date in the past?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
+
+
+☑️ `local` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;shorthand for `toLocaleString` (using the *instance* locale and timeZone)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `locale` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;what is the instances encapsulated locale?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String` (e.g. 'en-CA', 'fr')
+
+
+☑️ `localeInfo` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the locale/timeZone information encapsulated within the instance.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{locale:String, timeZone:String, calendar:String, numberingSystem:String, year:String, month:String, day:String}`
+
+
+☑️ `localeString` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;shorthand for `toLocaleString` (using the *instance* locale and timeZone). Alias: [instance].local
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `milliseconds` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;The number of milliseconds of the instance Date.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `minutes` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;getter returns value for *user* timeZone (use `zoneMinutes` for the *instance* timeZone).
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `month` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns zero based value for *user* timeZone (use `[instance].zoneMonth` for the value in the *instance* timeZone), but setter is not zero based (so january is 1)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `monthName` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: for *user* locale, use zoneMonthName for *instance* locale
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `names` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;names for months (short/long), weekdays (short/long), month, weekday within the *user* locale/timeZone. Use `[instance].zoneNames` for the same within the *instance* locale/timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object`
+
+
+☑️ `next(day:String)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for next `day` (the english weekday name, either short or long, case insensitive, e.g. 'mon' or 'MONDAY')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the first day *after* the instance Date
+
+
+☑️ `nextMonth` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one month
+
+
+☑️ `nextWeek` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one week
+
+
+☑️ `nextYear` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one year
+
+
+☑️ `offsetFrom(fromDate: Date|TickTock instance|undefined)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: assumes 'GMT' Date with a plain Date parameter `fromDate`. Without `fromDate` will be *now* within the instances' timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{from:String (timeZone), to:String (timeZone), offset:String}`
+
+
+☑️ `previous(day:String)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve new instance for previous `day` (the english weekday name, either short or long, case insensitive, e.g. 'mon' or 'MONDAY')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the first day *before* the instance Date
+
+
+☑️ `previousMonth` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one month
+
+
+☑️ `previousWeek` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one week
+
+
+☑️ `previousYear` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one year
+
+
+☑️ `quarter` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String` (First, ..., Fourth)
+
+
+☑️ `quarterNr` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number` (1 - 4)
+
+
+☑️ `relocate({locale:String, timeZone:String})` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;change the locale/timeZone information of the instance (so: **mutating**)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: can also be done with the `localeInfo` setter
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> instance with `locale` and/or `timeZone` from parameters
+
+
+☑️ `removeTime` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance without time 00:00:00
+
+
+☑️ `revalue(newValue:Date)` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;change the instance Date value, (so **mutating**)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> The instance with Date from `newValue`
+
+
+☑️ `seconds` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;get/set seconds of the instance Date.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `subtract(whatToSubtract:String|String[])` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;subtracts `whatToSubtract` to the instance Date value.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: `whatToSubtract` Can be a single string (e.g. '1 week, 3 hours, 5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance derived from the instance with Date value according to subtracted values
+
+
+☑️ `time` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;getter returns values for *user* timeZone, use `[instance].zoneTime` for localized time values.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+
+
+☑️ `timeValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns values for *user* timeZone, use `[instance].zoneTimeValues` for localized time values
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `[hours:Number, minutes:Number, seconds:Number, milliseconds:Number]`
+
+
+☑️ `timeZone` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve the timeZone value (a string) of the instance
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `tomorrow` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve a new instance with Date + one day
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance
+
+
+☑️ `unixEpochTimestamp` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve the instances' Date unix timestamp
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `userLocaleInfo` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;retrieve the *user* locale information.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: one can also use a static constructor getter `$D.localeInformation`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object`
+
+
+☑️ `UTC` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance within the GMT timeZone
+
+
+☑️ `UTCOffset` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{from:String, to:String, offset:String}`
+
+
+☑️ `value` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Date`
+
+
+☑️ `weekDay` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: returns weekday number (zero based) in *user* timeZone, use zoneWeekday for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `weeknr` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `weeksInYear` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;the number of weeks in the instance Date year
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `year` <ins>getter/setter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: getter returns year in *user* timeZone, use `[instance].zoneYear` getter for year in the *instance* timeZone.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `yesterday` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> new TickTock instance with Date - one day
+
+
+☑️ `zoneDate` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns Date values Object for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number}`
+
+
+☑️ `zoneDateSingle` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date date value for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneDateTime` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns values for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{year:Number, month:Number, date:Number, hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+
+
+☑️ `zoneDateTimeValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number[] [year, month, date, hours, minutes, seconds, milliseconds]`
+
+
+☑️ `zoneDateValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns Date values for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number[] [year, month, date]`
+
+
+☑️ `zoneDay` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns (zero based, sunday = 0) weekday value from *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneDayname` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns weekday name from *instance* locale
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `zoneHours` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns value within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneISO` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;returns ISO string for *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `zoneMinutes` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date minutes value within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneMonth` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns (zero based, january = 0) month value within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneMonthname` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns month name from the *instance* locale
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
+
+
+☑️ `zoneNames` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{locale:String, dayName:String, dayNames:{long:Array<String>, short:Array<String>}, montName:String, monthNames:{long:Array<String>, short:Array<String>},timeZone:String}`
+
+
+☑️ `zoneSeconds` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date seconds value within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
+
+
+☑️ `zoneTime` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date time values within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{hours:Number, minutes:Number, seconds:Number, milliseconds:Number}`
+
+
+☑️ `zoneTimeValues` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns instance Date time values within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number[] [hours, minutes, seconds, milliseconds]`
+
+
+☑️ `zoneYear` <ins>getter</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Returns the instance Date year value within the *instance* timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Number`
