@@ -148,8 +148,9 @@ console.log(inChina.info);
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `String`
 
 
-☑️ `between({start:Date|instance, end:Date|instance, include: {start:boolean=false, end:boolean=false}})` <ins>method</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;does the instance Date fall between `start` and `end`? Optionally include `include.start` and/or `include.end`
+☑️ `between({start, end, include: {start, end}})` <ins>method</ins>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;does the instance Date fall between `start` and `end` (both Date or instance)?
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Optionally include `include.start` and/or `include.end` (Boolean, default false).
 <br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Boolean`
 
 
@@ -337,8 +338,9 @@ console.log(inChina.info);
 
 
 ☑️ `offsetFrom(fromDate: Date|TickTock instance|undefined)` <ins>method</ins>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: assumes 'GMT' Date with a plain Date parameter `fromDate`. Without `fromDate` will be *now* within the instances' timeZone
-<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `{from:String (timeZone), to:String (timeZone), offset:String}`
+<br>&nbsp;&nbsp;&nbsp;&nbsp;**note**: assumes 'GMT' Date with a plain Date parameter `fromDate`.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;Without `fromDate` will be *now* within the instances' timeZone
+<br>&nbsp;&nbsp;&nbsp;&nbsp;<ins>returns</ins> `Object<String[]> {from, to, offset}`
 
 
 ☑️ `previous(day:String)` <ins>method</ins>
