@@ -249,6 +249,9 @@ function extendCTOR(ctor, customMethods) {
         return ctor(dateFromString(string, ymdOrder));
       }
     },
+    localeInformation: {
+      get() { return localeValidator() },
+    },
     localWeekdayNames: {
       value(locale) {
         return localeWeekdays(locale);
