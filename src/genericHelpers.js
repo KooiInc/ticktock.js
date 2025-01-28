@@ -2,49 +2,9 @@ import {add2Date} from "./instanceHelpers.js";
 import {instanceCreator} from "./instantiationHelpers.js";
 
 export {
-  dateFromString, localeWeekdays, localeMonthnames, localeValidator,
-  setLocaleInfo, retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,
+  localeWeekdays, localeMonthnames, localeValidator, setLocaleInfo,
+  retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,
   extendCTOR, };
-
-function dateFromString(dateString, YMDOrder = "ymd") {
-  dateString = dateString?.trim();
-
-  if (!dateString) { return new Date(); }
-
-  const dsArray = dateString?.split(/[T :\-\/.,]/g).filter(v => !!(v.trim()));
-  const getResult = () => {
-    const formatMap = [...YMDOrder].reduce((a, b, i) => (a[b] = i, a), {});
-    const datePart = dsArray.slice(0, 3);
-    const timePart = dsArray.slice(3);
-
-    if (/PM/.test(timePart.slice(-1))) {
-      timePart[0] = (+timePart[0] + 12);
-    }
-
-    const [year, month, date, hours, minutes, seconds, milliseconds] =
-      [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
-        .concat([...Array(4)].map( (_, i) => +timePart[i] || 0 ) );
-
-    if (year < 1900) {
-      return new Date(new Date( year, month, date, hours, minutes, seconds, milliseconds ).setFullYear(year) );
-    }
-
-    return new Date( year, month, date, hours, minutes, seconds, milliseconds );
-  };
-  const convert = {
-    get cando() { return getResult(); },
-    get cannot() {
-      if (!dateString || dsArray?.length < 3) {
-        console.error(`DateTools::parse: can't convert "${!dateString
-          ? `empty date string`
-          : dateString}" to ES-Date. Result will be current Date` );
-        return true;
-      }
-    },
-  }
-
-  return convert.cannot ? new Date() : convert.cando;
-}
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -207,20 +167,15 @@ function extendCTOR(ctor, customMethods) {
         return ctor(new Date());
       }
     },
-    parse: {
-      value(string, ymdOrder = `ymd`) {
-        return ctor(dateFromString(string, ymdOrder));
-      }
-    },
     localeInformation: {
       get() { return localeValidator() },
     },
-    localWeekdayNames: {
+    localWeekdaynames: {
       value(locale) {
         return localeWeekdays(locale);
       }
     },
-    localMonthNames: {
+    localMonthnames: {
       value(locale) {
         return localeMonthnames(locale);
       }
@@ -232,6 +187,11 @@ function extendCTOR(ctor, customMethods) {
         }
         return `${monthIndex} not between 1 and 12`;
       },
+    },
+    from: {
+      value(...input) {
+        return ctor(new Date(...input) || new Date());
+      }
     },
     addCustom: {
       value( { name, method, enumerable = false, isGetter = false } = {} ) {
