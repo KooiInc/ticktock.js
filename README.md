@@ -73,7 +73,7 @@ Date is invalid, will return `[TickTock constructor].now`
 
 ☑️ `addCustom({ name, method, enumerable, isGetter })` <ins>method</ins>
 <br>the `addCustom` method enables creating custom methods and/or getters for instances.
-<br><ins>returns</ins> `String[]`
+<br><ins>returns</ins> nothing
 
 The `addCustom` parameters are:
 - `name:String`: the method/getter name
