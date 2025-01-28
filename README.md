@@ -84,15 +84,21 @@ The `addCustom` parameters are:
 
 *examples* `addCustom`
 ```javascript
-import $D from "[location of the library]"; 
+import $D from "[location of the library]";
+// getter
 $D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
-const testDate = $D("1970/01/01 12:00").addEra.ISO; //=> '2070-01-01T11:00:00.000Z' 
+$D("1970/01/01 12:00").addEra.ISO;
+  // ↳ '2070-01-01T11:00:00.000Z'
+
+// method
 $D.addCustom({
   name: "kwartaalStr", 
-  method: (instance, showDate = true) => ` Resultaten voor kwartaal ${instance.quarterNr} ${
-      showDate ? `(${instance.local})` : ``}`;
-$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr(); // => 'Resultaten voor kwartaal 2 (1-4-2022, 12:00:00)'
-$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr(false); // => 'Resultaten voor kwartaal 2'
+  method: (instance, showDate = true) => ` Resultaten voor kwartaal ${
+            instance.quarterNr} ${showDate ? `(${instance.local})` : ``}`;
+$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr();
+  // ↳ 'Resultaten voor kwartaal 2 (1-4-2022, 12:00:00)'
+$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr(false);
+  // ↳ 'Resultaten voor kwartaal 2'
 ```
 
 ## Example
