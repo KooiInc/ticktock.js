@@ -158,13 +158,14 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
 
 function offsetFrom(instance, from) {
   const instanceClone = instance.clone;
+  const userTimeZone = localeValidator().timeZone;
 
   if (from instanceof Date && !from?.clone) {
-    from = xDate(instanceClone, {timeZone: `Etc/UTC`});
+    from = instanceClone.clone.relocate({timeZone: userTimeZone});
   }
 
   if (!from) {
-    from = instanceClone.clone.relocate({timeZone: `Etc/UTC`});
+    from = instanceClone.clone.relocate({timeZone: userTimeZone});
   }
 
   from = from.revalue(instanceClone.value);
