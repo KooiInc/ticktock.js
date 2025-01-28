@@ -83,7 +83,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get zoneDate() { return getFullDate(instance, true); },
     get dateTime() { return Object.freeze({...instance.date, ...instance.time}); },
     get zoneDateTime() { return {...instance.zoneDate, ...instance.zoneTime}; },
-    get UTC() { return instance.clone().relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
+    get UTC() { return instance.clone.relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
     get UTCOffset() { return offsetFrom(instance); },
     get day() { return getDowNumber(instance); },
     get zoneDay() { return getDowNumber(instance, true); },
