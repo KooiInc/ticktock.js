@@ -338,8 +338,7 @@ console.log(inChina.info);
 
 
 ☑️ `offsetFrom(fromDate: Date|TickTock instance|undefined)` <ins>method</ins>
-<br>**note**: assumes 'GMT' Date with a plain Date parameter `fromDate`.
-<br>Without `fromDate` will be *now* within the instances' timeZone
+<br>**note**: assumes Date within *user* timeZone with a plain Date or no `fromDate`.
 <br><ins>returns</ins> `Object<String[]> {from, to, offset}`
 
 
@@ -523,7 +522,7 @@ console.log(inChina.info);
 
 
 ☑️ `zoneNames` <ins>getter</ins>
-<br><ins>returns</ins> `Object {locale, timeZone, dayName, dayNames:{long, short}, montName, monthNames:{long, short}}`
+<br><ins>returns</ins> `Object {locale, timeZone, dayName, montName, dayNames:{long, short}, monthNames:{long, short}}`
 
 
 ☑️ `zoneSeconds` <ins>getter</ins>
