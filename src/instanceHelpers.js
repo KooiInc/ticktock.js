@@ -137,7 +137,7 @@ function toISOString(instance, local = true) {
   if (local) {
     return instance.toISOString();
   }
-  const ms = instance.milliseconds;
+  const ms = pad0(instance.milliseconds, 3);
   return instance.format(`yyyy-mm-dd~T~hh:mmi:ss.${ms}`, instance.localeInfo.formatOptions);
 }
 
