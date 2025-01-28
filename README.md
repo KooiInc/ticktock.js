@@ -62,8 +62,8 @@ The constructor includes a few static methods
 <br>retrieves the number of days in `month`, a number from 1 (january) to 12 (december). 
 <br><ins>returns</ins> `Number (28 - 31)`
 
-☑️ `from(...Number[])` <ins>method</ins>
-<br>tries creating an instance from number. E.g. `$D.from(2000, 0, 4, 22)`. When the resulting
+☑️ `from(...numbers:Number[])` <ins>method</ins>
+<br>tries creating an instance from `...numbers`. E.g. `$D.from(2000, 0, 4, 22)`. When the resulting
 Date is invalid, will return `[TickTock constructor].now`
 <br><ins>returns</ins>  new TickTock instance
 
