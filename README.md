@@ -5,7 +5,16 @@ A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04
 It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
 the instance's individual date/time/locale/timeZone values.
 
-The library has *no dependencies* and a *small footprint*. The bundled file size is around 15kb.
+The library has *no dependencies* and a *small footprint*. The bundled file size is around 18kb.
+
+### Importing
+The library exports the TickTock constructor by default, ready for use.
+
+```javascript
+import $D from "[location of library]";
+const now = $D(`2025/01/22 22:00`, {timeZone: `Etc/UTC`});
+console.log(now.clone.relocate({timeZone: `Pacific/Auckland`}).differenceTo(now));
+```
 
 ### locale and timezone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
@@ -17,7 +26,6 @@ the week day names for that instance can be retrieved as `[instance].names.dayNa
  that time zone* (so, UTC+0900).
 
 ### For example
-
 `[instance].year = [new value]` sets the year of the current instance
 <br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` relocates the current instance,
 <br>`[instance].revalue([some date])` changes the current instance's Date value to [some date], 
@@ -31,10 +39,61 @@ An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web
 for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance. 
 This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
 
-## Work in progress
-This library is a rewrite from [es-date-fiddler](https://github.com/KooiInc/es-date-fiddler) based on evolvings insights. 
+## Constructor static methods
+The constructor includes a few static methods
 
-Currently a work in progress.
+☑️ `now` <ins>getter</ins>
+<br>converts the current Date to a TickTock instance, within the user locale/timeZone.
+<br><ins>returns</ins> new TickTock instance
+
+☑️ `localeInformation` <ins>getter</ins>
+<br>retrieves the users' default locale/timeZone information
+<br><ins>returns</ins> `Object<String[]> {locale, timeZone, calendar, numberingSystem, year, month, day}`
+
+☑️ `localMonthNames(locale:String)` <ins>method</ins>
+<br>retrieves the month names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
+<br><ins>returns</ins> `Object<Array[]> {long, short}`
+
+☑️ `localWeekdayNames(locale:String)` <ins>method</ins>
+<br>retrieves the weekday names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
+<br><ins>returns</ins> `Object<Array[]> {long, short}`
+
+☑️ `daysInMonth(month:Number)` <ins>method</ins>
+<br>retrieves the number of days in `month`, a number from 1 (january) to 12 (december). 
+<br><ins>returns</ins> `Number (28 - 31)`
+
+☑️ `from(...Number[])` <ins>method</ins>
+<br>tries creating an instance from number. E.g. `$D.from(2000, 0, 4, 22)`. When the resulting
+Date is invalid, will return `[TickTock constructor].now`
+<br><ins>returns</ins>  new TickTock instance
+
+☑️ `keys` <ins>getter</ins>
+<br>retrieves a sorted list of all keys (getter/method names) of a TickTock instance, sorted alphabetically.
+<br><ins>returns</ins> `String[]`
+
+☑️ `addCustom({ name, method, enumerable, isGetter })` <ins>method</ins>
+<br>the `addCustom` method enables creating custom methods and/or getters for instances.
+<br><ins>returns</ins> `String[]`
+
+The `addCustom` parameters are:
+- `name:String`: the method/getter name
+- `method:Function(instance, ...arguments)`: the method to use. `instance` should always be given
+- `enumerable:Boolean`: default value false. The custom getter/method can be made *enumerable*.  
+   &nbsp;&nbsp;In that case its name will show up in the `keys` list
+- `isGetter`: false by default. When true, will function as getter.
+
+*examples* `addCustom`
+```javascript
+import $D from "[location of the library]"; 
+$D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
+const testDate = $D("1970/01/01 12:00").addEra.ISO; //=> '2070-01-01T11:00:00.000Z' 
+$D.addCustom({
+  name: "kwartaalStr", 
+  method: (instance, showDate = true) => ` Resultaten voor kwartaal ${instance.quarterNr} ${
+      showDate ? `(${instance.local})` : ``}`;
+$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr(); // => 'Resultaten voor kwartaal 2 (1-4-2022, 12:00:00)'
+$D("2022/04/01 12:00", {locale: "nl"}).kwartaalStr(false); // => 'Resultaten voor kwartaal 2'
+```
 
 ## Example
 
