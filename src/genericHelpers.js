@@ -95,43 +95,6 @@ function setLocaleInfo({locale, timeZone} = {}) {
   return Object.freeze({...info, formatOptions: retrieveFormattingFormats(info.locale, info.timeZone)});
 }
 
-function _extendCTOR(ctor) {
-  Object.defineProperties(ctor, {
-    clone: {
-      value: function clone(instance) { return instance?.clone || ctor(); },
-    },
-    now: {
-      get() { return ctor(); }
-    },
-    parse: {
-      value(string, ymdOrder = `ymd`) {
-        return ctor(dateFromString(string, ymdOrder));
-      }
-    },
-    localWeekdayNames: {
-      value({locale, format} = {}) {
-        return localeWeekdays(locale, format);
-      }
-    },
-    localMonthNames: {
-      value({locale, format} = {}) {
-        return localeMonthnames(locale, format);
-      }
-    },
-    daysInMonth: {
-      value(monthIndex) {
-        if (monthIndex >= 1 && monthIndex <= 12) {
-          return new Date(1970, monthIndex, 0).getDate();
-        }
-        return `${monthIndex} not between 1 and 12`;
-      },
-    },
-    xtend: { value(name, fn) { aggregates.addFn(name, fn); } },
-  });
-
-  return ctor;
-}
-
 function valiDate(date) {
   return !Number.isNaN(+date) && date || new Date();
 }
