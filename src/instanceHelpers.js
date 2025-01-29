@@ -285,9 +285,8 @@ function daysInMonth(instance) {
 
 function fullMonth(instance) {
   const firstDay = instance.clone.removeTime;
-  firstDay.date = {date: 1};
-  const nDays = daysInMonth(firstDay.month + 1);
-  return [...Array(nDays)].map( (v, i) => firstDay.addDays(i) );
+  firstDay.date = { date: 1 };
+  return [...Array(daysInMonth(firstDay))].map( (v, i) => firstDay.addDays(i+1) );
 }
 
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
