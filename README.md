@@ -607,7 +607,7 @@ console.log(inChina.info);
 
 
 ☑️ `zoneNames` <ins>getter</ins>
-<br><ins>returns</ins> `Object<String, String|Object<String, Array<String> {locale, timeZone, dayName, montName, dayNames:{long, short}, monthNames:{long, short}}`
+<br><ins>returns</ins> `Object<String, String|Object<String, Array<String>> {locale, timeZone, dayName, montName, dayNames:{long, short}, monthNames:{long, short}}`
 
 
 ☑️ `zoneSeconds` <ins>getter</ins>
