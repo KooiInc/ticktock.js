@@ -42,24 +42,8 @@ This means that all native methods and properties for a `Date` can be used with 
 ## Constructor static methods
 The constructor includes a few static methods
 
-☑️ `now` <ins>getter</ins>
-<br>converts the current Date to a TickTock instance, within the user locale/timeZone.
-<br><ins>returns</ins> new TickTock instance
-
-☑️ `localeInformation` <ins>getter</ins>
-<br>retrieves the users' default locale/timeZone information
-<br><ins>returns</ins> `Object<String[]> {locale, timeZone, calendar, numberingSystem, year, month, day}`
-
-☑️ `localMonthNames(locale:String)` <ins>method</ins>
-<br>retrieves the month names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
-<br><ins>returns</ins> `Object<Array[]> {long, short}`
-
-☑️ `localWeekdayNames(locale:String)` <ins>method</ins>
-<br>retrieves the weekday names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
-<br><ins>returns</ins> `Object<Array[]> {long, short}`
-
 ☑️ `daysInMonth(month:Number)` <ins>method</ins>
-<br>retrieves the number of days in `month`, a number from 1 (january) to 12 (december). 
+<br>retrieves the number of days in `month`, a number from 1 (january) to 12 (december).
 <br><ins>returns</ins> `Number (28 - 31)`
 
 ☑️ `from(...numbers:Number[])` <ins>method</ins>
@@ -71,6 +55,27 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>retrieves a sorted list of all keys (getter/method names) of a TickTock instance, sorted alphabetically.
 <br><ins>returns</ins> `String[]`
 
+☑️ `localeInformation` <ins>getter</ins>
+<br>retrieves the users' default locale/timeZone information
+<br><ins>returns</ins> `Object<String, String> {locale, timeZone, calendar, numberingSystem, year, month, day}`
+
+☑️ `localMonthNames(locale:String)` <ins>method</ins>
+<br>retrieves the month names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
+<br><ins>returns</ins> `Object<String, Array<String>> {long, short}`
+
+☑️ `localWeekdayNames(locale:String)` <ins>method</ins>
+<br>retrieves the weekday names (long and short) for the given `locale` (e.g. `"fr-FR"`, `"zh"`)
+<br><ins>returns</ins> `Object<String, Array<String>> {long, short}`
+
+☑️ `now` <ins>getter</ins>
+<br>converts the current Date to a TickTock instance, within the user locale/timeZone.
+<br><ins>returns</ins> new TickTock instance
+
+☑️ `yearCalendar(year: number)` <ins>method</ins>
+<br>creates an Object containing for every month of the `year` an array of TickTock instances for all Dates in that month.
+<br><ins>returns</ins> `Object<String, Number|Object<String, Array<TickTock instance>>>`
+
+### add custom methods and/or getters
 ☑️ `addCustom({ name, method, enumerable, isGetter })` <ins>method</ins>
 <br>the `addCustom` method enables creating custom methods and/or getters for instances.
 <br><ins>returns</ins> nothing
@@ -176,8 +181,8 @@ console.log(inChina.info);
 <!--LIST-->
 ☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
 <br>adds `whatToAdd` to the instance Date value.
-<br>**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'),
-<br>or 1 or more strings (e.g. '2 years', '1 month')
+<br>**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>example `$D("2000/01/01").add("1 year")`
 <br><ins>returns</ins> new TickTock instance with Date + `whatToAdd`
 
 
@@ -232,7 +237,7 @@ console.log(inChina.info);
 
 ☑️ `date` <ins>getter</ins>
 <br>date values in *user* timeZone, use `[instance].zoneDate` for values in *instance* timeZone
-<br><ins>returns</ins> `Object<Number[]> {year, month, date}`
+<br><ins>returns</ins> `Object<String, Number> {year, month, date}`
 
 
 ☑️ `dateSingle` <ins>getter</ins>
@@ -243,7 +248,7 @@ console.log(inChina.info);
 ☑️ `dateTime` <ins>getter</ins>
 <br>date and time values in *user* timeZone, use `[instance].zoneDateTime` for *instance* timeZone.
 <br>**note**: month value is zero based (january = 0)
-<br><ins>returns</ins> `Object<Number[]> {year, month, date, hours, minutes, seconds, milliSeconds}`
+<br><ins>returns</ins> `Object<String, Number> {year, month, date, hours, minutes, seconds, milliSeconds}`
 
 
 ☑️ `dateTimeValues` <ins>getter</ins>
@@ -282,7 +287,7 @@ console.log(inChina.info);
 <br>the difference of the instance Date with `differenceToDate` in years, months ... etc.
 <br>**note**: timeZone specific for both the instance Date and `differenceToDate`.
 <br>In other words, will accurately calculate the difference between two dates in different time zones.
-<br><ins>returns</ins> `Object`
+<br><ins>returns</ins> `Object<String, String|Number`>
 
 
 ☑️ `DSTActive` <ins>getter</ins>
@@ -302,13 +307,18 @@ console.log(inChina.info);
 <br><ins>returns</ins> `String`
 
 
+☑️ `fullMonth` <ins>getter</ins>
+<br>creates an Array containing all dates within the month of the instance Date.
+<br><ins>returns</ins> `Array<TickTock instance>`
+
+
 ☑️ `hasDST` <ins>getter</ins>
 <br>is **D**aylight **S**aving **T**ime used in the *instance* timeZone?
 <br><ins>returns</ins> `Boolean`
 
 
 ☑️ `hours` <ins>getter/setter</ins>
-<br>value for *user* locale, use `[instance].zoneHours` for *instance* timeZone specific name
+<br>value for *user* locale, use `[instance].zoneHours` for *instance* timeZone specific name.
 <br><ins>returns</ins> `Number`
 
 
@@ -342,6 +352,11 @@ console.log(inChina.info);
 <br><ins>returns</ins> `String`
 
 
+☑️ `localDate` <ins>getter</ins>
+<br>shorthand for `toLocaleDateString` (using the *instance* locale and timeZone).
+<br><ins>returns</ins> `String`
+
+
 ☑️ `locale` <ins>getter</ins>
 <br>what is the instances encapsulated locale?
 <br><ins>returns</ins> `String` (e.g. 'en-CA', 'fr')
@@ -349,11 +364,16 @@ console.log(inChina.info);
 
 ☑️ `localeInfo` <ins>getter/setter</ins>
 <br>the locale/timeZone information encapsulated within the instance.
-<br><ins>returns</ins> `Object<String[]} {locale, timeZone, calendar, numberingSystem year, month, day}`
+<br><ins>returns</ins> `Object<String, String> {locale, timeZone, calendar, numberingSystem year, month, day}`
 
 
 ☑️ `localeString` <ins>getter</ins>
 <br>shorthand for `toLocaleString` (using the *instance* locale and timeZone). Alias: [instance].local
+<br><ins>returns</ins> `String`
+
+
+☑️ `localTime` <ins>getter</ins>
+<br>shorthand for `toLocaleTimeString` (using the *instance* locale and timeZone).
 <br><ins>returns</ins> `String`
 
 
@@ -381,7 +401,7 @@ console.log(inChina.info);
 ☑️ `names` <ins>getter</ins>
 <br>names for months (short/long), weekdays (short/long), month, weekday within the *user* locale/timeZone.
 <br>Use `[instance].zoneNames` for the same within the *instance* locale/timeZone.
-<br><ins>returns</ins> `Object`
+<br><ins>returns</ins> `Object<String, Array<string>>`
 
 
 ☑️ `next(day:String)` <ins>method</ins>
@@ -404,7 +424,7 @@ console.log(inChina.info);
 
 ☑️ `offsetFrom(fromDate: Date|TickTock instance|undefined)` <ins>method</ins>
 <br>**note**: assumes Date within *user* timeZone with a plain Date or no `fromDate`.
-<br><ins>returns</ins> `Object<String[]> {from, to, offset}`
+<br><ins>returns</ins> `Object<String, Array<String>> { from, to, offset }`
 
 
 ☑️ `previous(day:String)` <ins>method</ins>
@@ -462,7 +482,7 @@ console.log(inChina.info);
 
 ☑️ `time` <ins>getter/setter</ins>
 <br>getter returns values for *user* timeZone, use `[instance].zoneTime` for localized time values.
-<br><ins>returns</ins> `Object<Number[]} {hours, minutes, seconds, milliseconds}`
+<br><ins>returns</ins> `Object<String, Number} {hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `timeValues` <ins>getter</ins>
@@ -529,7 +549,7 @@ console.log(inChina.info);
 
 ☑️ `zoneDate` <ins>getter</ins>
 <br>Returns Date values Object for *instance* timeZone
-<br><ins>returns</ins> `Object<Number[]> {year, month, date}`
+<br><ins>returns</ins> `Object<String, Number> {year, month, date}`
 
 
 ☑️ `zoneDateSingle` <ins>getter</ins>
@@ -539,7 +559,7 @@ console.log(inChina.info);
 
 ☑️ `zoneDateTime` <ins>getter</ins>
 <br>Returns values for *instance* timeZone
-<br><ins>returns</ins> `Object<Number[]> {year, month, date, hours, minutes, seconds, milliseconds}`
+<br><ins>returns</ins> `Object<String, Number> {year, month, date, hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `zoneDateTimeValues` <ins>getter</ins>
@@ -587,7 +607,7 @@ console.log(inChina.info);
 
 
 ☑️ `zoneNames` <ins>getter</ins>
-<br><ins>returns</ins> `Object {locale, timeZone, dayName, montName, dayNames:{long, short}, monthNames:{long, short}}`
+<br><ins>returns</ins> `Object<String, String|Object<String, Array<String> {locale, timeZone, dayName, montName, dayNames:{long, short}, monthNames:{long, short}}`
 
 
 ☑️ `zoneSeconds` <ins>getter</ins>
@@ -597,7 +617,7 @@ console.log(inChina.info);
 
 ☑️ `zoneTime` <ins>getter</ins>
 <br>Returns instance Date time values within the *instance* timeZone
-<br><ins>returns</ins> `Object<Number[]> {hours, minutes, seconds, milliseconds}`
+<br><ins>returns</ins> `Object<String, Number> {hours, minutes, seconds, milliseconds}`
 
 
 ☑️ `zoneTimeValues` <ins>getter</ins>

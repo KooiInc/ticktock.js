@@ -1,5 +1,6 @@
-import {add2Date} from "./instanceHelpers.js";
+import {add2Date, fullMonth} from "./instanceHelpers.js";
 import {instanceCreator} from "./instantiationHelpers.js";
+import xDate from "../index.js";
 
 export {
   localeWeekdays, localeMonthnames, localeValidator, setLocaleInfo,
@@ -36,6 +37,17 @@ function localeMonthnames(locale = "en-GB") {
       .map( v => new Date(Date.UTC(1970, v, 1) )
         .toLocaleDateString(locale, { timeZone: `Etc/UTC`, month: `short` }) )
   };
+}
+
+function calenderForYear(year) {
+  const calendar = { year, calendar: {} };
+  
+  for (let i = 0; i < 12; i += 1) {
+    const firstDay = xDate.from(year, i, 1).relocate({locale: `en-CA`});
+    calendar.calendar[firstDay.monthName] = fullMonth(firstDay);
+  }
+  
+  return calendar;
 }
 
 function localeValidator({ locale, timeZone, logError = true } = {}) {
@@ -187,6 +199,9 @@ function extendCTOR(ctor, customMethods) {
         }
         return `${monthIndex} not between 1 and 12`;
       },
+    },
+    yearCalendar: {
+      value: calenderForYear,
     },
     from: {
       value(...input) {
