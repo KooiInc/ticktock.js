@@ -487,7 +487,7 @@ console.log(inChina.info);
 
 ☑️ `timeValues` <ins>getter</ins>
 <br>Returns values for *user* timeZone, use `[instance].zoneTimeValues` for localized time values
-<br><ins>returns</ins> `[hours:Number, minutes:Number, seconds:Number, milliseconds:Number]`
+<br><ins>returns</ins> `Array<Number> [hours, minutes, seconds, milliseconds]`
 
 
 ☑️ `timeZone` <ins>getter</ins>
