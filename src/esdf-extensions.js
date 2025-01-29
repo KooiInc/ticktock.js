@@ -6,7 +6,7 @@ import {
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
   removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
   offsetFrom, getAggregatedInfo, localeValidator, toJSDateString,
-  getDowNumber, toISOString,
+  getDowNumber, toISOString, fullMonth
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -48,12 +48,15 @@ function instanceCreator({instance, localeInfo} = {}) {
     get localeString() { return toLocalString(instance); },
     get userLocaleInfo() { return userLocale; },
     get local() { return toLocalString(instance); },
+    get localDate() { return toLocalString(instance, {dateOnly: true}); },
+    get localTime() { return toLocalString(instance, {timeOnly: true}); },
     get ISO() { return toISOString(instance); },
     get zoneISO() { return toISOString(instance, false); },
     get isLeapYear() { return new Date(instance.getFullYear(), 2, 0).getDate() === 29; },
     get names() { return getNames(instance); },
     get zoneNames() { return getNames(instance, true); },
     get daysThisMonth() { return daysInMonth(instance); },
+    get fullMonth() { return fullMonth(instance); },
     get localeInfo() { return localeInfo },
     get timeZone() { return ( localeInfo || setLocaleInfo() ).timeZone; },
     get locale() { return ( localeInfo || setLocaleInfo() ).locale; },

@@ -46,6 +46,7 @@ export {
   toJSDateString,
   getDowNumber,
   toISOString,
+  fullMonth,
 };
 
 function addParts2Date(instance, ...parts2Add) {
@@ -282,6 +283,13 @@ function daysInMonth(instance) {
   return new Date(instance.year, instance.month + 1, 0, 0, 0, 0).getDate();
 }
 
+function fullMonth(instance) {
+  const firstDay = instance.clone.removeTime;
+  firstDay.date = {date: 1};
+  const nDays = daysInMonth(firstDay.month + 1);
+  return [...Array(nDays)].map( (v, i) => firstDay.addDays(i) );
+}
+
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
   let dayNr = weekdays(day?.toLowerCase());
   const cloned = xDate(new Date(...instance.dateValues), instance.localeInfo);
@@ -303,12 +311,16 @@ function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} =
   }
 }
 
-function toLocalString(instance) {
+function toLocalString(instance, {dateOnly = false, timeOnly = false} = {}) {
   if (!instance.localeInfo) {
     instance.localeInfo = setLocaleInfo();
   }
   const {locale, timeZone} = instance.localeInfo;
-  return new Date(instance).toLocaleString(locale, {timeZone});
+  return dateOnly
+    ? new Date(instance).toLocaleDateString(locale, {timeZone})
+    : timeOnly
+      ? new Date(instance).toLocaleTimeString(locale, {timeZone})
+      : new Date(instance).toLocaleString(locale, {timeZone});
 }
 
 function DTInTimezone(date, timeZoneID) {
