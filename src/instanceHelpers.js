@@ -335,21 +335,10 @@ function setDateParts(instance, {year, month, date} = {}) {
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
-  switch (true) {
-    case isNumberOrString(hours):
-      instance.setHours(hours);
-      break;
-    case isNumberOrString(minutes):
-      instance.setMinutes(minutes);
-      break;
-    case isNumberOrString(seconds):
-      instance.setSeconds(seconds);
-      break;
-    case isNumberOrString(milliseconds):
-      instance.setMilliseconds(milliseconds);
-      break;
-  }
-
+  if (isNumberOrString(hours)) { instance.setHours(hours); }
+  if (isNumberOrString(minutes)) { instance.setMinutes(minutes); }
+  if (isNumberOrString(seconds)) { instance.setSeconds(seconds) };
+  if (isNumberOrString(milliseconds)) { instance.setMilliseconds(milliseconds); }
   return true;
 }
 
