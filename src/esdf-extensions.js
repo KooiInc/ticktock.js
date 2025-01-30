@@ -29,6 +29,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
+    fullMonth(forLocale) { return fullMonth(instance, forLocale); },
     toString() { return toJSDateString(instance); },
 
     // instance setters mutate
@@ -56,7 +57,6 @@ function instanceCreator({instance, localeInfo} = {}) {
     get names() { return getNames(instance); },
     get zoneNames() { return getNames(instance, true); },
     get daysThisMonth() { return daysInMonth(instance); },
-    get fullMonth() { return fullMonth(instance); },
     get localeInfo() { return localeInfo },
     get timeZone() { return ( localeInfo || setLocaleInfo() ).timeZone; },
     get locale() { return ( localeInfo || setLocaleInfo() ).locale; },
