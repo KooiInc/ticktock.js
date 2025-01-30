@@ -30,7 +30,8 @@ function instanceCreator({instance, localeInfo} = {}) {
     isPast(date) { return compareDates(instance, {start: date, before: true}); },
     isFuture(date) { return compareDates(instance, {start: date, before: false}); },
     fullMonth(forLocale) { return fullMonth(instance, forLocale); },
-    toString() { return toJSDateString(instance); },
+    ageFullUntil(date) { return instance.differenceTo(date).clean; },
+    toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
 
     // instance setters mutate
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
@@ -45,7 +46,7 @@ function instanceCreator({instance, localeInfo} = {}) {
 
     get age() { return instance.differenceTo(new Date()).years; },
     get clone() { return cloneInstance(instance); },
-    get ageParts() { return instance.differenceTo(new Date()).full; },
+    get ageFull() { return instance.differenceTo(new Date()).clean; },
     get localeString() { return toLocalString(instance); },
     get userLocaleInfo() { return userLocale; },
     get local() { return toLocalString(instance); },
