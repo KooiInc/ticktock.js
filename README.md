@@ -221,9 +221,14 @@ console.log(inChina.info);
 <br><ins>returns</ins> `Number`
 
 
-☑️ `ageParts` <ins>getter</ins>
+☑️ `ageFull` <ins>getter</ins>
 <br>the current age for all parts (years, months, days, hours, etc), from the instance Date to now.
 <br>**note**: absolute, future instance Dates will also show a value
+<br><ins>returns</ins> `String`
+
+
+☑️ `ageFullUntil(untilDate:Date|TickTock instance)` <ins>method</ins>
+<br>the age from the instance Date to `untilDate`
 <br><ins>returns</ins> `String`
 
 
@@ -507,6 +512,12 @@ console.log(inChina.info);
 ☑️ `tomorrow` <ins>getter</ins>
 <br>retrieve a new instance with Date + one day
 <br><ins>returns</ins> new TickTock instance
+
+
+☑️ `toString(template:String, formatOptions:String)` <ins>method</ins>
+<br>overrides `Date.prototype.toString` with possibility to format the resulting string (see `[instance].format`)
+<br>Without parameters the Date is formatted cf the `Date.prototype.toString` format honoring the with the instance encapsulated timeZone
+<br><ins>returns</ins> `String`
 
 
 ☑️ `unixEpochTimestamp` <ins>getter</ins>

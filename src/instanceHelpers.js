@@ -192,10 +192,10 @@ function toJSDateString(instance, withFormat, withFormatOptions) {
     return toFormattedJSDateString(instance, withFormat, withFormatOptions);
   }
   
-  const instanceEN = instance.clone.relocate({locale: `en-CA`});
+  const instanceEN = instance.clone.relocate({locale: `en-GB`});
   const gmtString = instanceEN.format(`tz`, instanceEN.localeInfo.formatOptions + `,tzn:longOffset`).replace(`:`, ``);
   const formatString = `wd M d yyyy hh:mmi:ss ${gmtString} (tz)`;
-  return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:long,hrc:23`);
+  return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:longGeneric, hrc:23`);
 }
 
 function getDowNumber(instance, remote = false) {
