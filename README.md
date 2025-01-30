@@ -71,8 +71,17 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>converts the current Date to a TickTock instance, within the user locale/timeZone.
 <br><ins>returns</ins> new TickTock instance
 
-☑️ `yearCalendar(year: number)` <ins>method</ins>
+☑️ `monthCalendar({monthNr:Number, locale:String})` <ins>method</ins>
+<br>creates an Array containing TickTock instances for all Dates in `month`.
+If `locale` is given (e.g. `nl-BE`, `pl`) and valid the calendar Date instances encapsulates that locale, 
+otherwise the default (user) locale.
+<br>**Note**: `month` is not zero based, so january = 1, december = 12.
+<br><ins>returns</ins> `Array<String>`
+
+☑️ `yearCalendar({year:Number, locale:String})` <ins>method</ins>
 <br>creates an Object containing for every month of the `year` an array of TickTock instances for all Dates in that month.
+If `locale` is given (e.g. `de-DE`, `fr`) and valid the calendar Date instances encapsulates that locale, 
+otherwise the default (user) locale.
 <br><ins>returns</ins> `Object<String, Number|Object<String, Array<TickTock instance>>>`
 
 ### add custom methods and/or getters
@@ -307,8 +316,8 @@ console.log(inChina.info);
 <br><ins>returns</ins> `String`
 
 
-☑️ `fullMonth` <ins>getter</ins>
-<br>creates an Array containing all dates within the month of the instance Date.
+☑️ `fullMonth(forLocale:String)` <ins>method</ins>
+<br>creates an Array containing all dates within the month of the instance Date. Optionally for locale `forLocale`.
 <br><ins>returns</ins> `Array<TickTock instance>`
 
 
