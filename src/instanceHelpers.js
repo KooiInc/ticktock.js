@@ -2,7 +2,9 @@ import dateFormat from "./dateFormat.js";
 import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
-import {localeMonthnames, localeValidator, localeWeekdays, setLocaleInfo} from "./genericHelpers.js";
+import {
+  localeMonthnames, localeValidator, localeWeekdays,
+  setLocaleInfo, isNumberOrNumberString, } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -283,8 +285,9 @@ function daysInMonth(instance) {
   return new Date(instance.year, instance.month + 1, 0, 0, 0, 0).getDate();
 }
 
-function fullMonth(instance) {
+function fullMonth(instance, forLocale) {
   const firstDay = instance.clone.removeTime;
+  if (forLocale) { firstDay.relocate({locale: forLocale}); }
   firstDay.date = { date: 1 };
   return [...Array(daysInMonth(firstDay))].map( (v, i) => firstDay.addDays(i+1) );
 }
@@ -328,17 +331,17 @@ function DTInTimezone(date, timeZoneID) {
 }
 
 function setDateParts(instance, {year, month, date} = {}) {
-  if (isNumberOrString(year)) { instance.setFullYear(year); }
-  if (isNumberOrString(date)) { instance.setDate(date); }
-  if (isNumberOrString(month)) { instance.setMonth(month - 1); }
+  if (isNumberOrNumberString(year)) { instance.setFullYear(year); }
+  if (isNumberOrNumberString(date)) { instance.setDate(date); }
+  if (isNumberOrNumberString(month)) { instance.setMonth(month - 1); }
   return true;
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
-  if (isNumberOrString(hours)) { instance.setHours(hours); }
-  if (isNumberOrString(minutes)) { instance.setMinutes(minutes); }
-  if (isNumberOrString(seconds)) { instance.setSeconds(seconds) };
-  if (isNumberOrString(milliseconds)) { instance.setMilliseconds(milliseconds); }
+  if (isNumberOrNumberString(hours)) { instance.setHours(hours); }
+  if (isNumberOrNumberString(minutes)) { instance.setMinutes(minutes); }
+  if (isNumberOrNumberString(seconds)) { instance.setSeconds(seconds) };
+  if (isNumberOrNumberString(milliseconds)) { instance.setMilliseconds(milliseconds); }
   return true;
 }
 
@@ -411,10 +414,6 @@ function relocate(instance, {locale, timeZone} = {}) {
 function revalue(instance, date) {
   if (date?.constructor !== Date) { return instance; }
   return xDate(date, date.localeInfo || instance.localeInfo);
-}
-
-function isNumberOrString(value) {
-  return !(Number.isNaN(parseInt(value)) && Number.isNaN(+value));
 }
 
 function getWeeksInYear(year, date) {
