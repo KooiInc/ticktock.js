@@ -6,7 +6,7 @@ import {
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
   removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
   offsetFrom, getAggregatedInfo, localeValidator, toJSDateString,
-  getDowNumber, toISOString, fullMonth
+  getDowNumber, fullMonth
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
@@ -51,8 +51,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get local() { return toLocalString(instance); },
     get localDate() { return toLocalString(instance, {dateOnly: true}); },
     get localTime() { return toLocalString(instance, {timeOnly: true}); },
-    get ISO() { return toISOString(instance); },
-    get zoneISO() { return toISOString(instance, false); },
+    get ISO() { return instance.toISOString(); },
     get isLeapYear() { return new Date(instance.getFullYear(), 2, 0).getDate() === 29; },
     get names() { return getNames(instance); },
     get zoneNames() { return getNames(instance, true); },
@@ -87,7 +86,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get dateTime() { return Object.freeze({...instance.date, ...instance.time}); },
     get zoneDateTime() { return {...instance.zoneDate, ...instance.zoneTime}; },
     get UTC() { return instance.clone.relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
-    get UTCOffset() { return offsetFrom(instance); },
+    get UTCOffset() { return offsetFrom(instance, `UTC`); },
     get day() { return getDowNumber(instance); },
     get zoneDay() { return getDowNumber(instance, true); },
     get zoneDayname() { return instance.zoneNames.zoneWeekday; },

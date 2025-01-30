@@ -595,11 +595,6 @@ console.log(inChina.info);
 <br><ins>returns</ins> `Number`
 
 
-☑️ `zoneISO` <ins>getter</ins>
-<br>returns ISO string for *instance* timeZone
-<br><ins>returns</ins> `String`
-
-
 ☑️ `zoneMinutes` <ins>getter</ins>
 <br>Returns instance Date minutes value within the *instance* timeZone
 <br><ins>returns</ins> `Number`

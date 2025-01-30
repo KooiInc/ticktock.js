@@ -47,7 +47,6 @@ export {
   localeValidator,
   toJSDateString,
   getDowNumber,
-  toISOString,
   fullMonth,
 };
 
@@ -136,14 +135,6 @@ function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
   return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
 }
 
-function toISOString(instance, local = true) {
-  if (local) {
-    return instance.toISOString();
-  }
-  const ms = pad0(instance.milliseconds, 3);
-  return instance.format(`yyyy-mm-dd~T~hh:mmi:ss.${ms}`, instance.localeInfo.formatOptions);
-}
-
 function timezoneAwareDifferenceTo({start, end} = {}) {
   if (!end?.clone) {
     end = xDate(end, {timeZone: start.timeZone});
@@ -160,22 +151,15 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
 }
 
 function offsetFrom(instance, from) {
-  const instanceClone = instance.clone;
-  const userTimeZone = localeValidator().timeZone;
-
-  if (from instanceof Date && !from?.clone) {
-    from = instanceClone.clone.relocate({timeZone: userTimeZone});
-  }
-
-  if (!from) {
-    from = instanceClone.clone.relocate({timeZone: userTimeZone});
-  }
-
-  from = from.revalue(instanceClone.value);
-  const diff = timezoneAwareDifferenceTo({start: instanceClone, end: from});
+  const isUTC = String(from).toLowerCase() === `utc`;
+  from = isUTC
+    ? instance.clone.relocate({timeZone: `Etc/UTC`})
+    : xDate(instance.value, { timeZone: from.timeZone || localeValidator().timeZone });
+  
+  const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
 
   return {
-    from: instanceClone.timeZone,
+    from: instance.timeZone,
     to: from.timeZone,
     offset: `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
   };
@@ -340,7 +324,7 @@ function setDateParts(instance, {year, month, date} = {}) {
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
   if (isNumberOrNumberString(hours)) { instance.setHours(hours); }
   if (isNumberOrNumberString(minutes)) { instance.setMinutes(minutes); }
-  if (isNumberOrNumberString(seconds)) { instance.setSeconds(seconds) };
+  if (isNumberOrNumberString(seconds)) { instance.setSeconds(seconds) }
   if (isNumberOrNumberString(milliseconds)) { instance.setMilliseconds(milliseconds); }
   return true;
 }
@@ -366,7 +350,13 @@ function setProxy(proxy) {
   return proxy;
 }
 
-function offset2Number(dtStr) {
+function offset2Number(dtStr, all = false) {
+  if (all) {
+    const values = dtStr.slice(1).split(/[-:]/).map(Number);
+    values.unshift(dtStr.slice(0, 1));
+    return values;
+  }
+  
   return Number(dtStr.split(/[+-]/).slice(-1)[0].replace(/:/, ``));
 }
 
