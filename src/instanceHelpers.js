@@ -330,7 +330,8 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function cloneInstance(instance, date) {
-  return xDate(date && new Date(date) || instance.value, instance.localeInfo);
+  const newDate = new Date(date);
+  return xDate(!Number.isNaN(+date) && date || instance.value, instance.localeInfo);
 }
 
 function weekdayFactory() {
