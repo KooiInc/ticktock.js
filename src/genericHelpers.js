@@ -5,7 +5,7 @@ import xDate from "../index.js";
 export {
   localeWeekdays, localeMonthnames, localeValidator, setLocaleInfo,
   retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,
-  extendCTOR, };
+  extendCTOR, isNumberOrNumberString, };
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -39,12 +39,12 @@ function localeMonthnames(locale = "en-GB") {
   };
 }
 
-function calenderForYear(year) {
+function calenderForYear(year, forLocale) {
   const calendar = { year, calendar: {} };
   
   for (let i = 0; i < 12; i += 1) {
     const firstDay = xDate.from(year, i, 1).relocate({locale: `en-CA`});
-    calendar.calendar[firstDay.monthName] = fullMonth(firstDay);
+    calendar.calendar[firstDay.monthName] = fullMonth(firstDay, forLocale);
   }
   
   return calendar;
@@ -93,6 +93,10 @@ function currentLocalTime4TZ(date, localeHere) {
     localDate: inTheZone.toLocaleDateString(),
     localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
   };
+}
+
+function isNumberOrNumberString(value) {
+  return !(Number.isNaN(parseInt(value)) && Number.isNaN(+value));
 }
 
 function getAggregates(instance, customExtras) {
@@ -194,7 +198,7 @@ function extendCTOR(ctor, customMethods) {
     },
     daysInMonth: {
       value(monthIndex) {
-        if (monthIndex >= 1 && monthIndex <= 12) {
+        if (isNumberOrNumberString(monthIndex) && +monthIndex >= 1 && +monthIndex <= 12) {
           return new Date(1970, monthIndex, 0).getDate();
         }
         return `${monthIndex} not between 1 and 12`;
@@ -202,6 +206,13 @@ function extendCTOR(ctor, customMethods) {
     },
     yearCalendar: {
       value: calenderForYear,
+    },
+    monthCalendar: {
+      value(monthIndex, forLocale) {
+        if (isNumberOrNumberString(monthIndex) && +monthIndex >= 1 && +monthIndex <= 12) {
+          return $D({locale: `en-CA`}).fullMonth(forLocale);
+        }
+      }
     },
     from: {
       value(...input) {
