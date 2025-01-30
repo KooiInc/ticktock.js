@@ -183,7 +183,15 @@ function timeDiffenceInWords(diffInfo) {
     : `${hours} ${maybePlural(hours, `hour`)} ${later ? `ahead of`: `behind`}`;
 }
 
-function toJSDateString(instance) {
+function toFormattedJSDateString(instance, formatString, formatOptions) {
+  return instance.clone.format(formatString, formatOptions || instance.localeInfo.formatOptions);
+}
+
+function toJSDateString(instance, withFormat, withFormatOptions) {
+  if (withFormat) {
+    return toFormattedJSDateString(instance, withFormat, withFormatOptions);
+  }
+  
   const instanceEN = instance.clone.relocate({locale: `en-CA`});
   const gmtString = instanceEN.format(`tz`, instanceEN.localeInfo.formatOptions + `,tzn:longOffset`).replace(`:`, ``);
   const formatString = `wd M d yyyy hh:mmi:ss ${gmtString} (tz)`;
