@@ -230,6 +230,12 @@ function extendCTOR(ctor, customMethods) {
         }
       }
     },
+    dateTime4Timezone: {
+      value(date, timeZoneID) {
+        const timeZoneInfo = {timeZone: timeZoneID, hourCycle: `h23`};
+        return new Date(new Date(date).toLocaleString(`en`, timeZoneInfo));
+      }
+    },
     keys: {
       get() {
         const customEnumerables = Object.fromEntries(
