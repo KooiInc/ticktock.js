@@ -1,5 +1,5 @@
 import {
-  localeValidator,
+  localeInfoValidator,
   retrieveDateValueFromInput as retrieveDateValue,
   getAggregates,
   extendCTOR,
@@ -22,9 +22,9 @@ function XDateFactory() {
 
   function ctor(input, localeInfo) {
     let maybeDate = input?.locale || input?.timeZone ? new Date() : retrieveDateValue(input);
-    const instanceExtensions = instanceCreator();
-    instanceExtensions.localeInfo = input?.locale || input?.timeZone
-      ? localeValidator(input) : localeValidator(localeInfo);
+    const localeInfoResolved = input?.locale || input?.timeZone
+      ? localeInfoValidator(input) : localeInfoValidator(localeInfo || {});
+    const instanceExtensions = instanceCreator({localeInfo: localeInfoResolved});
     const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
     const instanceAggregates = getAggregates(instance, customMethods);
     instance.addAggregates(instance, instanceAggregates);
