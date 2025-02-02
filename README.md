@@ -55,6 +55,24 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>retrieves a sorted list of all keys (getter/method names) of a TickTock instance, sorted alphabetically.
 <br><ins>returns</ins> `String[]`
 
+☑️ `localDateTime4TimeZone({timeZoneDate:Date|String, timeZoneID:String})` <ins>method</ins>
+<br>calculates user (local) date and time information for `date` in `timeZoneId`
+<br><ins>returns</ins> `Object<String, String|Object<String, String>>`
+```javascript
+import $D from "[location of the library]";
+$D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland"});
+/* ↳ result (developer timeZone is Europe/Amsterdam) 
+{
+  userTimezone: "Europe/Amsterdam",
+  offsetFromLocal: "Pacific/Auckland 12 hours ahead of Europe/Amsterdam",
+  result: {
+    Pacific_Auckland: "Wed Jan 15 2025 15:00:00",
+    Europe_Amsterdam: "Wed Jan 15 2025 03:00:00"
+  }
+}
+*/
+```
+
 ☑️ `localeInformation` <ins>getter</ins>
 <br>retrieves the users' default locale/timeZone information
 <br><ins>returns</ins> `Object<String, String> {locale, timeZone, calendar, numberingSystem, year, month, day}`
@@ -84,6 +102,26 @@ If `locale` is given (e.g. `de-DE`, `fr`) and valid the calendar Date instances 
 otherwise the default (user) locale.
 <br><ins>returns</ins> `Object<String, Number|Object<String, Array<TickTock instance>>>`
 
+☑️ `validateLocaleInformation({locale:String, timeZone:String, logError:Boolean})` <ins>method</ins>
+<br>validates `locale` and/or `timeZone`. When (one of) `locale`/`timeZone` is not valid, its values
+for the user (your) computer are returned, otherwise an Object for the given values.
+<br>In other words, when `locale` *and* `timeZone` are defined, the *combination* is validated. 
+<br>One can however input *either* a correct `locale` *or* a `timeZone` value.
+<br><ins>returns</ins> `Object<String, String>`
+
+*Examples* `validateLocaleInformation`
+```javascript
+import $D from "[location of the library]";
+
+$D.validateLocaleInformation({locale:`fr-FR`})
+ // ↳ {locale: 'fr-FR', timeZone: [user time zone id], ...}
+
+$D.validateLocaleInformation({timeZone: `Pacific/Auland`}) 
+// ↳ {locale: '[user locale]', timeZone: 'Pacific/Auland', ...}
+
+$D.validateLocaleInformation({locale:`english` /*invalid!*/, timeZone: `Pacific/Auland`}) 
+// ↳ {locale: '[user locale]', timeZone: [user time zone id], ...}
+```
 ### add custom methods and/or getters
 ☑️ `addCustom({ name, method, enumerable, isGetter })` <ins>method</ins>
 <br>the `addCustom` method enables creating custom methods and/or getters for instances.
@@ -96,7 +134,7 @@ The `addCustom` parameters are:
    &nbsp;&nbsp;In that case its name will show up in the `keys` list
 - `isGetter`: false by default. When true, will function as getter.
 
-*examples* `addCustom`
+*Examples* `addCustom`
 ```javascript
 import $D from "[location of the library]";
 // getter
@@ -332,7 +370,7 @@ console.log(inChina.info);
 
 
 ☑️ `hours` <ins>getter/setter</ins>
-<br>value for *user* locale, use `[instance].zoneHours` for *instance* timeZone specific name.
+<br>getter returns value for *user* timeZone, use `[instance].zoneHours` for *instance* timeZone value.
 <br><ins>returns</ins> `Number`
 
 

@@ -1,11 +1,10 @@
-import {add2Date, fullMonth} from "./instanceHelpers.js";
-import {instanceCreator} from "./instantiationHelpers.js";
+import { add2Date, fullMonth, offset2Number, } from "./instanceHelpers.js";
+import { instanceCreator } from "./instantiationHelpers.js";
 import xDate from "../index.js";
-
+const localLocaleInfo = localeInfoValidator();
 export {
-  localeWeekdays, localeMonthnames, localeValidator, setLocaleInfo,
-  retrieveDateValueFromInput, currentLocalTime4TZ, getAggregates,
-  extendCTOR, isNumberOrNumberString, };
+  localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
+  retrieveDateValueFromInput, getAggregates, extendCTOR, isNumberOrNumberString, };
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -15,7 +14,7 @@ function retrieveFormattingFormats(locale, timeZone) {
 }
 
 function localeWeekdays(locale = `en-GB`) {
-  locale = localeValidator({locale}).locale;
+  locale = localeInfoValidator({locale}).locale;
   return {
     long: [...Array(7).keys()]
       .map( v => new Date(Date.UTC(1970, 0, 4 + v) )
@@ -27,7 +26,7 @@ function localeWeekdays(locale = `en-GB`) {
 }
 
 function localeMonthnames(locale = "en") {
-  locale = localeValidator({locale}).locale;
+  locale = localeInfoValidator({locale}).locale;
 
   return {
     long: [...Array(12).keys()]
@@ -52,20 +51,16 @@ function calenderForYear({year, locale} = {}) {
   return calendar;
 }
 
-function localeValidator({ locale, timeZone, logError = true } = {}) {
-  const reportLocaleError = errLocale =>
-    console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
-      errLocale.locale}"), associated your locale instead`);
+function localeInfoValidator({ locale, timeZone, logError = false} = {}) {
   try {
-    return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions();
-  } catch (err) {
-    logError && reportLocaleError({locale, timeZone});
-    return Intl.DateTimeFormat().resolvedOptions();
-  }
+    return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions(); }
+  catch (error) {
+    logError && console.error(`localeValidator: invalid input, using computer locale`);
+    return Intl.DateTimeFormat().resolvedOptions(); }
 }
 
 function setLocaleInfo({locale, timeZone} = {}) {
-  const info = localeValidator({locale, timeZone}, true);
+  const info = localeInfoValidator({locale, timeZone}, true);
   return Object.freeze({...info, formatOptions: retrieveFormattingFormats(info.locale, info.timeZone)});
 }
 
@@ -75,7 +70,7 @@ function valiDate(date) {
 
 function retrieveDateValueFromInput(input) {
   const now = new Date();
-
+  
   switch(true) {
     case input?.constructor === String:
       return valiDate(new Date(input));
@@ -87,13 +82,22 @@ function retrieveDateValueFromInput(input) {
   }
 }
 
-function currentLocalTime4TZ(date, localeHere) {
-  const tzRemote = {timeZone: date.localeInfo.timeZone, hourCycle: `h23`};
-  const inTheZone = new Date(date.toLocaleString(`en-CA`, tzRemote));
-
+function LocalDateAndTime4TimeZone({timeZoneDate, timeZoneID} = {}) {
+  timeZoneID = localeInfoValidator({timeZone: timeZoneID}).timeZone;
+  const timeZoneDT = xDate(new Date(timeZoneDate), {timeZone: timeZoneID});
+  const info = timeZoneDT.info;
+  const locals = info.dateTime.user;
+  const localHere = xDate(timeZoneDate);
+  const distance = offset2Number(locals.offsetFromRemote, true);
+  localHere.time = {hours: localHere.hours + distance[0], minutes: localHere.minutes + distance[1]};
   return {
-    localDate: inTheZone.toLocaleDateString(),
-    localTime: inTheZone.toLocaleTimeString(localeHere.locale, {hourCycle: `h23`}),
+    remoteTimezone: timeZoneID.timeZone,
+    userTimezone: localLocaleInfo.timeZone,
+    offsetFromLocal: info.offset.fromUserTime,
+    result: {
+      [timeZoneID.replace(/\//, `_`)]: timeZoneDT.toString(`wd M d yyyy hh:mmi:ss`, `hrc:23`),
+      [localLocaleInfo.timeZone.replace(/\//, `_`)]: localHere.toString(`wd M d yyyy hh:mmi:ss`, `hrc:23`),
+    }
   };
 }
 
@@ -186,7 +190,7 @@ function extendCTOR(ctor, customMethods) {
       }
     },
     localeInformation: {
-      get() { return localeValidator() },
+      value: localLocaleInfo,
     },
     localWeekdaynames: {
       value(locale) {
@@ -230,12 +234,8 @@ function extendCTOR(ctor, customMethods) {
         }
       }
     },
-    dateTime4Timezone: {
-      value(date, timeZoneID) {
-        const timeZoneInfo = {timeZone: timeZoneID, hourCycle: `h23`};
-        return new Date(new Date(date).toLocaleString(`en`, timeZoneInfo));
-      }
-    },
+    validateLocaleInformation: { value: localeInfoValidator },
+    localDateTime4TimeZone: { value: LocalDateAndTime4TimeZone },
     keys: {
       get() {
         const customEnumerables = Object.fromEntries(
