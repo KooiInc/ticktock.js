@@ -3,7 +3,7 @@ import dateDiffFactory from "./dateDiffFactory.js";
 import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
 import {
-  localeMonthnames, localeValidator, localeWeekdays,
+  localeMonthnames, localeInfoValidator, localeWeekdays,
   setLocaleInfo, isNumberOrNumberString, localLocaleInfo, } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
@@ -45,7 +45,7 @@ export {
   offset2Number,
   offsetFrom,
   getAggregatedInfo,
-  localeValidator,
+  localeInfoValidator,
   toJSDateString,
   getDowNumber,
   fullMonth,
@@ -410,7 +410,7 @@ function DSTAcive(instance) {
 }
 
 function relocate(instance, {locale, timeZone} = {}) {
-  instance.localeInfo = localeValidator({
+  instance.localeInfo = localeInfoValidator({
     locale: locale || instance.locale,
     timeZone: timeZone || instance.timeZone
   });
