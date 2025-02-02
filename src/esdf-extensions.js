@@ -5,14 +5,13 @@ import {
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
   removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
-  offsetFrom, getAggregatedInfo, localeValidator, toJSDateString,
-  getDowNumber, fullMonth
+  offsetFrom, getAggregatedInfo, toJSDateString, getDowNumber,
+  fullMonth, localLocaleInfo,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
 
 function instanceCreator({instance, localeInfo} = {}) {
-  const userLocale = localeValidator();
   const extensions = {
     format(formatStr, moreOptions) { return format(instance, formatStr, moreOptions); },
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
@@ -48,7 +47,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get clone() { return cloneInstance(instance); },
     get ageFull() { return instance.differenceTo(new Date()).clean; },
     get localeString() { return toLocalString(instance); },
-    get userLocaleInfo() { return userLocale; },
+    get userLocaleInfo() { return localLocaleInfo; },
     get local() { return toLocalString(instance); },
     get localDate() { return toLocalString(instance, {dateOnly: true}); },
     get localTime() { return toLocalString(instance, {timeOnly: true}); },
