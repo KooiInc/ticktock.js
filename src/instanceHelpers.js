@@ -4,7 +4,7 @@ import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
 import {
   localeMonthnames, localeValidator, localeWeekdays,
-  setLocaleInfo, isNumberOrNumberString, } from "./genericHelpers.js";
+  setLocaleInfo, isNumberOrNumberString, localLocaleInfo, } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -42,12 +42,15 @@ export {
   DSTAcive,
   cloneInstance,
   timezoneAwareDifferenceTo,
+  offset2Number,
   offsetFrom,
   getAggregatedInfo,
   localeValidator,
   toJSDateString,
   getDowNumber,
   fullMonth,
+  localLocaleInfo,
+  pad0,
 };
 
 function addParts2Date(instance, ...parts2Add) {
@@ -97,14 +100,14 @@ function getNames(instance, remote = false) {
 
 function getTime(instance, tz = false) {
   const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, tz);
-  const values4Timezone = tz ? instance.timeZone : localeValidator().timeZone
+  const values4Timezone = tz ? instance.timeZone : localLocaleInfo.timeZone
   const returnValue = { values4Timezone, hours, minutes, seconds, milliseconds };
 
   return Object.freeze(returnValue);
 }
 
 function getTimeValues(instance, remote = false) {
-  const tzOpt = remote ? `,tz:${instance.timeZone}` : `,tz:${localeValidator().timeZone}`;
+  const tzOpt = remote ? `,tz:${instance.timeZone}` : `,tz:${localLocaleInfo.timeZone}`;
   const opts = `l:en-CA${tzOpt},hrc:23`;
   
   return instance.format("hh-mmi-ss", opts)
@@ -114,10 +117,10 @@ function getTimeValues(instance, remote = false) {
 }
 
 function getFullDate(instance, local) {
-  const tzOpt = !local ? `,tz:${instance.timeZone}` : `tz:${localeValidator().timeZone}`;
+  const tzOpt = !local ? `,tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
   let [year, month, date] = instance.format(`yyyy-mm-dd`, tzOpt).split(/-/) .map(Number);
   month -= 1;
-  const values4Timezone = local ? instance.timeZone : localeValidator().timeZone;
+  const values4Timezone = local ? instance.timeZone : localLocaleInfo.timeZone;
   return Object.freeze({ values4Timezone, year, month, date, });
 }
 
@@ -154,7 +157,7 @@ function offsetFrom(instance, from) {
   const isUTC = String(from).toLowerCase() === `utc`;
   from = isUTC
     ? instance.clone.relocate({timeZone: `Etc/UTC`})
-    : xDate(instance.value, { timeZone: from.timeZone || localeValidator().timeZone });
+    : xDate(instance.value, { timeZone: from.timeZone || localLocaleInfo.timeZone });
   
   const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
 
@@ -174,12 +177,13 @@ function maybePlural(value, word) {
 }
 
 function timeDiffenceInWords(diffInfo) {
-  if (/00:00/.test(diffInfo)) { return `no time diffence`; }
+  if (/00:00/.test(diffInfo)) { return `no time diffence to`; }
   const hoursAndMinutes = diffInfo.slice(1).split(`:`).map(Number);
   const [hours, minutes] = hoursAndMinutes;
   const later = diffInfo.at(0) === `+`;
   return minutes > 0
-    ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${maybePlural(minutes, `minute`)} ${later ? `ahead of`: `behind`}`
+    ? `${hours} ${maybePlural(hours, `hour`)} and ${minutes} ${
+      maybePlural(minutes, `minute`)} ${later ? `ahead of`: `behind`}`
     : `${hours} ${maybePlural(hours, `hour`)} ${later ? `ahead of`: `behind`}`;
 }
 
@@ -200,7 +204,7 @@ function toJSDateString(instance, withFormat, withFormatOptions) {
 
 function getDowNumber(instance, remote = false) {
   const dayFormat = Intl.DateTimeFormat(`en-CA`, {
-    timeZone: remote ? instance.timeZone : localeValidator().timeZone,
+    timeZone: remote ? instance.timeZone : localLocaleInfo.timeZone,
     weekday: "short",
   });
   
@@ -211,6 +215,7 @@ function getAggregatedInfo(instance) {
   const localInstance = instance.clone
     .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
   const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance).offset;
+  const timeDifferenceRemote2UserLocal = localInstance.offsetFrom(instance).offset;
   const local = instance.userLocaleInfo;
   const remote = instance.localeInfo;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
@@ -231,7 +236,8 @@ function getAggregatedInfo(instance) {
         dayPeriodTime: pmLocal,
         hasDST: localInstance.hasDST,
         DSTActive: localInstance.DSTActive,
-        string: localInstance.toString(),
+        offsetFromRemote: timeDifferenceRemote2UserLocal,
+        string: localInstance.toString()
       },
       remote: {
         ...instance.zoneDateTime,
@@ -241,6 +247,7 @@ function getAggregatedInfo(instance) {
         dayPeriodTime: pmRemote,
         hasDST: instance.hasDST,
         DSTActive: instance.DSTActive,
+        offsetFromUser: timeDifferenceUserLocal2Remote,
         string: instance.toString(),
       },
     },
@@ -359,14 +366,15 @@ function setProxy(proxy) {
   return proxy;
 }
 
-function offset2Number(dtStr, all = false) {
+function offset2Number(offsetString, all = false) {
   if (all) {
-    const values = dtStr.slice(1).split(/[-:]/).map(Number);
-    values.unshift(dtStr.slice(0, 1));
+    let values = offsetString.slice(1).split(/[-:]/).map(Number);
+    const minus = offsetString.slice(0, 1) === `-`;
+    values = values.map(v => minus ? -v : v);
     return values;
   }
   
-  return Number(dtStr.split(/[+-]/).slice(-1)[0].replace(/:/, ``));
+  return Number(offsetString.split(/[+-]/).slice(-1)[0].replace(/:/, ``));
 }
 
 function removeTime(instance) {
