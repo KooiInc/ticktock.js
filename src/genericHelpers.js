@@ -91,7 +91,7 @@ function LocalDateAndTime4TimeZone({timeZoneDate, timeZoneID} = {}) {
   const distance = offset2Number(locals.offsetFromRemote, true);
   localHere.time = {hours: localHere.hours + distance[0], minutes: localHere.minutes + distance[1]};
   return {
-    remoteTimezone: timeZoneID.timeZone,
+    remoteTimezone: timeZoneID,
     userTimezone: localLocaleInfo.timeZone,
     offsetFromLocal: info.offset.fromUserTime,
     result: {
