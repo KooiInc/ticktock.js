@@ -63,6 +63,7 @@ import $D from "[location of the library]";
 $D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland"});
 /* ↳ result (developer timeZone is Europe/Amsterdam) 
 {
+  remoteTimezone: "Pacific/Auckland",
   userTimezone: "Europe/Amsterdam",
   offsetFromLocal: "Pacific/Auckland 12 hours ahead of Europe/Amsterdam",
   result: {
