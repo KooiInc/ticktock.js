@@ -80,7 +80,7 @@ $D.localDateTime4TimeZone( {
 */
 
 $D.localDateTime4TimeZone( {
-  timeZoneDate: new Date("2025/01/15 15:00:00"),
+  timeZoneDate: "2025/01/15 15:00:00",
   timeZoneID: "Pacific/Auckland",
   userTimeZoneID: "America/Los_Angeles" } )
 /* ↳ result
