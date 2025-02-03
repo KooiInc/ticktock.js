@@ -65,7 +65,9 @@ date/time in `timeZoneID`"?
 *Examples* `localDateTime4TimeZone`
 ```javascript
 import $D from "[location of the library]";
-$D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland"});
+$D.localDateTime4TimeZone( {
+  timeZoneDate: new Date("2025/01/15 15:00:00"),
+  timeZoneID: "Pacific/Auckland" } );
 /* ↳ result (developer timeZone is Europe/Amsterdam) 
 {
   remoteTimezone: "Pacific/Auckland",
@@ -77,7 +79,10 @@ $D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZo
 }
 */
 
-$D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland", userTimeZoneID: "America/Los_Angeles"})
+$D.localDateTime4TimeZone( {
+  timeZoneDate: new Date("2025/01/15 15:00:00"),
+  timeZoneID: "Pacific/Auckland",
+  userTimeZoneID: "America/Los_Angeles" } )
 /* ↳ result
 {
   remoteTimezone: "Pacific/Auckland",
