@@ -55,9 +55,14 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>retrieves a sorted list of all keys (getter/method names) of a TickTock instance, sorted alphabetically.
 <br><ins>returns</ins> `String[]`
 
-☑️ `localDateTime4TimeZone({timeZoneDate:Date|String, timeZoneID:String})` <ins>method</ins>
-<br>calculates user (local) date and time information for `date` in `timeZoneId`
+☑️ `localDateTime4TimeZone({timeZoneDate:Date|String, timeZoneID:String, userTimeZoneID:String})` <ins>method</ins>
+<br>calculates what date and time it is for `timeZoneDate` in `timeZoneId` in the `userTimeZoneID` time zone. When
+`userTimeZoneID` is not provided, the local computer time zone is used.
+<br>So this function answers the question: "what is the date and time in `userTimeZoneID` for a 
+date/time in `timeZoneID`"?
 <br><ins>returns</ins> `Object<String, String|Object<String, String>>`
+
+*Examples* `localDateTime4TimeZone`
 ```javascript
 import $D from "[location of the library]";
 $D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland"});
@@ -65,10 +70,22 @@ $D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZo
 {
   remoteTimezone: "Pacific/Auckland",
   userTimezone: "Europe/Amsterdam",
-  offsetFromLocal: "Pacific/Auckland 12 hours ahead of Europe/Amsterdam",
+  timeDifference: "-12 hours: Europe/Amsterdam is 12 hours behind Pacific/Auckland",
   result: {
-    Pacific_Auckland: "Wed Jan 15 2025 15:00:00",
-    Europe_Amsterdam: "Wed Jan 15 2025 03:00:00"
+    Pacific_Auckland: "2025/01/15 15:00:00",
+    Europe_Amsterdam: "2025/01/15 03:00:00"
+}
+*/
+
+$D.localDateTime4TimeZone({timeZoneDate: new Date("2025/01/15 15:00:00"), timeZoneID: "Pacific/Auckland", userTimeZoneID: "America/Los_Angeles"})
+/* ↳ result
+{
+  remoteTimezone: "Pacific/Auckland",
+  userTimezone: "America/Los_Angeles",
+  timeDifference: "-21 hours: America/Los_Angeles is 21 hours behind Pacific/Auckland",
+  result: {
+    Pacific_Auckland: "2025/01/15 15:00:00",
+    America_Los_Angeles: "2025/01/14 18:00:00"
   }
 }
 */

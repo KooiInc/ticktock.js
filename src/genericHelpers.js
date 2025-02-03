@@ -82,21 +82,24 @@ function retrieveDateValueFromInput(input) {
   }
 }
 
-function LocalDateAndTime4TimeZone({timeZoneDate, timeZoneID} = {}) {
-  timeZoneID = localeInfoValidator({timeZone: timeZoneID}).timeZone;
-  const timeZoneDT = xDate(new Date(timeZoneDate), {timeZone: timeZoneID});
-  const info = timeZoneDT.info;
-  const locals = info.dateTime.user;
-  const localHere = xDate(timeZoneDate);
-  const distance = offset2Number(locals.offsetFromRemote, true);
-  localHere.time = {hours: localHere.hours + distance[0], minutes: localHere.minutes + distance[1]};
+function localDateAndTime4TimeZone({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
+  const localTZ = {timeZone: localeInfoValidator({timeZone: timeZoneID}).timeZone};
+  const remoteTZ = {timeZone: localeInfoValidator({timeZone: userTimeZoneID || ""}).timeZone};
+  const localDate = xDate(timeZoneDate, localTZ);
+  const remoteDate = xDate(timeZoneDate, remoteTZ);
+  const diff = remoteDate.differenceTo(localDate);
+  const [hours, minutes] = diff.sign === `-` ? [-diff.hours, -diff.minutes] : [diff.hours, diff.minutes];
+  const remote4Real = remoteDate.clone.add(`${hours} hours, ${minutes} minutes`);
+  const timeDiffInWords = `${diff.sign}${diff.clean}: ${remoteTZ.timeZone} is ${diff.clean} ${
+    diff.sign === `-` ? `behind` : `ahead of`} ${localTZ.timeZone}`
+  
   return {
-    remoteTimezone: timeZoneID,
-    userTimezone: localLocaleInfo.timeZone,
-    offsetFromLocal: info.offset.fromUserTime,
+    remoteTimezone: localTZ.timeZone,
+    userTimezone: remoteTZ.timeZone,
+    timeDifference: timeDiffInWords,
     result: {
-      [timeZoneID.replace(/\//, `_`)]: timeZoneDT.toString(`wd M d yyyy hh:mmi:ss`, `hrc:23`),
-      [localLocaleInfo.timeZone.replace(/\//, `_`)]: localHere.toString(`wd M d yyyy hh:mmi:ss`, `hrc:23`),
+      [localTZ.timeZone.replace(/\//, `_`)]: xDate(timeZoneDate).toString(`yyyy/mm/dd hh:mmi:ss`, `hrc:23`),
+      [remoteTZ.timeZone.replace(/\//, `_`)]: remote4Real.toString(`yyyy/mm/dd hh:mmi:ss`, `hrc:23`),
     }
   };
 }
@@ -235,7 +238,7 @@ function extendCTOR(ctor, customMethods) {
       }
     },
     validateLocaleInformation: { value: localeInfoValidator },
-    localDateTime4TimeZone: { value: LocalDateAndTime4TimeZone },
+    localDateTime4TimeZone: { value: localDateAndTime4TimeZone },
     keys: {
       get() {
         const customEnumerables = Object.fromEntries(
