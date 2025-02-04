@@ -2,22 +2,21 @@
 
 A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
-It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. Instances are *immutable*, except for setting 
-the instance's individual date/time/locale/timeZone values.
+It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
+The bundled file size is around 19kb.
 
-The library has *no dependencies* and a *small footprint*. The bundled file size is around 18kb.
+Instances are *immutable*, except for setting the instance's individual date/time/locale/timeZone values.
 
-### Importing
-The library exports the TickTock constructor by default, ready for use.
+### For example
+`[instance].year = [new value]` *changes* the year of the current instance
+<br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` *changes* the embedded locale information of  the current instance,
+<br>`[instance].revalue([some date])` *changes* the current instance's Date value to [some date], 
+<br>**but**
+<br>`[instance].clone([some date])` delivers a *new* instance derived from the current instance with possibly a new date ([some date])
+<br>`[instance].UTC` delivers a *new* instance for the UTC timeZone derived from the current instance and
+<br>`[instance].add("1 year, 2 days, 13 hours")` delivers a *new* instance derived from the current instance
 
-```javascript
-import $D from "[location of library]";
-const now = $D(`2025/01/22 22:00`, {timeZone: `Etc/UTC`});
-console.log(now.clone.relocate({timeZone: `Pacific/Auckland`}).differenceTo(now));
-```
-**Note**: the library is also available as npm-module @ [https://www.npmjs.com/package/ticktock-es](https://www.npmjs.com/package/ticktock-es).
-
-### locale and timezone sensitivity
+### locale and timeZone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
 the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
 `[instance].local` or `[instance].localeString`). For example, when a ticktock date is instantiated with locale `pl-PL`, 
@@ -26,19 +25,43 @@ the week day names for that instance can be retrieved as `[instance].names.dayNa
  was instantiated with locale: 'zh' and timeZone "Asia/Chongqing", [instance].local will display the date and time *in
  that time zone* (so, UTC+0900).
 
-### For example
-`[instance].year = [new value]` sets the year of the current instance
-<br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` relocates the current instance,
-<br>`[instance].revalue([some date])` changes the current instance's Date value to [some date], 
-<br>but
-<br>`[instance].clone([some date])` delivers a *new* instance derived from the current instance with possibly a new date ([some date])
-<br>`[instance].UTC` delivers a *new* instance for the UTC timeZone derived from the current instance and
-<br>`[instance].add("1 year, 2 days, 13 hours")` delivers a *new* instance derived from the current instance
-
-## Instances are proxies
+### TickTock instances are proxies
 An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 
 for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance. 
 This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
+
+**Note**: using native Date methods (e.g. `setFullYear`) may compromise immutatibility of an instance.
+
+### Importing and using
+The library exports the TickTock constructor by default, ready for use. Example:
+
+```javascript
+import $D from "[location of library]";
+const now = $D(`2025/01/22 22:00`, {timeZone: `Etc/UTC`});
+console.log(now.clone.relocate({timeZone: `Pacific/Auckland`}).differenceTo(now));
+/* ↳ result
+{
+  timeZoneStart: "Pacific/Auckland",
+  timeZoneEnd: "UTC",
+  fromUTC: "2025-01-23T09:00:00.000Z",
+  toUTC: "2025-01-22T20:00:00.000Z",
+  sign: "+",
+  years: 0,
+  months: 0,
+  days: 0,
+  hours: 13,
+  minutes: 0,
+  seconds: 0,
+  milliseconds: 0,
+  diffInDay": 0,
+  full: "0 years, 0 months, 0 days, 13 hours, 0 minutes and 0 seconds",
+  clean: "13 hours",
+  jsPeriod: "+P13H",
+  ISOPeriod: "P13H"
+}
+*/
+```
+**Note**: the library is also available as npm-module @ [https://www.npmjs.com/package/ticktock-es](https://www.npmjs.com/package/ticktock-es).
 
 ## Constructor static methods
 The constructor includes a few static methods
