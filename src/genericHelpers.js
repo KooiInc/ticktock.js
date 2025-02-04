@@ -1,4 +1,4 @@
-import { add2Date, fullMonth, offset2Number, } from "./instanceHelpers.js";
+import { add2Date, fullMonth, } from "./instanceHelpers.js";
 import { instanceCreator } from "./instantiationHelpers.js";
 import xDate from "../index.js";
 const localLocaleInfo = localeInfoValidator();
