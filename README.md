@@ -55,47 +55,6 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>retrieves a sorted list of all keys (getter/method names) of a TickTock instance, sorted alphabetically.
 <br><ins>returns</ins> `String[]`
 
-☑️ `localDateTime4TimeZone({timeZoneDate:Date|String, timeZoneID:String, userTimeZoneID:String})` <ins>method</ins>
-<br>calculates what date and time it is for `timeZoneDate` in `timeZoneId` in the `userTimeZoneID` time zone. When
-`userTimeZoneID` is not provided, the local computer time zone is used.
-<br>So this function answers the question: "what is the date and time in `userTimeZoneID` for a 
-date/time in `timeZoneID`"?
-<br><ins>returns</ins> `Object<String, String|Object<String, String>>`
-
-*Examples* `localDateTime4TimeZone`
-```javascript
-import $D from "[location of the library]";
-$D.localDateTime4TimeZone( {
-  timeZoneDate: new Date("2025/01/15 15:00:00"),
-  timeZoneID: "Pacific/Auckland" } );
-/* ↳ result (developer timeZone is Europe/Amsterdam) 
-{
-  remoteTimezone: "Pacific/Auckland",
-  userTimezone: "Europe/Amsterdam",
-  timeDifference: "-12 hours: Europe/Amsterdam is 12 hours behind Pacific/Auckland",
-  result: {
-    Pacific_Auckland: "2025/01/15 15:00:00",
-    Europe_Amsterdam: "2025/01/15 03:00:00"
-}
-*/
-
-$D.localDateTime4TimeZone( {
-  timeZoneDate: "2025/01/15 15:00:00",
-  timeZoneID: "Pacific/Auckland",
-  userTimeZoneID: "America/Los_Angeles" } )
-/* ↳ result
-{
-  remoteTimezone: "Pacific/Auckland",
-  userTimezone: "America/Los_Angeles",
-  timeDifference: "-21 hours: America/Los_Angeles is 21 hours behind Pacific/Auckland",
-  result: {
-    Pacific_Auckland: "2025/01/15 15:00:00",
-    America_Los_Angeles: "2025/01/14 18:00:00"
-  }
-}
-*/
-```
-
 ☑️ `localeInformation` <ins>getter</ins>
 <br>retrieves the users' default locale/timeZone information
 <br><ins>returns</ins> `Object<String, String> {locale, timeZone, calendar, numberingSystem, year, month, day}`
@@ -118,6 +77,48 @@ If `locale` is given (e.g. `nl-BE`, `pl`) and valid the calendar Date instances 
 otherwise the default (user) locale.
 <br>**Note**: `month` is not zero based, so january = 1, december = 12.
 <br><ins>returns</ins> `Array<String>`
+
+☑️ `timeAcrossZones({timeZoneDate:Date|String, timeZoneID:String, userTimeZoneID:String})` <ins>method</ins>
+<br>calculates what date and time it is for `timeZoneDate` in `timeZoneId` in the `userTimeZoneID` time zone. When
+`userTimeZoneID` is not provided, the local computer time zone is used.
+<br>In other words: this function answers the question "*what is the Date (and time) in `userTimeZoneID` for a
+specific Date and time in `timeZoneID`*"?
+<br>**Note**: `timeZoneDate` can *NOT* be a TickTock instance.
+<br><ins>returns</ins> `Object<String, String|Object<String, String>>`
+
+*Examples* `timeAcrossTimezones`
+```javascript
+import $D from "[location of the library]";
+$D.timeAcrossZones( {
+  timeZoneDate: new Date("2025/01/15 15:00:00"),
+  timeZoneID: "Pacific/Auckland" } );
+/* ↳ result (developer timeZone is Europe/Amsterdam) 
+{
+  remoteTimezone: "Pacific/Auckland",
+  userTimezone: "Europe/Amsterdam",
+  timeDifference: "-12 hours: Europe/Amsterdam is 12 hours behind Pacific/Auckland",
+  result: {
+    Pacific_Auckland: "2025/01/15 15:00:00",
+    Europe_Amsterdam: "2025/01/15 03:00:00"
+}
+*/
+
+$D.timeAcrossZones( {
+  timeZoneDate: "2025/01/15 15:00:00",
+  timeZoneID: "Pacific/Auckland",
+  userTimeZoneID: "America/Los_Angeles" } )
+/* ↳ result
+{
+  remoteTimezone: "Pacific/Auckland",
+  userTimezone: "America/Los_Angeles",
+  timeDifference: "-21 hours: America/Los_Angeles is 21 hours behind Pacific/Auckland",
+  result: {
+    Pacific_Auckland: "2025/01/15 15:00:00",
+    America_Los_Angeles: "2025/01/14 18:00:00"
+  }
+}
+*/
+```
 
 ☑️ `yearCalendar({year:Number, locale:String})` <ins>method</ins>
 <br>creates an Object containing for every month of the `year` an array of TickTock instances for all Dates in that month.

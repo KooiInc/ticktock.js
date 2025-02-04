@@ -82,7 +82,7 @@ function retrieveDateValueFromInput(input) {
   }
 }
 
-function localDateAndTime4TimeZone({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
+function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   const localTZ = {timeZone: localeInfoValidator({timeZone: timeZoneID}).timeZone};
   const remoteTZ = {timeZone: localeInfoValidator({timeZone: userTimeZoneID || ""}).timeZone};
   const localDate = xDate(timeZoneDate, localTZ);
@@ -238,7 +238,7 @@ function extendCTOR(ctor, customMethods) {
       }
     },
     validateLocaleInformation: { value: localeInfoValidator },
-    localDateTime4TimeZone: { value: localDateAndTime4TimeZone },
+    timeAcrossZones: { value: timeAcrossZones },
     keys: {
       get() {
         const customEnumerables = Object.fromEntries(
