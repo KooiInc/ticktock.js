@@ -15,6 +15,7 @@ import $D from "[location of library]";
 const now = $D(`2025/01/22 22:00`, {timeZone: `Etc/UTC`});
 console.log(now.clone.relocate({timeZone: `Pacific/Auckland`}).differenceTo(now));
 ```
+**Note**: the library is also available as npm-module @ [https://www.npmjs.com/package/ticktock-es](https://www.npmjs.com/package/ticktock-es).
 
 ### locale and timezone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
