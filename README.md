@@ -86,7 +86,7 @@ specific Date and time in `timeZoneID`*"?
 <br>**Note**: `timeZoneDate` can *NOT* be a TickTock instance.
 <br><ins>returns</ins> `Object<String, String|Object<String, String>>`
 
-*Examples* `timeAcrossTimezones`
+*Examples* `timeAcrossZones`
 ```javascript
 import $D from "[location of the library]";
 $D.timeAcrossZones( {
