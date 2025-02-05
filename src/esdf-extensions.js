@@ -110,6 +110,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     addAggregates: { value(instance, aggregates2Add) {
       Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
         .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
+      return instance;
     }, enumerable: false },
   });
 
