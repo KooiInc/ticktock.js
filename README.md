@@ -56,9 +56,11 @@ console.log(now.clone.relocate({timeZone: `Pacific/Auckland`}).differenceTo(now)
   diffInDay": 0,
   full: "0 years, 0 months, 0 days, 13 hours, 0 minutes and 0 seconds",
   clean: "13 hours",
-  jsPeriod: "+P13H",
-  ISOPeriod: "P13H"
+  jsPeriod: "+PT13H",
+  ISOPeriod: "PT13H"
 }
+Note: for js-/ISOPeriod see  
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal/Duration
 */
 ```
 **Note**: the library is also available as npm-module @ [https://www.npmjs.com/package/ticktock-es](https://www.npmjs.com/package/ticktock-es).
