@@ -4,7 +4,9 @@ import dateAddFactory from "./dateAddFactory.js";
 import xDate from "../index.js";
 import {
   localeMonthnames, localeInfoValidator, localeWeekdays,
-  setLocaleInfo, isNumberOrNumberString, localLocaleInfo, } from "./genericHelpers.js";
+  setLocaleInfo, isNumberOrNumberString, localLocaleInfo,
+  retrieveFormattingFormats,
+} from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
@@ -87,7 +89,8 @@ function daysUntil(instance, nextDate) {
 }
 
 function getNames(instance, remote = false) {
-  const {locale, timeZone, formatOptions} = remote ? instance.localeInfo : xDate().localeInfo;
+  const {locale, timeZone, } = remote ? instance.localeInfo : localLocaleInfo;
+  const formatOptions = retrieveFormattingFormats(locale, timeZone);
   const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
   return { locale, timeZone,
@@ -288,7 +291,7 @@ function fullMonth(instance, forLocale) {
   const firstDay = instance.clone.removeTime;
   if (forLocale) { firstDay.relocate({locale: forLocale}); }
   firstDay.date = { date: 1 };
-  return [...Array(daysInMonth(firstDay))].map( (v, i) => firstDay.addDays(i+1) );
+  return [...Array(daysInMonth(firstDay))].map( (v, i) => firstDay.add(`${i+1} days`) );
 }
 
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
@@ -412,9 +415,9 @@ function DSTAcive(instance) {
 function relocate(instance, {locale, timeZone} = {}) {
   instance.localeInfo = localeInfoValidator({
     locale: locale || instance.locale,
-    timeZone: timeZone || instance.timeZone
+    timeZone: timeZone || instance.timeZone,
   });
-
+  
   return instance;
 }
 
