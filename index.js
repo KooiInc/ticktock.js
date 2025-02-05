@@ -2,32 +2,30 @@ import {
   localeInfoValidator,
   retrieveDateValueFromInput as retrieveDateValue,
   getAggregates,
-  extendCTOR,
+  createCTORStaticMethods,
 } from "./src/genericHelpers.js";
 import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
 
 let ctorIsExtended = false;
-
 export default XDateFactory();
 
 function XDateFactory() {
   const customMethods = {};
   
   if (!ctorIsExtended) {
-    extendCTOR(ctor, customMethods);
+    createCTORStaticMethods(ctor, customMethods);
     ctorIsExtended = true;
   }
   
   return ctor;
 
   function ctor(input, localeInfo) {
-    let maybeDate = input?.locale || input?.timeZone ? new Date() : retrieveDateValue(input);
-    const localeInfoResolved = input?.locale || input?.timeZone
+    const inputIsLocaleInfo = input?.locale || input?.timeZone;
+    let maybeDate = new Date(inputIsLocaleInfo ? Date.now : retrieveDateValue(input));
+    const localeInfoResolved = inputIsLocaleInfo
       ? localeInfoValidator(input) : localeInfoValidator(localeInfo || {});
     const instanceExtensions = instanceCreator({localeInfo: localeInfoResolved});
-    const instance = instanceExtensions.proxy(new Date(maybeDate), getTraps(instanceExtensions));
-    const instanceAggregates = getAggregates(instance, customMethods);
-    instance.addAggregates(instance, instanceAggregates);
-    return Object.freeze(instance);
+    const instance = instanceExtensions.proxy(maybeDate, getTraps(instanceExtensions));
+    return Object.freeze(instance.addAggregates(instance, getAggregates(instance, customMethods)));
   }
 }
