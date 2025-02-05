@@ -55,11 +55,13 @@ function dateDiffFactory() {
       diffInDays };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
+    const periodTime = hours + minutes + seconds > 0 ? `T` : ``;
     diffs.jsPeriod = `${sign}P${
       years > 0 ? `${years}Y` : ``}${
       months > 0 ? `${months}M` : ``}${
       weeks > 0 ? `${weeks}W` : ``}${
       durationDays > 0 ? `${durationDays}D` : ``}${
+      periodTime}${
       hours > 0 ? `${hours}H` : ``}${
       minutes > 0 ? `${minutes}M` : ``}${
       seconds > 0 ? `${seconds}S` : ``}`;
@@ -67,6 +69,7 @@ function dateDiffFactory() {
       years > 0 ? `${years}Y` : ``}${
       months > 0 ? `${months}M` : ``}${
       days > 0 ? `${days}D` : ``}${
+      periodTime}${
       hours > 0 ? `${hours}H` : ``}${
       minutes > 0 ? `${minutes}M` : ``}${
       seconds > 0 ? `${seconds}S` : ``}`;
