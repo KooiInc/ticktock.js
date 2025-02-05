@@ -1,10 +1,11 @@
 import { add2Date, fullMonth, } from "./instanceHelpers.js";
 import { instanceCreator } from "./instantiationHelpers.js";
 import xDate from "../index.js";
-const localLocaleInfo = localeInfoValidator();
+const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
-  retrieveDateValueFromInput, getAggregates, extendCTOR, isNumberOrNumberString, };
+  retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
+  retrieveFormattingFormats, };
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -56,7 +57,7 @@ function localeInfoValidator({ locale, timeZone, logError = false} = {}) {
     return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions(); }
   catch (error) {
     logError && console.error(`localeValidator: invalid input, using computer locale`);
-    return Intl.DateTimeFormat().resolvedOptions(); }
+    return localLocaleInfo; }
 }
 
 function setLocaleInfo({locale, timeZone} = {}) {
@@ -90,8 +91,11 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   const diff = remoteDate.differenceTo(localDate);
   const [hours, minutes] = diff.sign === `-` ? [-diff.hours, -diff.minutes] : [diff.hours, diff.minutes];
   const remote4Real = remoteDate.clone.add(`${hours} hours, ${minutes} minutes`);
-  const timeDiffInWords = `${diff.sign}${diff.clean}: ${remoteTZ.timeZone} is ${diff.clean} ${
-    diff.sign === `-` ? `behind` : `ahead of`} ${localTZ.timeZone}`
+  const equal = diff.clean === `Dates are equal`;
+  const timeDiffInWords = equal
+    ? `No difference`
+    : `${diff.sign}${diff.clean}: ${remoteTZ.timeZone} is ${diff.clean} ${
+        diff.sign === `-` ? `behind` : `ahead of`} ${localTZ.timeZone}`
   
   return {
     remoteTimezone: localTZ.timeZone,
@@ -185,7 +189,7 @@ function getAggregates(instance, customExtras) {
   return aggregates;
 }
 
-function extendCTOR(ctor, customMethods) {
+function createCTORStaticMethods(ctor, customMethods) {
   Object.defineProperties(ctor, {
     now: {
       get() {
