@@ -97,9 +97,9 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>converts the current Date to a TickTock instance, within the user locale/timeZone.
 <br><ins>returns</ins> new TickTock instance
 
-☑️ `monthCalendar({monthNr:Number, locale:String})` <ins>method</ins>
-<br>creates an Array containing TickTock instances for all Dates in `month`.
-If `locale` is given (e.g. `nl-BE`, `pl`) and valid the calendar Date instances encapsulates that locale, 
+☑️ `monthCalendar({year:Number, monthNr:Number, locale:String})` <ins>method</ins>
+<br>creates an Array containing TickTock instances for all Dates in `month` for `year`.
+If a valid `locale` is given (e.g. `nl-BE`, `pl`) calendar Date instances encapsulate that locale, 
 otherwise the default (user) locale.
 <br>**Note**: `month` is not zero based, so january = 1, december = 12.
 <br><ins>returns</ins> `Array<String>`
