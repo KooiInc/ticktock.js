@@ -348,7 +348,6 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function cloneInstance(instance, date) {
-  const newDate = new Date(date);
   return xDate(!Number.isNaN(+date) && date || instance.value, instance.localeInfo);
 }
 
