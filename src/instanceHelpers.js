@@ -62,7 +62,7 @@ function addParts2Date(instance, ...parts2Add) {
 }
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone.UTC;
-  start = xDate(start).UTC;
+  start = xDate(start?.value || start).UTC;
 
   if (!Number.isNaN(+start) && !end) {
     return before ? +instnc < +start : +instnc > +start
@@ -291,7 +291,7 @@ function fullMonth(instance, forLocale) {
   const firstDay = instance.clone.removeTime;
   if (forLocale) { firstDay.relocate({locale: forLocale}); }
   firstDay.date = { date: 1 };
-  return [...Array(daysInMonth(firstDay))].map( (v, i) => firstDay.add(`${i+1} days`) );
+  return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.add(`${i+1} days`) ));
 }
 
 function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
@@ -348,7 +348,13 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function cloneInstance(instance, date) {
-  return xDate(!Number.isNaN(+date) && date || instance.value, instance.localeInfo);
+  date = date && new Date(date);
+  
+  if (date && !Number.isNaN(date)) {
+    return xDate(date, instance.localeInfo);
+  }
+  
+  return xDate.from(...instance.dateTimeValues).relocate(instance.localeInfo);
 }
 
 function weekdayFactory() {
