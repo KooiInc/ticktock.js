@@ -40,8 +40,8 @@ function instanceCreator({instance, localeInfo} = {}) {
     set minutes(n) { return setTimeParts(instance, {minutes: n}); },
     set seconds(n) { return setTimeParts(instance, {seconds: n}); },
     set milliseconds(n) { return setTimeParts(instance, {milliseconds: `${n}`}); },
-    set time({hours, minutes, seconds, milliseconds} = {}) { return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
-    set date({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
+    set time({hours, minutes, seconds, milliseconds}) { return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
+    set date({year, month, date}) { return setDateParts(instance, {year, month, date}); },
 
     get age() { return instance.differenceTo(new Date()).years; },
     get clone() { return cloneInstance(instance); },
