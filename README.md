@@ -621,7 +621,7 @@ console.log(inChina.info);
 
 
 ☑️ `UTC` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance within the GMT timeZone
+<br><ins>returns</ins> new TickTock instance with encapsulated UTC timeZone.
 
 
 ☑️ `UTCOffset` <ins>getter</ins>
