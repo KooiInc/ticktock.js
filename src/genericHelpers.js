@@ -42,7 +42,7 @@ function localeMonthnames(locale = "en") {
 function calenderForYear({year, locale} = {}) {
   year = isNumberOrNumberString(year) ? +year : new Date().getFullYear();
   const calendar = { year, calendar: {} };
-  const monthNames = localeMonthnames().long;
+  const monthNames = localeMonthnames().long.map(v => v.toLowerCase());
   
   for (let i = 0; i < 12; i += 1) {
     const firstDay = xDate.from(year, i, 1);
@@ -221,9 +221,9 @@ function createCTORStaticMethods(ctor, customMethods) {
       value: calenderForYear,
     },
     monthCalendar: {
-      value({monthNr, locale} = {}) {
+      value({year, monthNr, locale = `en-CA`} = {}) {
         if (isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12) {
-          return $D({locale: `en-CA`}).fullMonth(locale);
+          return xDate.from(year || new Date().getFullYear, monthNr -1, 1).relocate({locale}).fullMonth(locale);
         }
         
         return `${monthNr} should be a Number (1 - 12)`;
