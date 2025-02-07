@@ -18,7 +18,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     revalue(date) { instance = revalue(instance, date); return instance; },
     firstWeekday({sunday = false, midnight = false} = {}) { return firstWeekday(instance, {sunday, midnight}); },
     next(day) { return nextOrPrevious(instance, {day, next: true}); },
-    previous(day) { return nextOrPrevious(instance, {day}); },
+    previous(day) { return nextOrPrevious(instance, {day, next: false}); },
     add(...args) { return addParts2Date(instance, ...args); },
     subtract(...args) { return addParts2Date(instance, ...[`subtract`].concat(args)); },
     cloneWith(date) { return cloneInstance(instance, date); },

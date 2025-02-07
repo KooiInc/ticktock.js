@@ -60,6 +60,7 @@ function addParts2Date(instance, ...parts2Add) {
   add2Date(clone, ...parts2Add);
   return clone;
 }
+
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone.UTC;
   start = xDate(start?.value || start).UTC;
@@ -87,12 +88,14 @@ function daysUntil(instance, nextDate) {
   return parseInt(`${diff.sign}${diff.diffInDays}`);
 }
 
-function getNames(instance, remote = false) {
-  const {locale, timeZone, } = remote ? instance.localeInfo : localLocaleInfo;
+function getNames(instance, forLocale = false) {
+  const {locale, timeZone, } = forLocale ? instance.localeInfo : localLocaleInfo;
   const formatOptions = retrieveFormattingFormats(locale, timeZone);
   const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
-  return { locale, timeZone,
+  return {
+    locale,
+    timeZone,
     monthName: monthAndDay[0],
     dayName: monthAndDay[1],
     dayNames: localeWeekdays(locale),
@@ -136,8 +139,8 @@ function getDateValues(instance, local = true) {
   return values;
 }
 
-function firstWeekday(instance, {sunday = false, midnight = false} = {}) {
-  return nextOrPrevious(instance, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true }) ;
+function firstWeekday(instance, {sunday = false} = {}) {
+  return nextOrPrevious(instance, { day: sunday ? `sunday` : `monday` }) ;
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
@@ -287,31 +290,29 @@ function daysInMonth(instance) {
 }
 
 function fullMonth(instance, forLocale) {
-  const firstDay = instance.clone.removeTime;
-  if (forLocale) { firstDay.relocate({locale: forLocale}); }
+  const firstDay = instance.clone.relocate({locale: `en`});
   firstDay.date = { date: 1 };
   return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.add(`${i+1} days`) ));
 }
 
-function nextOrPrevious(instance, {day, next = false, forFirstWeekday = false} = {}) {
+function nextOrPrevious(instance, {day, next = false} = {}) {
   let dayNr = weekdays(day?.toLowerCase());
-  const cloned = xDate(new Date(...instance.dateValues), instance.localeInfo);
-
-  if (dayNr < 0) { return cloned; }
-
-  let today = cloned.getDay();
-
-  if (forFirstWeekday && today === dayNr) { return instance; }
-
-  let addTerm = next ? 1 : -1 ;
-
-  return findDayRecursive(today);
-
-  function findDayRecursive(day) {
-    return day !== dayNr
-      ? findDayRecursive(cloned.add(`${addTerm} days`).getDay())
-      : cloned;
+  
+  if (dayNr < 0) {
+    console.error(`[TickTock instance].next/previous invalid day value ${day}`);
+    return cloned;
   }
+  
+  const cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
+  let addTerm = next ? 1 : -1 ;
+  
+  return findDayRecursive(cloned, dayNr, addTerm);
+}
+
+function findDayRecursive(cloned, dayNr, addTerm) {
+  return add2Date(cloned, `${addTerm} day`).getDay() < dayNr
+    ? findDayRecursive(cloned, dayNr, addTerm)
+    : cloned;
 }
 
 function toLocalString(instance, {dateOnly = false, timeOnly = false} = {}) {
@@ -363,9 +364,9 @@ function weekdayFactory() {
   };
 
   return function(day) {
-    if (!day) { return -1 }
+    day = `${day}`.toLowerCase();
     let dayNr = dow.short.indexOf(day);
-    return dayNr < 0 ? dow.long.indexOf(day) : dayNr;
+    return !isNumberOrNumberString(dayNr) && dow.long.findIndex(v => v == day);
   };
 }
 
