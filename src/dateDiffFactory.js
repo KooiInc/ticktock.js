@@ -25,9 +25,8 @@ function dateDiffFactory() {
 
   return function getDifference({start, end, diffs = {}} = {}) {
     const checks = checkParams(start, end);
+    const sign = end > start ? `+` : `-`;
     if (checks.error) { return checks; }
-    const diffRaw = start - end;
-    const sign = diffRaw === 0 ? `` : diffRaw < 0 ? `-` : `+`;
     const differenceMs = Math.abs(start - end);
     const differenceDate = new Date(differenceMs);
     const years = differenceDate.getUTCFullYear() - 1970;
@@ -44,7 +43,7 @@ function dateDiffFactory() {
       ...diffs,
       fromUTC: start,
       toUTC: end,
-      sign,
+      sign: ``,
       years,
       months,
       days,
@@ -55,24 +54,28 @@ function dateDiffFactory() {
       diffInDays };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
+    diffs.equalDates = diffs.clean === `Dates are equal`;
     const periodTime = hours + minutes + seconds > 0 ? `T` : ``;
-    diffs.jsPeriod = `${sign}P${
-      years > 0 ? `${years}Y` : ``}${
-      months > 0 ? `${months}M` : ``}${
-      weeks > 0 ? `${weeks}W` : ``}${
-      durationDays > 0 ? `${durationDays}D` : ``}${
-      periodTime}${
-      hours > 0 ? `${hours}H` : ``}${
-      minutes > 0 ? `${minutes}M` : ``}${
-      seconds > 0 ? `${seconds}S` : ``}`;
-    diffs.ISOPeriod = `P${
-      years > 0 ? `${years}Y` : ``}${
-      months > 0 ? `${months}M` : ``}${
-      days > 0 ? `${days}D` : ``}${
-      periodTime}${
-      hours > 0 ? `${hours}H` : ``}${
-      minutes > 0 ? `${minutes}M` : ``}${
-      seconds > 0 ? `${seconds}S` : ``}`;
+    if (diffs.clean !== `Dates are equal`) {
+      diffs.sign = sign;
+      diffs.jsPeriod = `${sign}P${
+        years > 0 ? `${years}Y` : ``}${
+        months > 0 ? `${months}M` : ``}${
+        weeks > 0 ? `${weeks}W` : ``}${
+        durationDays > 0 ? `${durationDays}D` : ``}${
+        periodTime}${
+        hours > 0 ? `${hours}H` : ``}${
+        minutes > 0 ? `${minutes}M` : ``}${
+        seconds > 0 ? `${seconds}S` : ``}`;
+      diffs.ISOPeriod = `P${
+        years > 0 ? `${years}Y` : ``}${
+        months > 0 ? `${months}M` : ``}${
+        days > 0 ? `${days}D` : ``}${
+        periodTime}${
+        hours > 0 ? `${hours}H` : ``}${
+        minutes > 0 ? `${minutes}M` : ``}${
+        seconds > 0 ? `${seconds}S` : ``}`;
+    }
     return diffs;
   };
 
