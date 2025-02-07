@@ -278,10 +278,10 @@ console.log(inChina.info);
 
 <!--LIST-->
 ☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
-<br>adds `whatToAdd` to the instance Date value.
-<br>**note**: `whatToAdd` Can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
+<br>adds `whatToAdd` to the instance Date value. 
+<br>**Note**: `whatToAdd` can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
 <br>example `$D("2000/01/01").add("1 year")`
-<br><ins>returns</ins> new TickTock instance with Date + `whatToAdd`
+<br><ins>returns</ins> new TickTock instance with Date value + `whatToAdd`
 
 
 ☑️ `addDays(nDays:Number)` <ins>method</ins>
