@@ -1,4 +1,4 @@
-import { add2Date, fullMonth, } from "./instanceHelpers.js";
+import {add2Date, fullMonth, offset2Number,} from "./instanceHelpers.js";
 import { instanceCreator } from "./instantiationHelpers.js";
 import xDate from "../index.js";
 const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
@@ -89,14 +89,15 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   const localDate = xDate(timeZoneDate, localTZ);
   const remoteDate = xDate(timeZoneDate, remoteTZ);
   const diff = remoteDate.differenceTo(localDate);
-  const [hours, minutes] = diff.sign === `-` ? [-diff.hours, -diff.minutes] : [diff.hours, diff.minutes];
+  const offset = localDate.offsetFrom(remoteDate).offset;
+  const [hours, minutes] = offset2Number(offset, true);
   const remote4Real = remoteDate.clone.add(`${hours} hours, ${minutes} minutes`);
-  const equal = diff.clean === `Dates are equal`;
+  const equal = diff.equalDates;
   const timeDiffInWords = equal
     ? `No difference`
-    : `${diff.sign}${diff.clean}: ${remoteTZ.timeZone} is ${diff.clean} ${
-        diff.sign === `-` ? `behind` : `ahead of`} ${localTZ.timeZone}`
-  
+    : `Time offset ${offset}: ${remoteTZ.timeZone} is ${diff.clean} ${
+        hours < 0 ? `behind` : `ahead of`} ${localTZ.timeZone}`;
+
   return {
     remoteTimezone: localTZ.timeZone,
     userTimezone: remoteTZ.timeZone,
