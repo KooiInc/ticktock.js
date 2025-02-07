@@ -84,8 +84,7 @@ function format(instance, formatStr, moreOptions) {
 
 function daysUntil(instance, nextDate) {
   const diff = dateDiff({start: instance, end: nextDate || instance});
-  const nextAfterInstance = diff.sign === `-`;
-  return nextAfterInstance ? diff.diffInDays : -diff.diffInDays;
+  return parseInt(`${diff.sign}${diff.diffInDays}`);
 }
 
 function getNames(instance, remote = false) {
