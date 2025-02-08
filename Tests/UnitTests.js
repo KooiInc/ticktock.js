@@ -7,11 +7,20 @@ const tzs = {
   auckland: "Pacific/Auckland",
   losAngeles: "America/Los_Angeles",
   vancouver: "America/Vancouver",
-  amsterdam: "Europe/Amsterdam"
+  amsterdam: "Europe/Amsterdam",
+  paris: "Europe/Paris"
 };
 
 describe(`Basics $D`, () => {
   const now = new Date();
+  it(`$D({timeZone: "Pacific/Auckland"}) Date value is valid Date`, () =>
+    assert.strictEqual($D({timeZone: tzs.auckland}).value.constructor, Date));
+  it(`$D({timeZone: "Pacific/Auckland"}) instance embeds Auckland time zone`, () =>
+    assert.strictEqual($D({timeZone: tzs.auckland}).timeZone, tzs.auckland));
+  it(`$D({locale: "zh"}) Date value is valid Date`, () =>
+    assert.strictEqual($D({locale: "zh"}).value.constructor, Date));
+  it(`$D({locale: "zh"}) instance embeds zh (china) locale`, () =>
+    assert.strictEqual($D({locale: "zh"}).locale, `zh`));
   it(`Stringified [$D instance].value and new Date() should be equal`, _ =>
     assert.strictEqual(String(now), String($D(now))));
   it(`[$D instance].value.constructor and new Date().constructor should be equal`, _ =>
@@ -194,44 +203,50 @@ describe(`$D instance extensions`, () => {
     // note: using winter time mostly
     const now$ = $D(`2025/01/01`, {timeZone: `Europe/Paris`});
     const auckland = now$.clone.relocate({timeZone: `Pacific/Auckland`});
-    const testAucklandToLA = {fromTZ: 'Pacific/Auckland', toTZ: `America/Los_Angeles`, offset: '-21:00'};
+    const testAucklandToLA = {fromTZ: tzs.auckland, toTZ: tzs.losAngeles, offset: '-21:00'};
     
     it(`.offsetFrom Paris to Auckland (+12)`, () => {
-      const parisToAcukland = {fromTZ: 'Europe/Paris', toTZ: 'Pacific/Auckland', offset: '+12:00'};
+      const parisToAcukland = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00'};
       assert.deepStrictEqual(
         now$.offsetFrom({timeZone: `Pacific/Auckland`}),
         parisToAcukland);
     });
     it(`.offsetFrom Auckland to Paris (-12)`, () => {
-      const testAucklandToParis = {fromTZ: 'Pacific/Auckland', toTZ: `Europe/Paris`, offset: '-12:00'};
+      const testAucklandToParis = {fromTZ: tzs.auckland, toTZ: tzs.paris, offset: '-12:00'};
       assert.deepStrictEqual(
-        auckland.offsetFrom($D.now.relocate({timeZone: `Europe/Paris`})),
+        auckland.offsetFrom($D.now.relocate({timeZone: tzs.paris})),
         testAucklandToParis);
     });
-    it(`.offsetFrom Auckland to los Angeles (-21)`, () => {
+    it(`.offsetFrom Auckland to Los Angeles (-21)`, () => {
       assert.deepStrictEqual(
-        auckland.offsetFrom($D({timeZone: `America/Los_Angeles`})),
+        auckland.offsetFrom($D({timeZone: tzs.losAngeles})),
         testAucklandToLA);
     });
-    it(`.offsetFrom Auckland to los Angeles no matter the date`, () => {
+    it(`.offsetFrom Auckland to Los Angeles no matter the date (-21)`, () => {
       assert.deepStrictEqual(
-        $D(`2022/01/01 13:00:30`, {timeZone: `Pacific/Auckland`})
-          .offsetFrom($D({timeZone: `America/Los_Angeles`})),
+        $D(`2022/01/01 13:00:30`, {timeZone: tzs.auckland})
+          .offsetFrom($D({timeZone: tzs.losAngeles})),
         testAucklandToLA);
     });
-    it(`.offsetFrom Paris to Auckland *summerTime* (+10)`, () => {
-      const parisToAcuklandSummer = {fromTZ: 'Europe/Paris', toTZ: 'Pacific/Auckland', offset: '+10:00'};
+    it(`.offsetFrom Paris *summerTime* to Auckland (+10)`, () => {
+      const paris2AucklandSummer = {fromTZ: 'Europe/Paris', toTZ: 'Pacific/Auckland', offset: '+10:00'};
       assert.deepStrictEqual(
-        $D(`2025/06/01`, {timeZone: `Europe/Paris`}).offsetFrom({timeZone: `Pacific/Auckland`}),
-        parisToAcuklandSummer);
+        $D(`2025/06/01`, {timeZone: tzs.paris}).offsetFrom({timeZone: tzs.auckland}),
+        paris2AucklandSummer);
+    });
+    it(`.offsetFrom Paris *winterTime* to Auckland (+12)`, () => {
+      const aucklandSummer2Paris = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00'};
+      assert.deepStrictEqual(
+        $D(`2025/01/01`, {timeZone: `Europe/Paris`}).offsetFrom($D.now.relocate({timeZone: `Pacific/Auckland`})),
+        aucklandSummer2Paris);
     });
     it(`.UTCOffset getter for Auckland summer time (-13)`, () => {
-      const shouldBe = {fromTZ: 'Pacific/Auckland', toTZ: 'UTC', offset: '-13:00'};
-      assert.deepStrictEqual($D(`2025/01/01`, {timeZone: `Pacific/Auckland`}).UTCOffset, shouldBe);
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-13:00'};
+      assert.deepStrictEqual($D(`2025/01/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
     it(`.UTCOffset getter for Auckland winter time (-12)`, () => {
-      const shouldBe = {fromTZ: 'Pacific/Auckland', toTZ: 'UTC', offset: '-12:00'};
-      assert.deepStrictEqual($D(`2025/06/01`, {timeZone: `Pacific/Auckland`}).UTCOffset, shouldBe);
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-12:00'};
+      assert.deepStrictEqual($D(`2025/06/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
   });
   
@@ -295,6 +310,12 @@ describe(`$D instance extensions`, () => {
       const fwdMonday = now$.firstWeekday();
       const prevMonday = now$.previous(`monday`);
       assert.strictEqual(prevMonday.local, fwdMonday.local, `${fwdMonday.local} !== ${prevMonday.local}`);
+    });
+    it(`.weeknr for 2024/12/30 (UTC) is 1`, () => {
+      assert.equal($D(`2024/12/30`).UTC.weeknr, 1);
+    });
+    it(`.weeknr for 2022/01/01 (UTC) is 52`, () => {
+      assert.equal($D(`2022/01/01`).UTC.weeknr, 52);
     });
   })
 });
