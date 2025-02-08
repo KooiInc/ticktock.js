@@ -5,8 +5,6 @@ A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04
 It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
 The bundled file size is around 19kb.
 
-Instances are *immutable*, except for setting the instance's individual date/time/locale/timeZone values.
-
 ### For example
 `[instance].year = [new value]` *changes* the year of the current instance
 <br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` *changes* the embedded locale information of  the current instance,
@@ -281,27 +279,27 @@ console.log(inChina.info);
 <br>adds `whatToAdd` to the instance Date value. 
 <br>**Note**: `whatToAdd` can be a single string (e.g. '1 week, 3 hours, -5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
 <br>example `$D("2000/01/01").add("1 year")`
-<br><ins>returns</ins> new TickTock instance with Date value + `whatToAdd`
+<br><ins>returns</ins> instance with Date value + `whatToAdd`
 
 
 ☑️ `addDays(nDays:Number)` <ins>method</ins>
 <br>adds `nDays` days to the instance Date value
-<br><ins>returns</ins> new TickTock instance with Date + `nDays` days
+<br><ins>returns</ins> instance with Date + `nDays` days
 
 
 ☑️ `addMonths(nMonths:Number)` <ins>method</ins>
 <br>adds `nMonths` months to the instance Date value
-<br><ins>returns</ins> new TickTock instance with Date + `nMonths` months
+<br><ins>returns</ins> instance with Date + `nMonths` months
 
 
 ☑️ `addWeeks(nWeeks:Number)` <ins>method</ins>
 <br>adds `nWeeks` weeks to the instance Date value
-<br><ins>returns</ins> new TickTock instance with Date + `nWeeks` days
+<br><ins>returns</ins> instance with Date + `nWeeks` days
 
 
 ☑️ `addYears(nYears:Number)` <ins>method</ins>
 <br>adds `nYears` years to the instance Date value
-<br><ins>returns</ins> new TickTock instance with Date + `nYears` years
+<br><ins>returns</ins> instance with Date + `nYears` years
 
 
 ☑️ `age` <ins>getter</ins>
@@ -514,20 +512,20 @@ console.log(inChina.info);
 
 
 ☑️ `nextMonth` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one month
+<br><ins>returns</ins> instance with value Date + one month
 
 
 ☑️ `nextWeek` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one week
+<br><ins>returns</ins> instance with value Date + one week
 
 
 ☑️ `nextYear` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date + one year
+<br><ins>returns</ins> instance with value Date + one year
 
 
 ☑️ `offsetFrom(fromDate: Date|TickTock instance|undefined)` <ins>method</ins>
 <br>**note**: assumes Date within *user* timeZone with a plain Date or no `fromDate`.
-<br><ins>returns</ins> `Object<String, Array<String>> { from, to, offset }`
+<br><ins>returns</ins> `Object<String, Array<String>> { fromTZ, toTZ, offset }`
 
 
 ☑️ `previous(day:String)` <ins>method</ins>
@@ -537,15 +535,15 @@ console.log(inChina.info);
 
 
 ☑️ `previousMonth` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one month
+<br><ins>returns</ins> instance with value Date - one month
 
 
 ☑️ `previousWeek` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one week
+<br><ins>returns</ins> instance with value instance Date - one week
 
 
 ☑️ `previousYear` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance for the instance Date - one year
+<br><ins>returns</ins> instance with value Date - one year
 
 
 ☑️ `quarter` <ins>getter</ins>
@@ -563,7 +561,7 @@ console.log(inChina.info);
 
 
 ☑️ `removeTime` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance derived from the instance without time 00:00:00
+<br><ins>returns</ins> instance with time 00:00:00.000
 
 
 ☑️ `revalue(newValue:Date)` <ins>method</ins>
@@ -580,7 +578,7 @@ console.log(inChina.info);
 <br>subtracts `whatToSubtract` to the instance Date value.
 <br>**note**: `whatToSubtract` Can be a single string
 <br>(e.g. '1 week, 3 hours, 5 minutes'), or 1 or more strings (e.g. '2 years', '1 month')
-<br><ins>returns</ins> new TickTock instance derived from the instance with Date value according to subtracted values
+<br><ins>returns</ins> instance derived with Date value according to subtracted values
 
 
 ☑️ `time` <ins>getter/setter</ins>
@@ -599,9 +597,7 @@ console.log(inChina.info);
 
 
 ☑️ `tomorrow` <ins>getter</ins>
-<br>retrieve a new instance with Date + one day
-<br><ins>returns</ins> new TickTock instance
-
+<br><ins>returns</ins> instance with value Date + 1 day
 
 ☑️ `toString(template:String, formatOptions:String)` <ins>method</ins>
 <br>overrides `Date.prototype.toString` with possibility to format the resulting string (see `[instance].format`)
@@ -625,7 +621,7 @@ console.log(inChina.info);
 
 
 ☑️ `UTCOffset` <ins>getter</ins>
-<br><ins>returns</ins> `{from:String, to:String, offset:String}`
+<br><ins>returns</ins> `{fromTZ:String, toTZ:String, offset:String}`
 
 
 ☑️ `value` <ins>getter</ins>
@@ -653,7 +649,7 @@ console.log(inChina.info);
 
 
 ☑️ `yesterday` <ins>getter</ins>
-<br><ins>returns</ins> new TickTock instance with Date - one day
+<br><ins>returns</ins> instance with value Date - one day
 
 
 ☑️ `zoneDate` <ins>getter</ins>
