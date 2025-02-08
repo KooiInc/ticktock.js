@@ -116,52 +116,40 @@ function isNumberOrNumberString(value) {
 function getAggregates(instance, customExtras) {
   const aggregates = {
     addYears(amount = 1) {
-      const clone = instance.clone;
-      return add2Date(clone, `${amount} years`);
+      return add2Date(instance, `${amount} years`);
     },
     addMonths(amount = 1) {
-      const clone = instance.clone;
-      return add2Date(clone, `${amount} months`);
+      return add2Date(instance, `${amount} months`);
     },
     addWeeks(amount = 1) {
-      const clone = instance.clone;
-      return add2Date(clone, `${amount * 7} days`);
+      return add2Date(instance, `${amount * 7} days`);
     },
     addDays(amount = 1) {
-      const clone = instance.clone;
-      return add2Date(clone, `${amount} days`);
+       return add2Date(instance, `${amount} days`);
     },
     get nextYear() {
-      const clone = instance.clone;
-      return add2Date(clone, `1 year`);
+      return add2Date(instance, `1 year`);
     },
     get nextWeek() {
-      const clone = instance.clone;
-      return add2Date(clone, `7 days`);
+      return add2Date(instance, `7 days`);
     },
     get previousWeek() {
-      const clone = instance.clone;
-      return add2Date(clone, "-7 days");
+      return add2Date(instance, "-7 days");
     },
     get previousYear() {
-      const clone = instance.clone;
-      return add2Date(clone, `-1 year`);
+      return add2Date(instance, `-1 year`);
     },
     get nextMonth() {
-      const clone = instance.clone;
-      return add2Date(clone, `1 month`);
+      return add2Date(instance, `1 month`);
     },
     get previousMonth() {
-      const clone = instance.clone;
-      return add2Date(clone, `-1 month`);
+      return add2Date(instance, `-1 month`);
     },
     get tomorrow() {
-      const clone = instance.clone;
-      return add2Date(clone, `1 day`);
+      return add2Date(instance, `1 day`);
     },
     get yesterday() {
-      const clone = instance.clone;
-      return add2Date(clone, `-1 day`);
+      return add2Date(instance, `-1 day`);
     },
   };
 

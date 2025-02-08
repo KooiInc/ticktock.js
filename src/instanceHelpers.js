@@ -56,9 +56,8 @@ export {
 };
 
 function addParts2Date(instance, ...parts2Add) {
-  const clone = instance.clone;
-  add2Date(clone, ...parts2Add);
-  return clone;
+  add2Date(instance, ...parts2Add);
+  return instance;
 }
 
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
@@ -167,8 +166,8 @@ function offsetFrom(instance, from) {
   const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
 
   return {
-    from: instance.timeZone,
-    to: from.timeZone,
+    fromTZ: instance.timeZone,
+    toTZ: from.timeZone,
     offset: `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
   };
 }
@@ -292,18 +291,18 @@ function daysInMonth(instance) {
 function fullMonth(instance, forLocale) {
   const firstDay = instance.clone.relocate({locale: localeInfoValidator({locale: forLocale || `en`}).locale});
   firstDay.date = { date: 1 };
-  return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.add(`${i+1} days`) ));
+  return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.clone.add(`${i+1} days`) ));
 }
 
 function nextOrPrevious(instance, {day, next = false} = {}) {
   let dayNr = weekdays(day?.toLowerCase());
+  const cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
   
   if (dayNr < 0) {
     console.error(`[TickTock instance].next/previous invalid day value ${day}`);
     return cloned;
   }
   
-  const cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
   let addTerm = next ? 1 : -1 ;
   
   return findDayRecursive(cloned, dayNr, addTerm);
@@ -386,8 +385,8 @@ function offset2Number(offsetString, all = false) {
 }
 
 function removeTime(instance) {
-  instance = instance || xDate();
-  return xDate(new Date(...instance.dateValues), instance.localeInfo);
+  instance.time = {hours: 0, minutes: 0, seconds: 0, milliseconds: 0};
+  return instance;
 }
 
 function hasDST(instance) {
@@ -427,8 +426,9 @@ function relocate(instance, {locale, timeZone} = {}) {
 }
 
 function revalue(instance, date) {
-  if (date?.constructor !== Date) { return instance; }
-  return xDate(date, date.localeInfo || instance.localeInfo);
+  if ((date?.value?.constructor || date?.constructor) !== Date) { return instance; }
+  instance = xDate(date.value || date, date.localeInfo || instance.localeInfo);
+  return instance;
 }
 
 function getWeeksInYear(year, date) {
