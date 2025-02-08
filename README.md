@@ -270,7 +270,7 @@ console.log(inChina.info);
 - in the following list the TickTock constructor is referred to as `$D`.
 - getters for date values return a zero based month (like `[date instance]getMonth()`, january = 0). Setters for `month` are not zero based. So `[instance].month = 1` sets the month to january.
 - getters for date values (e.g. `[instance]month`) return the value within the *user* timeZone. For each of these getters, a getter preceded with `zone` is available to retrieve the value for the *instance* Timezone, for example `[instance.zoneYear]` or `[instance].zoneTimeValues`.
-- setters for date values are changing (*mutatating*) the instance Date.
+- setters for date values, add/subtract methods and aggregated add/subtract getters (e.g. `[instance].tomorrow`, `[instance].addDays([nDays])`) change (***mutate***) the instance Date value.
 
 <!--LIST-->
 ☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
@@ -499,15 +499,15 @@ console.log(inChina.info);
 <br><ins>returns</ins> `Number` (1 - 4)
 
 ☑️ `relocate({locale:String, timeZone:String})` <ins>method</ins>
-<br>change the locale/timeZone information of the instance (so: **mutating**)
+<br>change the locale/timeZone information of the instance
 <br>**note**: can also be done with the `localeInfo` setter
-<br><ins>returns</ins> instance with `locale` and/or `timeZone` from parameters
+<br><ins>returns</ins> instance with changed embedded `locale` and/or `timeZone` from parameters
 
 ☑️ `removeTime` <ins>getter</ins>
 <br><ins>returns</ins> instance with time 00:00:00.000
 
 ☑️ `revalue(newValue:Date)` <ins>method</ins>
-<br>change the instance Date value, (so **mutating**)
+<br>change the instance Date value
 <br><ins>returns</ins> The instance with Date from `newValue`
 
 ☑️ `seconds` <ins>getter/setter</ins>
