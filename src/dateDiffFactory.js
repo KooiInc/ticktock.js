@@ -38,7 +38,7 @@ function dateDiffFactory() {
     let minutes = differenceDate.getUTCMinutes();
     const seconds = differenceDate.getUTCSeconds();
     const milliseconds = differenceDate.getUTCMilliseconds();
-    const diffInDays = Math.floor(differenceMs/1000/60/1440);
+    const diffInDays = Math.floor(differenceMs/86400000);
     diffs = {
       ...diffs,
       fromUTC: start,
