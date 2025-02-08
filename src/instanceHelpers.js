@@ -5,7 +5,7 @@ import xDate from "../index.js";
 import {
   localeMonthnames, localeInfoValidator, localeWeekdays,
   setLocaleInfo, isNumberOrNumberString, localLocaleInfo,
-  retrieveFormattingFormats,
+  retrieveFormattingFormats, retrieveDateValueFromInput
 } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
@@ -347,12 +347,10 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function cloneInstance(instance, date) {
-  date = date && new Date(date);
-  
-  if (date && !Number.isNaN(date)) {
-    return xDate(date, instance.localeInfo);
+  if (date?.constructor === Date || date?.value) {
+    return xDate(date?.value || date, instance.localeInfo);
   }
-  
+
   return xDate.from(...instance.dateTimeValues).relocate(instance.localeInfo);
 }
 
