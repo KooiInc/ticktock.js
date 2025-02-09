@@ -5,7 +5,7 @@ const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
   retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
-  retrieveFormattingFormats, };
+  retrieveFormattingFormats, aggregateDateAdder};
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -116,19 +116,25 @@ function isNumberOrNumberString(value) {
   return !(Number.isNaN(parseInt(value)) && Number.isNaN(+value));
 }
 
+function aggregateDateAdder(value, instance, aggregatePart) {
+  return value?.constructor === Number
+    ? add2Date(instance, `${value} ${aggregatePart}`) : instance;
+}
+
 function getAggregates(instance, customExtras) {
   const aggregates = {
     addYears(amount = 1) {
-      return add2Date(instance, `${amount} years`);
+      return aggregateDateAdder(amount, instance, `years`);
     },
     addMonths(amount = 1) {
-      return add2Date(instance, `${amount} months`);
+      return aggregateDateAdder(amount, instance, `months`);
     },
     addWeeks(amount = 1) {
-      return add2Date(instance, `${amount * 7} days`);
+      amount = amount?.constructor === Number ? amount * 7 : 1;
+      return aggregateDateAdder(amount, instance, `days`);
     },
     addDays(amount = 1) {
-       return add2Date(instance, `${amount} days`);
+      return aggregateDateAdder(amount, instance, `days`);
     },
     get nextYear() {
       return add2Date(instance, `1 year`);
