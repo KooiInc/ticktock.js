@@ -476,13 +476,12 @@ describe(`Setters, mutating methods/getters`, () => {
       const now$ = $D.now;
       now$.year = 2050;
       assert.equal(now$.year, 2050);
-      
-      it(`.year setter using += sets the year to year + value`, () => {
-        const now$ = $D.now;
-        now$.year = 2030;
-        now$.year += 10;
-        assert.equal(now$.year, 2040);
-      });
+    });
+    it(`.year setter using += sets the year to year + value`, () => {
+      const now$ = $D.now;
+      now$.year = 2030;
+      now$.year += 10;
+      assert.equal(now$.year, 2040);
     });
     it(`.month setter sets the instance month to march`, () => {
       const now$ = $D.now.relocate({locale: `en`});
@@ -490,69 +489,63 @@ describe(`Setters, mutating methods/getters`, () => {
       assert.equal(now$.month, 2);
       assert.equal(now$.zoneNames.monthNames.long[now$.month], `March`);
       assert.equal(now$.zoneMonthname, `March`);
-      
-      it(`.month setter using += sets the month to month + value`, () => {
-        const now$ = $D(`2000/02/01`).relocate({locale: `en`});
-        now$.month += 1;
-        assert.equal(now$.month, 2);
-        assert.equal(now$.zoneMonthname, `March`);
-        assert.equal(now$.zoneNames.monthNames.long[now$.month], `March`);
-      });
+    });
+    it(`.month setter using += sets the month to month + value`, () => {
+      const now$ = $D(`2000/02/01`).relocate({locale: `en`});
+      now$.month += 1;
+      assert.equal(now$.month, 2);
+      assert.equal(now$.zoneMonthname, `March`);
+      assert.equal(now$.zoneNames.monthNames.long[now$.month], `March`);
     });
     it(`.dateNr setter sets the instance date to 18`, () => {
       const now$ = $D.now;
       now$.dateNr = 18;
       assert.equal(now$.dateNr, 18);
-      
-      it(`.dateNr setter using += sets the date to hours + value`, () => {
-        const now$ = $D(`2000/01/01 17:00:00`);
-        now$.dateNr += 1;
-        assert.equal(now$.dateNr, 2);
-      });
+    });
+    it(`.dateNr setter using += sets the date to hours + value`, () => {
+      const now$ = $D(`2000/01/01 17:00:00`);
+      now$.dateNr += 1;
+      assert.equal(now$.dateNr, 2);
     });
     it(`.hours setter sets the instance hour to 18`, () => {
       const now$ = $D(`2000/01/01`);
       now$.hours = 18;
       assert.equal(now$.hours, 18);
-      
-      it(`.hours setter using += sets the hours to hours + value`, () => {
-        const now$ = $D(`2000/01/01 17:00:00`);
-        now$.hours += 1;
-        assert.equal(now$.hours, 18);
-      });
+    });
+    it(`.hours setter using += sets the hours to hours + value`, () => {
+      const now$ = $D(`2000/01/01 17:00:00`);
+      now$.hours += 1;
+      assert.equal(now$.hours, 18);
     });
     it(`.minutes setter sets the instance minutes to 35`, () => {
       const now$ = $D(`2000/01/01`);
       now$.minutes = 35;
       assert.equal(now$.minutes, 35);
-      
-      it(`.minutes setter using += sets the minutes to minutes + value`, () => {
-        const now$ = $D(`2000/01/01 17:10:00`);
-        now$.minutes += 25;
-        assert.equal(now$.minutes, 35);
-      });
+    });
+    it(`.minutes setter using += sets the minutes to minutes + value`, () => {
+      const now$ = $D(`2000/01/01 17:10:00`);
+      now$.minutes += 25;
+      assert.equal(now$.minutes, 35);
     });
     it(`.seconds setter sets the instance seconds to 55`, () => {
       const now$ = $D(`2000/01/01`);
       now$.seconds = 55;
       assert.equal(now$.seconds, 55);
-      
-      it(`.seconds setter using += sets the seconds to seconds + value`, () => {
-        const now$ = $D(`2000/01/01 17:10:30`);
-        now$.seconds += 25;
-        assert.equal(now$.seconds, 55);
-      });
+    });
+    it(`.seconds setter using += sets the seconds to seconds + value`, () => {
+      const now$ = $D(`2000/01/01 17:10:30`);
+      now$.seconds += 25;
+      assert.equal(now$.seconds, 55);
     });
     it(`.milliseconds setter sets the instance milliseconds to 725`, () => {
       const now$ = $D(`2000/01/01`);
       now$.milliseconds = 725;
       assert.equal(now$.milliseconds, 725);
-      
-      it(`.milliseconds setter using += sets the milliseconds to milliseconds + value`, () => {
-        const now$ = $D(`2000/01/01 17:10:30.600`);
-        now$.milliseconds += 125;
-        assert.equal(now$.milliseconds, 725);
-      });
+    });
+    it(`.milliseconds setter using += sets the milliseconds to milliseconds + value`, () => {
+      const now$ = $D(`2000/01/01 17:10:30.600`);
+      now$.milliseconds += 125;
+      assert.equal(now$.milliseconds, 725);
     });
   });
   
