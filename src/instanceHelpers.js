@@ -5,7 +5,7 @@ import xDate from "../index.js";
 import {
   localeMonthnames, localeInfoValidator, localeWeekdays,
   setLocaleInfo, isNumberOrNumberString, localLocaleInfo,
-  retrieveFormattingFormats, retrieveDateValueFromInput
+  retrieveFormattingFormats,
 } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
@@ -62,8 +62,10 @@ function addParts2Date(instance, ...parts2Add) {
 
 function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone.UTC;
-  start = xDate(start?.value || start).UTC;
-
+  start = start?.value || start?.constructor === Date ? xDate(start?.value || start).UTC : xDate.now.UTC;
+  instnc.milliseconds = 0;
+  start.milliseconds = 0;
+  
   if (!Number.isNaN(+start) && !end) {
     return before ? +instnc < +start : +instnc > +start
   }
