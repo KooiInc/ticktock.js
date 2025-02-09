@@ -104,16 +104,16 @@ function getNames(instance, forLocale = false) {
   };
 }
 
-function getTime(instance, tz = false) {
-  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, tz);
-  const values4Timezone = tz ? instance.timeZone : localLocaleInfo.timeZone
+function getTime(instance, userTimezone = false) {
+  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, userTimezone);
+  const values4Timezone = !userTimezone ? instance.timeZone : localLocaleInfo.timeZone
   const returnValue = { values4Timezone, hours, minutes, seconds, milliseconds };
 
   return Object.freeze(returnValue);
 }
 
-function getTimeValues(instance, remote = false) {
-  const tzOpt = remote ? `,tz:${instance.timeZone}` : `,tz:${localLocaleInfo.timeZone}`;
+function getTimeValues(instance, inUserTimeZone = false) {
+  const tzOpt = !inUserTimeZone ? `,tz:${instance.timeZone}` : `,tz:${localLocaleInfo.timeZone}`;
   const opts = `l:en-CA${tzOpt},hrc:23`;
   
   return instance.format("hh-mmi-ss", opts)
@@ -122,11 +122,12 @@ function getTimeValues(instance, remote = false) {
     .concat(instance.getMilliseconds());
 }
 
-function getFullDate(instance, local) {
-  const tzOpt = !local ? `,tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
+function getFullDate(instance, inUserTimeZone) {
+  const tzOpt = !inUserTimeZone ? `,tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
   let [year, month, date] = instance.format(`yyyy-mm-dd`, tzOpt).split(/-/) .map(Number);
   month -= 1;
-  const values4Timezone = local ? instance.timeZone : localLocaleInfo.timeZone;
+  const values4Timezone = !inUserTimeZone ? instance.timeZone : localLocaleInfo.timeZone;
+  
   return Object.freeze({ values4Timezone, year, month, date, });
 }
 
