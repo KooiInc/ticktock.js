@@ -334,7 +334,7 @@ function DTInTimezone(date, timeZoneID) {
 function setDateParts(instance, {year, month, date} = {}) {
   if (isNumberOrNumberString(year)) { instance.setFullYear(year); }
   if (isNumberOrNumberString(date)) { instance.setDate(date); }
-  if (isNumberOrNumberString(month)) { instance.setMonth(month - 1); }
+  if (isNumberOrNumberString(month)) { instance.setMonth(month); }
   return true;
 }
 
