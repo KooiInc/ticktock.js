@@ -29,7 +29,7 @@ function dateAddFactory() {
         return a.toLowerCase()
           .split(/ /)
           .map(v => {
-            v = `${v}`.trim().replace(/[^a-z0-9]/g, ``);
+            v = `${v}`.trim().replace(/[^a-z0-9-+]/g, ``);
             const num = parseInt(v, 10);
             return !Number.isNaN(num) ? subtract ? -num : +num : v;
           });
