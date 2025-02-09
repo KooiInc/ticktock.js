@@ -365,7 +365,7 @@ function weekdayFactory() {
   return function(day) {
     day = `${day}`.toLowerCase();
     let dayNr = dow.short.indexOf(day);
-    return !isNumberOrNumberString(dayNr) && dow.long.findIndex(v => v == day);
+    return !isNumberOrNumberString(dayNr) && dow.long.findIndex(v => v === day);
   };
 }
 
