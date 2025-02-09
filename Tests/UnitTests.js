@@ -30,6 +30,8 @@ describe(`Basics $D`, () => {
   });
   it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () =>
     assert.equal($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst) );
+  it(`$D([2020]) should return instance with date 2020/01/01`, () =>
+    assert.equal($D([2020]).ISO, new Date(2020,0,1).toISOString()) );
   it(`$D("2000/01/01 13:00:00") should return instance with date 2000/01/01 and time 13:00:00`, () =>
     assert.equal($D("2000/01/01 13:00:00").ISO, dateToTestAgainst) );
   it(`$D("invalid") should return instance with current Date`, () => {
@@ -110,6 +112,11 @@ describe(`Constructor ($D) static methods/getters`, () => {
   it(`$D.from(2020, 0, 5, 13, 0, 0) should return a TickTock instance with ISOstring "2020-01-05T12:00:00.000Z"`, () => {
     const testD = $D.from(2020, 0, 5, 13, 0, 0);
     assert.equal(testD.ISO, '2020-01-05T12:00:00.000Z');
+  });
+  it(`$D.from(2000) (single value) should return a TickTock instance with value new Date(2000, 0, 1) (so: now)`, () => {
+    const nowISO = new Date(2000, 0, 1).toISOString();
+    const testD_ISO = $D.from(2000).ISO;
+    assert.equal(testD_ISO, nowISO);
   });
   it(`$D.from() should return a TickTock instance with value new Date() (so: now)`, () => {
     const nowISO = new Date().toISOString();
@@ -440,6 +447,26 @@ describe(`$D instance extensions`, () => {
     it(`.quarterNr for date 2000/08/01 is 3`, () => {
       assert.equal($D(`2000/10/01`).quarterNr, 4);
     });
+    it(`.unixEpochTimestamp for $D.from(2000,0,1) is 946681200`, () => {
+      assert.strictEqual($D.from(2000,0,1).unixEpochTimestamp, 946681200);
+    });
+    it(`.age for $D.from(1933,1,5) is 92`, () => {
+      const birthDate = $D.from(1933,1,5);
+      assert.strictEqual(birthDate.age, birthDate.differenceTo(new Date()).years);
+    });
+    it(`.ageFull for $D.from(1933,1,5) equals ${$D.from(1933,1,5).differenceTo(new Date()).clean}`, () => {
+      const birthDate = $D.from(1933,1,5);
+      assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(new Date()).clean);
+    });
+    it(`.userLocaleInfo for an instance equals $D.localeInformation`, () => {
+      assert.strictEqual($D.now.userLocaleInfo, $D.localeInformation);
+    });
+    it(`.isLeapYear for $D.from(2000, 0, 1) is true`, () => {
+      assert.equal($D.from(2000, 0, 1).isLeapYear, true);
+    });
+    it(`.isLeapYear for $D.from(2005, 0, 1) is false`, () => {
+      assert.equal($D.from(2005, 0, 1).isLeapYear, false);
+    });
   })
 });
 
@@ -658,7 +685,6 @@ describe(`Setters, mutating methods/getters`, () => {
       assert.strictEqual(now$.toDateString(), newDate.toDateString());
     });
     it(`.revalue([TickTock instance]) changes instance Date value`, () => {
-      const now = new Date();
       const newDate = $D.now.addYears(1);
       const now$ = $D.now.revalue(newDate);
       assert.strictEqual(now$.toDateString(), newDate.toDateString());

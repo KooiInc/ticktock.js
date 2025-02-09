@@ -79,7 +79,7 @@ function retrieveDateValueFromInput(input) {
     case input?.constructor === String:
       return valiDate(new Date(input));
     case Array.isArray(input) && input.map(Number).length === input.length:
-      return valiDate(new Date(...input));
+      return input.length === 1 ? new Date(input[0], 0, 1) : new Date(...input);
     case input?.constructor === Date:
       return valiDate(input);
     default: return now;
@@ -227,11 +227,7 @@ function createCTORStaticMethods(ctor, customMethods) {
         return `${monthNr} should be a Number (1 - 12)`;
       }
     },
-    from: {
-      value(...input) {
-        return ctor(new Date(...input) || new Date());
-      }
-    },
+    from: { value(...input) { return ctor(input); } },
     addCustom: {
       value( { name, method, enumerable = false, isGetter = false } = {} ) {
         if (name?.constructor === String && method?.constructor === Function && method.length > 0) {
