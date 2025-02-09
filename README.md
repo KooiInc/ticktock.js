@@ -21,8 +21,6 @@ for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
 When one creates a TickTock instance, it behaves like a Date.
 This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
 
-**Note**: using native Date methods (e.g. `setFullYear`) may compromise immutatibility of an instance.
-
 ### Importing and using
 The library exports the TickTock constructor by default, ready for use. Example:
 
