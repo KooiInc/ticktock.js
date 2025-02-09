@@ -13,7 +13,8 @@ one can retrieve the user (local) week day name using `[instance].names.dayNames
 day names using `[instance].zoneNames.dayNames.long`, the latter resulting in an array (starting with *sunday*) with values
  *'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'*. When an instance
  was instantiated with locale: 'zh' and timeZone "Asia/Chongqing", [instance].local will display the date and time *in
- that time zone* (so, UTC+0900).
+ that time zone* vis a vis the user timeZone (so `$D("2000/01/01", {locale: "zh", timeZone: "Asia/Chongqing"}).local`, 
+will display (within the developer timeZone "Europe/Amsterdam"): `"2000/1/1 07:00:00"`).
 
 ### TickTock instances are proxies
 An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 
@@ -261,7 +262,7 @@ console.log(inChina.info);
 - in the following list the TickTock constructor is referred to as `$D`.
 - getters for date values return a zero based month (like `[date instance]getMonth()`, january = 0).  
   Setters for `month` are also zero based. So `[instance].month = 0` sets the month to january.
-- getters for date values (e.g. `[instance]month`) return the value within the *user* timeZone.
+- getters for date values (e.g. `[instance].month`) return the value within the *user* timeZone.
   For each of these getters, a getter preceded with `zone` is available to retrieve the value for the *instance* Timezone, 
   for example `[instance.zoneYear]` or `[instance].zoneTimeValues`.
 - setters for date values, add/subtract methods and aggregated add/subtract getters 
