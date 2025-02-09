@@ -7,30 +7,31 @@ function dateAddFactory() {
     second: `Seconds`, millisecond: `Milliseconds` })
     .reduce( (acc, [key, value]) =>
       ({...acc, [key]: value, [`${key}s`]: value}), {} );
-
+  let subtract = false;
+  
   const aggregateArguments = function(...argsRaw) {
     const singleArgument = argsRaw.length === 1;
-    let subtract = argsRaw[0].trim().startsWith(`subtract`);
+    subtract = argsRaw[0].trim().startsWith(`subtract,`);
 
     if (subtract) {
       argsRaw = singleArgument
-        ? argsRaw[0].trim().replace(/^subtract./i, ``).split(`, `).map(v => v.trim())
-        : argsRaw.slice(1);
+        ? argsRaw[0].trim().replace(/^subtract,/i, ``).split(`,`).map(v => v.trim())
+        : argsRaw.filter(v => !v.startsWith(`subtract`));
     }
-
+    
     if (singleArgument && !subtract) {
       argsRaw = argsRaw[0].split(`,`).map(v => v.trim());
     }
-
+    
    return argsRaw
-      .map(function(a) {
+      .map( function(a) {
         if (!a) { return false; }
         return a.toLowerCase()
           .split(/ /)
           .map(v => {
-            v = `${v}`.trim();
+            v = `${v}`.trim().replace(/[^a-z0-9]/g, ``);
             const num = parseInt(v, 10);
-            return num ? subtract ? -num : +num : v;
+            return !Number.isNaN(num) ? subtract ? -num : +num : v;
           });
       }).filter(v => v);
   }
@@ -39,14 +40,16 @@ function dateAddFactory() {
     if (args.length < 1) { return date; }
 
     let aggregated = aggregateArguments(...args);
-
+    
     if (aggregated.length) {
       aggregated.forEach( ([n, part]) => {
-        part = parts[part];
-        if (+n && part) {
-          date[`set${part}`](date[`get${part}`]() + +n);
+          part = part;
+          part = parts[part];
+          if (n && part) {
+            date[`set${part}`](date[`get${part}`]() + n);
+          }
         }
-      } );
+      );
     }
 
     return date;
