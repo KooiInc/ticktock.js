@@ -2,30 +2,23 @@
 
 A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
-It presents a wrapped *locale and time zone sensitive* `ES-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
+It presents a wrapped *locale and time zone sensitive* `JS-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
 The bundled file size is around 19kb.
-
-### For example
-`[instance].year = [new value]` *changes* the year of the current instance
-<br>`[instance].localeInfo = {locale: "es", timeZone: " Europe/Madrid"}` *changes* the embedded locale information of  the current instance,
-<br>`[instance].revalue([some date])` *changes* the current instance's Date value to [some date], 
-<br>**but**
-<br>`[instance].clone([some date])` delivers a *new* instance derived from the current instance with possibly a new date ([some date])
-<br>`[instance].UTC` delivers a *new* instance for the UTC timeZone derived from the current instance and
-<br>`[instance].add("1 year, 2 days, 13 hours")` delivers a *new* instance derived from the current instance
 
 ### locale and timeZone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
 the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
-`[instance].local` or `[instance].localeString`). For example, when a ticktock date is instantiated with locale `pl-PL`, 
-the week day names for that instance can be retrieved as `[instance].names.dayNames.long`, resulting in an array with values
- *'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'* (starting with *sunday*). When an instance
+`[instance].local` or `[instance].localeString`). For example, when a ticktock date is instantiated with locale `pl-PL`,
+one can retrieve the user (local) week day name using `[instance].names.dayNames.long`, but *also* for the polish week 
+day names using `[instance].zoneNames.dayNames.long`, the latter resulting in an array (starting with *sunday*) with values
+ *'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'*. When an instance
  was instantiated with locale: 'zh' and timeZone "Asia/Chongqing", [instance].local will display the date and time *in
  that time zone* (so, UTC+0900).
 
 ### TickTock instances are proxies
 An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 
-for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance. 
+for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance.
+When one creates a TickTock instance, it behaves like a Date.
 This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
 
 **Note**: using native Date methods (e.g. `setFullYear`) may compromise immutatibility of an instance.
@@ -99,7 +92,7 @@ Date is invalid, will return `[TickTock constructor].now`
 <br>creates an Array containing TickTock instances for all Dates in `month` for `year`.
 If a valid `locale` is given (e.g. `nl-BE`, `pl`) calendar Date instances encapsulate that locale, 
 otherwise the default (user) locale.
-<br>**Note**: `month` is not zero based, so january = 1, december = 12.
+<br>**Note**: `month` is zero based, so january = 0, december = 11.
 <br><ins>returns</ins> `Array<String>`
 
 ☑️ `timeAcrossZones({timeZoneDate:Date|String, timeZoneID:String, userTimeZoneID:String})` <ins>method</ins>
@@ -268,9 +261,13 @@ console.log(inChina.info);
 
 ### Notes
 - in the following list the TickTock constructor is referred to as `$D`.
-- getters for date values return a zero based month (like `[date instance]getMonth()`, january = 0). Setters for `month` are not zero based. So `[instance].month = 1` sets the month to january.
-- getters for date values (e.g. `[instance]month`) return the value within the *user* timeZone. For each of these getters, a getter preceded with `zone` is available to retrieve the value for the *instance* Timezone, for example `[instance.zoneYear]` or `[instance].zoneTimeValues`.
-- setters for date values, add/subtract methods and aggregated add/subtract getters (e.g. `[instance].tomorrow`, `[instance].addDays([nDays])`) change (***mutate***) the instance Date value.
+- getters for date values return a zero based month (like `[date instance]getMonth()`, january = 0).  
+  Setters for `month` are also zero based. So `[instance].month = 0` sets the month to january.
+- getters for date values (e.g. `[instance]month`) return the value within the *user* timeZone.
+  For each of these getters, a getter preceded with `zone` is available to retrieve the value for the *instance* Timezone, 
+  for example `[instance.zoneYear]` or `[instance].zoneTimeValues`.
+- setters for date values, add/subtract methods and aggregated add/subtract getters 
+  (e.g. `[instance].tomorrow`, `[instance].addDays([nDays])`) change (***mutate***) the instance Date value.
 
 <!--LIST-->
 ☑️ `add(whatToAdd:String|String[])` <ins>method</ins>
@@ -325,10 +322,11 @@ console.log(inChina.info);
 
 ☑️ `date` <ins>getter</ins>
 <br>date values in *user* timeZone, use `[instance].zoneDate` for values in *instance* timeZone
-<br><ins>returns</ins> `Object<String, Number> {year, month, date}`
+<br><ins>returns</ins> `Object<String, Number|String> {values4Timezone, year, month, date}`
 
-☑️ `dateSingle` <ins>getter</ins>
-<br>the date value in *user* timeZone, use `[instance].zoneDateSingle` for date in *instance* timeZone
+☑️ `dateNr` <ins>getter/setter</ins>
+<br>get or set the date value. The getter return the value in *user* timeZone,
+  use `[instance].zoneDateNr` for date in *instance* timeZone.
 <br><ins>returns</ins> `Number`
 
 ☑️ `dateTime` <ins>getter</ins>
@@ -579,10 +577,10 @@ console.log(inChina.info);
 
 ☑️ `zoneDate` <ins>getter</ins>
 <br>Returns Date values Object for *instance* timeZone
-<br><ins>returns</ins> `Object<String, Number> {year, month, date}`
+<br><ins>returns</ins> `Object<String, Number|String> {values4Timezone, year, month, date}`
 
-☑️ `zoneDateSingle` <ins>getter</ins>
-<br>Returns instance Date date value for *instance* timeZone
+☑️ `zoneDateNr` <ins>getter</ins>
+<br>Returns instance date value for *instance* timeZone
 <br><ins>returns</ins> `Number`
 
 ☑️ `zoneDateTime` <ins>getter</ins>
