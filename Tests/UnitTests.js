@@ -440,22 +440,10 @@ describe(`$D instance extensions`, () => {
     it(`.quarterNr for date 2000/08/01 is 3`, () => {
       assert.equal($D(`2000/10/01`).quarterNr, 4);
     });
-    it(`.revalue([plain JS Date]) changes instance Date value`, () => {
-      const now = new Date();
-      const newDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-      const now$ = $D.now.revalue(newDate);
-      assert.strictEqual(now$.toDateString(), newDate.toDateString());
-    });
-    it(`.revalue([TickTock instance]) changes instance Date value`, () => {
-      const now = new Date();
-      const newDate = $D.now.addYears(1);
-      const now$ = $D.now.revalue(newDate);
-      assert.strictEqual(now$.toDateString(), newDate.toDateString());
-    });
   })
 });
 
-describe(`Setters`, () => {
+describe(`Setters, mutating methods/getters`, () => {
   describe(`individual date/time parts setters`, () => {
     it(`.year setter sets the instance year to 2050`, () => {
       const now$ = $D.now;
@@ -659,6 +647,35 @@ describe(`Setters`, () => {
     });
     it(`.previousMonth sets instance date to 2000/01/01`, () => {
       assert.strictEqual(initialDate.previousMonth.format(`yyyy/mm/dd`), `2000/01/01`);
+    });
+  });
+  
+  describe(`Mutating methods/getters`, () => {
+    it(`.revalue([plain JS Date]) changes instance Date value`, () => {
+      const now = new Date();
+      const newDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+      const now$ = $D.now.revalue(newDate);
+      assert.strictEqual(now$.toDateString(), newDate.toDateString());
+    });
+    it(`.revalue([TickTock instance]) changes instance Date value`, () => {
+      const now = new Date();
+      const newDate = $D.now.addYears(1);
+      const now$ = $D.now.revalue(newDate);
+      assert.strictEqual(now$.toDateString(), newDate.toDateString());
+    });
+    it(`.relocate({locale:pt}) changes instance associated locale to pt (Portugese)`, () => {
+      const testDate = $D.from(2000,0,1).relocate({locale: `pt`});
+      assert.strictEqual(testDate.localeInfo.locale, `pt`);
+      assert.strictEqual(testDate.zoneMonthname, `janeiro`);
+      assert.strictEqual(testDate.zoneDayname, 'sábado');
+    });
+    it(`.relocate({timeZone}) changes instance associated timeZone`, () => {
+      const testDate = $D(`2000/01/01 07:00`).relocate({timeZone: `America/Vancouver`});
+      assert.strictEqual(testDate.timeZone, `America/Vancouver`);
+      assert.strictEqual(testDate.zoneDateTime.values4Timezone, testDate.timeZone);
+      assert.strictEqual(testDate.zoneDateTime.hours, 22);
+      assert.strictEqual(testDate.zoneDateTime.year, 1999);
+      assert.strictEqual(testDate.zoneDateTime.month, 11);
     });
   });
 });
