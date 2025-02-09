@@ -345,7 +345,7 @@ console.log(inChina.info);
 <br><ins>returns</ins> `Number[] [year, month, date]`
 
 ☑️ `day` <ins>getter</ins>
-<br>weekday value for *user* timeZone, use `zoneDay` for value in *instance* timeZone
+<br>weekday number (zero based, 0 = sunday) for *user* timeZone, use `zoneDay` for value in *instance* timeZone
 <br><ins>returns</ins> `Number`
 
 ☑️ `dayName` <ins>getter</ins>
@@ -556,8 +556,8 @@ console.log(inChina.info);
 ☑️ `value` <ins>getter</ins>
 <br><ins>returns</ins> `Date`
 
-☑️ `weekDay` <ins>getter</ins>
-<br>**note**: returns weekday number (zero based) in *user* timeZone, use zoneWeekday for *instance* timeZone
+☑️ `weekDayName` <ins>getter</ins>
+<br>**note**: returns weekday name in *user* timeZone, use zoneWeekday for *instance* timeZone
 <br><ins>returns</ins> `Number`
 
 ☑️ `weeknr` <ins>getter</ins>
