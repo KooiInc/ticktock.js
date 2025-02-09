@@ -26,9 +26,9 @@ function dateAddFactory() {
    return argsRaw
       .map( function(a) {
         if (!a) { return false; }
-        return a.toLowerCase()
-          .split(/ /)
-          .map(v => {
+        const elem = a.toLowerCase().split(/ {1,}/);
+        if (elem.length < 2) { return false; }
+        return elem.map(v => {
             v = `${v}`.trim().replace(/[^a-z0-9-+]/g, ``);
             const num = parseInt(v, 10);
             return !Number.isNaN(num) ? subtract ? -num : +num : v;
