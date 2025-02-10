@@ -76,14 +76,14 @@ function instanceCreator({instance, localeInfo} = {}) {
     get removeTime() { return removeTime(instance); },
     get time() { return getTime(instance, true); },
     get zoneTime() { return getTime(instance); },
-    get timeValues() { return getTimeValues(instance, false); },
-    get zoneTimeValues() { return getTimeValues(instance, true); },
+    get timeValues() { return getTimeValues(instance, true); },
+    get zoneTimeValues() { return getTimeValues(instance); },
     get dateValues() { return getDateValues(instance, true); },
     get zoneDateValues() { return getDateValues(instance, false); },
     get dateTimeValues() { return getDTValues(instance, true); },
     get zoneDateTimeValues() { return getDTValues(instance, false); },
     get date() { return getFullDate(instance, true); },
-    get zoneDate() { return getFullDate(instance); },
+    get zoneDate() { return getFullDate(instance, false); },
     get dateTime() { return {...instance.date, ...instance.time}; },
     get zoneDateTime() { return {...instance.zoneDate, ...instance.zoneTime}; },
     get UTC() { return instance.clone.relocate({locale: instance.locale, timeZone: `Etc/UTC`}); },
@@ -105,7 +105,9 @@ function instanceCreator({instance, localeInfo} = {}) {
     get info() { return getAggregatedInfo(instance); },
     get unixEpochTimestamp() { return Math.floor(+instance/1000); }
   };
-
+  
+  extensions.localeInfo = localeInfo || localLocaleInfo;
+  
   Object.defineProperties(extensions, {
     proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
     addAggregates: { value(instance, aggregates2Add) {

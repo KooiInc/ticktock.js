@@ -81,7 +81,7 @@ function format(instance, formatStr, moreOptions) {
     instance.localeInfo = setLocaleInfo();
   }
   moreOptions = moreOptions || instance.localeInfo.formatOptions;
-  return dateFormat(new Date(instance), formatStr, moreOptions);
+  return dateFormat(instance, formatStr, moreOptions);
 }
 
 function daysUntil(instance, nextDate) {
@@ -104,9 +104,9 @@ function getNames(instance, forLocale = false) {
   };
 }
 
-function getTime(instance, userTimezone = false) {
-  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, userTimezone);
-  const values4Timezone = !userTimezone ? instance.timeZone : localLocaleInfo.timeZone
+function getTime(instance, inUserTimezone = false) {
+  const [hours, minutes, seconds, milliseconds] = getTimeValues(instance, inUserTimezone);
+  const values4Timezone = !inUserTimezone ? instance.timeZone : localLocaleInfo.timeZone
   const returnValue = { values4Timezone, hours, minutes, seconds, milliseconds };
 
   return Object.freeze(returnValue);
@@ -131,11 +131,11 @@ function getFullDate(instance, inUserTimeZone) {
   return Object.freeze({ values4Timezone, year, month, date, });
 }
 
-function getDateValues(instance, local = true) {
-  if (local) {
+function getDateValues(instance, inUserTimezone = true) {
+  if (inUserTimezone) {
     return [instance.getFullYear(), instance.getMonth(), instance.getDate()];
   }
-
+  
   const values = instance.format("yyyy-m-d", instance.localeInfo.formatOptions).split(/-/).map(Number);
   values[1] -= 1;
   return values;

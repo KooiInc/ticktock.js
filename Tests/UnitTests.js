@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
-import {retrieveDateValueFromInput} from "../src/genericHelpers.js";
+import {retrieveDateValueFromInput, localeInfoValidator} from "../src/genericHelpers.js";
 
 // globally used
 const tzs = {
@@ -11,6 +11,7 @@ const tzs = {
   amsterdam: "Europe/Amsterdam",
   paris: "Europe/Paris"
 };
+const localLocaleInformation = localeInfoValidator();
 
 describe(`Basics $D`, () => {
   const now = new Date();
@@ -377,35 +378,21 @@ describe(`$D instance extensions`, () => {
   })
   
   describe(`various methods/getters`, () => {
-    it(`.isFuture([no parameter]) works as expected`, () => {
-      const now$ = $D.now;
-      now$.dateNr += 5;
-      assert(now$.isFuture() === true, "now$ should be future");
+    it(`.age for $D.from(1933,1,5) is 92`, () => {
+      const birthDate = $D.from(1933,1,5);
+      assert.strictEqual(birthDate.age, birthDate.differenceTo(new Date()).years);
     });
-    it(`.isFuture([plain (past) Date]) works as expected`, () => {
-      const now$ = $D.now;
-      const then = now$.clone;
-      then.dateNr -= 5;
-      assert(now$.isFuture(then.value) === true, "now$ should not be future for $D.now.addDays(-15).value");
+    it(`.ageFull for $D.from(1933,1,5) equals ${$D.from(1933,1,5).differenceTo(new Date()).clean}`, () => {
+      const birthDate = $D.from(1933,1,5);
+      assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(new Date()).clean);
     });
-    it(`.isFuture([TickTock (past) instance]) works as expected`, () => {
-      const now$ = $D.now;
-      now$.date = {date: now$.date.date + 5};
-      assert(now$.isFuture() === true, "now$ should be future");
-      assert($D.now.isFuture($D(`2000/01/01`)) === true, "now$ should be future for 2000/01/01");
+    it(`.dateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for user timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.dateValues.join(`,`), `2020,2,1`);
     });
-    it(`.isPast([no parameter]) for $D.now is false`, () => {
-       assert($D.now.isPast() === false, "now$ should not be past" + $D.now.local);
-    });
-    it(`.isPast([plain future Date]) works as expected`, () => {
-      assert($D.now.isPast(new Date(2000, 0, 1)) === false, "now$ should not be past for plain Date (2000/01/01)");
-      assert($D.now.isPast($D.now.addDays(15).value) === true, "now$ should not be past for $D.now.addDays(15).value");
-    });
-    it(`.isPast([TickTock instance]) works as expected`, () => {
-      const then = $D.now.subtract(`10 days`);
-      assert(then.isPast() === true, `then (${then.local}) should be past`);
-      assert($D.now.isPast($D(`2000/01/01`)) === false, "then should not be past to 2000/01/01");
-      assert(then.isPast($D.now.addDays(15)) === true, "then should be past to $D.now");
+    it(`.dateTimeValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns DT values for user timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.dateTimeValues.join(`,`), `2020,2,1,23,28,30,441`);
     });
     it(`.daysUntil([Date + 15 days]) works as expected (+15)`, () => {
       const now$ = $D.now;
@@ -429,11 +416,41 @@ describe(`$D instance extensions`, () => {
       const prevMonday = now$.previous(`monday`);
       assert.strictEqual(prevMonday.local, fwdMonday.local, `${fwdMonday.local} !== ${prevMonday.local}`);
     });
-    it(`.weeknr for 2024/12/30 (UTC) is 1`, () => {
-      assert.equal($D(`2024/12/30`).UTC.weeknr, 1);
+    it(`.isFuture([no parameter]) works as expected`, () => {
+      const now$ = $D.now;
+      now$.dateNr += 5;
+      assert(now$.isFuture() === true, "now$ should be future");
     });
-    it(`.weeknr for 2022/01/01 (UTC) is 52`, () => {
-      assert.equal($D(`2022/01/01`).UTC.weeknr, 52);
+    it(`.isFuture([plain (past) Date]) works as expected`, () => {
+      const now$ = $D.now;
+      const then = now$.clone;
+      then.dateNr -= 5;
+      assert(now$.isFuture(then.value) === true, "now$ should not be future for $D.now.addDays(-15).value");
+    });
+    it(`.isFuture([TickTock (past) instance]) works as expected`, () => {
+      const now$ = $D.now;
+      now$.date = {date: now$.date.date + 5};
+      assert(now$.isFuture() === true, "now$ should be future");
+      assert($D.now.isFuture($D(`2000/01/01`)) === true, "now$ should be future for 2000/01/01");
+    });
+    it(`.isLeapYear for $D.from(2000, 0, 1) is true`, () => {
+      assert.equal($D.from(2000, 0, 1).isLeapYear, true);
+    });
+    it(`.isLeapYear for $D.from(2005, 0, 1) is false`, () => {
+      assert.equal($D.from(2005, 0, 1).isLeapYear, false);
+    });
+    it(`.isPast([no parameter]) for $D.now is false`, () => {
+      assert($D.now.isPast() === false, "now$ should not be past" + $D.now.local);
+    });
+    it(`.isPast([plain future Date]) works as expected`, () => {
+      assert($D.now.isPast(new Date(2000, 0, 1)) === false, "now$ should not be past for plain Date (2000/01/01)");
+      assert($D.now.isPast($D.now.addDays(15).value) === true, "now$ should not be past for $D.now.addDays(15).value");
+    });
+    it(`.isPast([TickTock instance]) works as expected`, () => {
+      const then = $D.now.subtract(`10 days`);
+      assert(then.isPast() === true, `then (${then.local}) should be past`);
+      assert($D.now.isPast($D(`2000/01/01`)) === false, "then should not be past to 2000/01/01");
+      assert(then.isPast($D.now.addDays(15)) === true, "then should be past to $D.now");
     });
     it(`.quarter for date 2025/02/01 is 'First'`, () => {
       assert.equal($D(`2025/02/01`).quarter, `First`);
@@ -447,25 +464,50 @@ describe(`$D instance extensions`, () => {
     it(`.quarterNr for date 2000/08/01 is 3`, () => {
       assert.equal($D(`2000/10/01`).quarterNr, 4);
     });
+    it(`.removeTime sets the instance (initial value 2020/02/01 12:28:30.441) time to 00:00:00.000`, () => {
+      const noTime = $D.from(2020, 2, 1, 12, 28, 30, 441);
+      assert.equal(noTime.format(`hh:mmi:ss.ms`), `12:28:30.441`, noTime.milliseconds);
+      noTime.removeTime;
+      assert.deepStrictEqual(noTime.time, {
+        values4Timezone: localLocaleInformation.timeZone,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0
+      });
+      assert.strictEqual(noTime.hours, 0);
+      assert.strictEqual(noTime.minutes, 0);
+      assert.strictEqual(noTime.seconds, 0);
+      assert.strictEqual(noTime.milliseconds, 0);
+      assert.equal(noTime.format(`hh:mmi:ss.ms`), `00:00:00.000`);
+    });
+    it(`.timeValues for 2020/02/01 12:28:30.441, TZ "Asia/Chongqing" returns values within user timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.timeValues.join(`,`), `12,28,30,441`);
+    });
     it(`.unixEpochTimestamp for $D.from(2000,0,1) is 946681200`, () => {
       assert.strictEqual($D.from(2000,0,1).unixEpochTimestamp, 946681200);
-    });
-    it(`.age for $D.from(1933,1,5) is 92`, () => {
-      const birthDate = $D.from(1933,1,5);
-      assert.strictEqual(birthDate.age, birthDate.differenceTo(new Date()).years);
-    });
-    it(`.ageFull for $D.from(1933,1,5) equals ${$D.from(1933,1,5).differenceTo(new Date()).clean}`, () => {
-      const birthDate = $D.from(1933,1,5);
-      assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(new Date()).clean);
     });
     it(`.userLocaleInfo for an instance equals $D.localeInformation`, () => {
       assert.strictEqual($D.now.userLocaleInfo, $D.localeInformation);
     });
-    it(`.isLeapYear for $D.from(2000, 0, 1) is true`, () => {
-      assert.equal($D.from(2000, 0, 1).isLeapYear, true);
+    it(`.weeknr for 2024/12/30 (UTC) is 1`, () => {
+      assert.equal($D(`2024/12/30`).UTC.weeknr, 1);
     });
-    it(`.isLeapYear for $D.from(2005, 0, 1) is false`, () => {
-      assert.equal($D.from(2005, 0, 1).isLeapYear, false);
+    it(`.weeknr for 2022/01/01 (UTC) is 52`, () => {
+      assert.equal($D(`2022/01/01`).UTC.weeknr, 52);
+    });
+    it(`.zoneDateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for embedded timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.zoneDateValues.join(`,`), `2020,2,2`);
+    });
+    it(`.zoneDateTimeValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns DT values for user timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.zoneDateTimeValues.join(`,`), `2020,2,2,6,28,30,441`);
+    });
+    it(`.zoneTimeValues for 2020/02/01 12:28:30.441, TZ "Asia/Chongqing" returns values within embedded timeZone`, () => {
+      const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
+      assert.strictEqual(dtChina.zoneTimeValues.join(`,`), `19,28,30,441`);
     });
   })
 });
@@ -692,9 +734,15 @@ describe(`Setters, mutating methods/getters`, () => {
       const testDate = $D(`2000/01/01 07:00`).relocate({timeZone: `America/Vancouver`});
       assert.strictEqual(testDate.timeZone, `America/Vancouver`);
       assert.strictEqual(testDate.zoneDateTime.values4Timezone, testDate.timeZone);
+      // user date/time
+      assert.strictEqual(testDate.dateTime.hours, 7);
+      assert.strictEqual(testDate.dateTime.year, 2000);
+      assert.strictEqual(testDate.dateTime.month, 0);
+      // timeZone date/time
       assert.strictEqual(testDate.zoneDateTime.hours, 22);
       assert.strictEqual(testDate.zoneDateTime.year, 1999);
       assert.strictEqual(testDate.zoneDateTime.month, 11);
+      
     });
   });
 });
