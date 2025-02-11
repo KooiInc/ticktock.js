@@ -1,4 +1,4 @@
-## TICKTOCK
+## TICKTOCK.JS
 
 A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
