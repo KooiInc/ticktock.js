@@ -589,10 +589,11 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(testD.value.constructor, new Date(`2020/02/01`).constructor);
       assert.strictEqual(String(testD.value), String(new Date(`2020/02/01`)));
     });
-    it(`.weekDayname for 2020/02/01 returns the right day name`, () => {
+    it(`.weekDayname/.dayName for 2020/02/01 returns the right day name`, () => {
       const testD = $D(`2020/02/01`);
       const localDayName = $D.localWeekdaynames(testD.locale).long[testD.getDay()];
       assert.strictEqual(testD.weekDayname, localDayName);
+      assert.strictEqual(testD.dayName, localDayName);
     });
     it(`.weeksInYear 2000 is 52, 2004 is 53`, () => {
         assert.strictEqual($D([2000]).weeksInYear, 52);
