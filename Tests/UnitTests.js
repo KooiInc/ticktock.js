@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
 import {retrieveDateValueFromInput, localeInfoValidator} from "../src/genericHelpers.js";
+import {toLocalString} from "../src/instanceHelpers.js";
 
 // globally used
 const tzs = {
@@ -315,11 +316,11 @@ describe(`$D instance extensions`, () => {
         aucklandSummer2Paris);
     });
     it(`.UTCOffset getter for Auckland summer time (-13)`, () => {
-      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-13:00'};
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+13:00'};
       assert.deepStrictEqual($D(`2025/01/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
     it(`.UTCOffset getter for Auckland winter time (-12)`, () => {
-      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-12:00'};
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+12:00'};
       assert.deepStrictEqual($D(`2025/06/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
   });
@@ -452,6 +453,27 @@ describe(`$D instance extensions`, () => {
       assert($D.now.isPast($D(`2000/01/01`)) === false, "then should not be past to 2000/01/01");
       assert(then.isPast($D.now.addDays(15)) === true, "then should be past to $D.now");
     });
+    it(`.local / .localeString) works as expected`, () => {
+      const local1 = $D.now;
+      const local2 = $D.now.relocate($D.localeInformation);
+      assert.strictEqual(local1.local, local2.local);
+      assert.strictEqual(local1.localeString, local2.localeString);
+    });
+    it(`.localDate works as expected`, () => {
+      const local1 = $D.now;
+      const local2 = $D.now.relocate($D.localeInformation);
+      assert.strictEqual(local1.localDate, local2.localDate);
+    });
+    it(`.localTime works as expected`, () => {
+      const local1 = $D.now;
+      const local2 = $D.now.relocate($D.localeInformation);
+      assert.strictEqual(local1.localTime, local2.localTime);
+    });
+    it(`.monthName 2020/02/01 delivers the day name in local user locale`, () => {
+      const testD = $D(`2020/02/01`);
+      const localMonthName = $D.localMonthnames(testD.locale).long[testD.getMonth()];
+      assert.strictEqual(testD.monthName, localMonthName);
+    })
     it(`.quarter for date 2025/02/01 is 'First'`, () => {
       assert.equal($D(`2025/02/01`).quarter, `First`);
     });
@@ -466,8 +488,9 @@ describe(`$D instance extensions`, () => {
     });
     it(`.removeTime sets the instance (initial value 2020/02/01 12:28:30.441) time to 00:00:00.000`, () => {
       const noTime = $D.from(2020, 2, 1, 12, 28, 30, 441);
-      assert.equal(noTime.format(`hh:mmi:ss.ms`), `12:28:30.441`, noTime.milliseconds);
+      assert.equal(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `12:28:30.441`, noTime.milliseconds);
       noTime.removeTime;
+      assert.equal(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `00:00:00.000`, noTime.milliseconds);
       assert.deepStrictEqual(noTime.time, {
         values4Timezone: localLocaleInformation.timeZone,
         hours: 0,
@@ -475,22 +498,44 @@ describe(`$D instance extensions`, () => {
         seconds: 0,
         milliseconds: 0
       });
-      assert.strictEqual(noTime.hours, 0);
-      assert.strictEqual(noTime.minutes, 0);
-      assert.strictEqual(noTime.seconds, 0);
-      assert.strictEqual(noTime.milliseconds, 0);
-      assert.equal(noTime.format(`hh:mmi:ss.ms`), `00:00:00.000`);
     });
     it(`.timeValues for 2020/02/01 12:28:30.441, TZ "Asia/Chongqing" returns values within user timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.timeValues.join(`,`), `12,28,30,441`);
     });
-    it(`.unixEpochTimestamp for $D.from(2000,0,1) is 946681200`, () => {
+    it(`.unixEpochTimestamp for 2000/01/01 is 946681200`, () => {
       assert.strictEqual($D.from(2000,0,1).unixEpochTimestamp, 946681200);
+    });
+    it(`.unixEpochTimestamp for 1900/03/01 is -2203891200`, () => {
+      assert.strictEqual($D(`1900/03/01`).unixEpochTimestamp, -2203891200);
     });
     it(`.userLocaleInfo for an instance equals $D.localeInformation`, () => {
       assert.strictEqual($D.now.userLocaleInfo, $D.localeInformation);
     });
+    it(`.UTC delivers a clone with embedded timeZone Etc/UTC`, () => {
+      const testDate = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "America/New_York"});
+      const utcDate = testDate.UTC;
+      assert.notEqual(testDate.toString(), utcDate.toString());
+      assert.strictEqual(utcDate.timeZone, `UTC`);
+    });
+    it(`.UTCOffset for America/New_York is {..., offset: '-05:00'}`, () => {
+      const testDate = $D({timeZone: "America/New_York"});
+      assert.deepStrictEqual(testDate.UTCOffset,{fromTZ: 'America/New_York', toTZ: 'UTC', offset: '-05:00'});
+    }),
+    it(`.value is a plain Date`, () => {
+      const testD = $D(`2020/02/01`);
+      assert.strictEqual(testD.value.constructor, new Date(`2020/02/01`).constructor);
+      assert.equal(String(testD.value), String(new Date(`2020/02/01`)));
+    });
+    it(`.weekDayname for 2020/02/01 returns the right day name`, () => {
+      const testD = $D(`2020/02/01`);
+      const localDayName = $D.localWeekdaynames(testD.locale).long[testD.getDay()];
+      assert.strictEqual(testD.weekDayname, localDayName);
+    });
+    it(`.weeksInYear 2000 is 52, 2004 is 53`, () => {
+        assert.strictEqual($D([2000]).weeksInYear, 52);
+        assert.strictEqual($D([2004]).weeksInYear, 53);
+      });
     it(`.weeknr for 2024/12/30 (UTC) is 1`, () => {
       assert.equal($D(`2024/12/30`).UTC.weeknr, 1);
     });
@@ -505,11 +550,19 @@ describe(`$D instance extensions`, () => {
       const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.zoneDateTimeValues.join(`,`), `2020,2,2,6,28,30,441`);
     });
+    it(`.zoneMonthname for 2020/02/01, locale "zh" is 三月`, () => {
+      const dt = $D([2020, 2, 1], {locale: `zh`});
+      assert.strictEqual(dt.zoneMonthname, "三月");
+    });
+    it(`.zoneDayname for 2020/02/01 12:28:30.441, locale "zh" is 星期日`, () => {
+      const dt = $D([2020, 2, 1, 12, 28, 30, 441], {locale: `zh`});
+      assert.strictEqual(dt.zoneDayname, "星期日");
+    });
     it(`.zoneTimeValues for 2020/02/01 12:28:30.441, TZ "Asia/Chongqing" returns values within embedded timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.zoneTimeValues.join(`,`), `19,28,30,441`);
     });
-  })
+  });
 });
 
 describe(`Setters, mutating methods/getters`, () => {

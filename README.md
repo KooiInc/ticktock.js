@@ -550,7 +550,7 @@ console.log(inChina.info);
 <br><ins>returns</ins> new TickTock instance with encapsulated UTC timeZone.
 
 ☑️ `UTCOffset` <ins>getter</ins>
-<br><ins>returns</ins> `{fromTZ:String, toTZ:String, offset:String}`
+<br><ins>returns</ins> `{fromTZ:String ('UTC'), toTZ:String (embedded timeZone), offset:String (+/-hh:mm)}`
 
 ☑️ `value` <ins>getter</ins>
 <br><ins>returns</ins> `Date`

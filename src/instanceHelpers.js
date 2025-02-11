@@ -90,7 +90,7 @@ function daysUntil(instance, nextDate) {
 }
 
 function getNames(instance, forLocale = false) {
-  const {locale, timeZone, } = forLocale ? instance.localeInfo : localLocaleInfo;
+  const { locale, timeZone, } = forLocale ? instance.localeInfo : localLocaleInfo;
   const formatOptions = retrieveFormattingFormats(locale, timeZone);
   const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
@@ -160,18 +160,23 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   return dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
 }
 
+function flipSign(sign) {
+  return sign === `+` ? `-` : `+`;
+}
+
 function offsetFrom(instance, from) {
   const isUTC = String(from).toLowerCase() === `utc`;
   from = isUTC
-    ? instance.clone.relocate({timeZone: `Etc/UTC`})
+    ? instance.clone.relocate({timeZone: `UTC`})
     : xDate(instance.value, { timeZone: from.timeZone || localLocaleInfo.timeZone });
   
   const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
+  const sign = !isUTC ? diff.sign : flipSign(diff.sign);
 
   return {
     fromTZ: instance.timeZone,
     toTZ: from.timeZone,
-    offset: `${diff.sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
+    offset: `${sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
   };
 }
 

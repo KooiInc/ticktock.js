@@ -32,7 +32,6 @@ function instanceCreator({instance, localeInfo} = {}) {
     ageFullUntil(date) { return instance.differenceTo(date).clean; },
     toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
 
-    // instance setters mutate
     set localeInfo({locale, timeZone}) { localeInfo = setLocaleInfo({locale, timeZone, validate: true}); },
     set year(n) { setDateParts(instance, {year: n}); },
     set month(n) { setDateParts(instance, {month: n}); },
@@ -90,11 +89,11 @@ function instanceCreator({instance, localeInfo} = {}) {
     get UTCOffset() { return offsetFrom(instance, `UTC`); },
     get day() { return getDowNumber(instance); },
     get zoneDay() { return getDowNumber(instance, true); },
-    get zoneDayname() { return instance.zoneNames.dayName; },
     get dayName() { return instance.names.dayName; },
     get weeknr() { return getISO8601Weeknr(instance); },
     get weeksInYear() { return getWeeksInYear(instance.year, 31); },
-    get weekDayName() { return instance.names.dayName; },
+    get weekDayname() { return instance.names.dayName; },
+    get zoneDayname() { return instance.zoneNames.dayName; },
     get monthName() { return instance.names.monthName; },
     get zoneMonthname() {return instance.zoneNames.monthName; },
     get quarter() { return getQuarter(instance); },
