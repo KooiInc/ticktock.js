@@ -438,6 +438,10 @@ describe(`$D instance extensions`, () => {
       const nextBirthdate = $D.from(2026,1,5);
       assert.strictEqual(birthDate.ageFullUntil(nextBirthdate), birthDate.differenceTo(nextBirthdate).clean);
     });
+    it(`.dateNr equals [instance].getDate()`, () => {
+      const now$ = $D.now;
+      assert.strictEqual(now$.dateNr, now$.getDate());
+    });
     it(`.dateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for user timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.dateValues.join(`,`), `2020,2,1`);
@@ -555,14 +559,12 @@ describe(`$D instance extensions`, () => {
       const str2 = now$.format(`yyyy/mm/dd WD`);
       assert.strictEqual(str1, str2);
     });
-    it(`.toString with formatString "yyyy/mm/dd WD" and locale formatOption "l:pl" equals .format("yyyy/mm/dd WD", "l:pl")`,
-      () => {
+    it(`.toString with formatString "yyyy/mm/dd WD" and locale formatOption "l:pl" equals .format("yyyy/mm/dd WD", "l:pl")`, () => {
         const now$ = $D.now;
         const str1 = now$.toString(`yyyy/mm/dd WD`, `l:pl`);
         const str2 = now$.format(`yyyy/mm/dd WD`, `l:pl`);
         assert.strictEqual(str1, str2);
-      }
-    );
+      } );
     it(`.unixEpochTimestamp for 2000/01/01 is 946681200`, () => {
       assert.strictEqual($D.from(2000,0,1).unixEpochTimestamp, 946681200);
     });
