@@ -30,17 +30,17 @@ getters like `.zoneDateTime`, `zoneDayname` or `zoneMonthname`.
 
 ```javascript
 import $D from "[location of library]";
-const nowInChongqinInPolish = $D(`2025/01/22 22:00`, {locale: "pl", timeZone: `Asia/Chongqing`});
+const inChongqinInPolish = $D(`2025/01/22 22:00`, {locale: "pl", timeZone: `Asia/Chongqing`});
 // note: developer (browser) locale = "en-US" and - timeZone = "Europe/Amsterdam"
-console.log(nowInChongqinInPolish.dayName);
+console.log(inChongqinInPolish.dayName);
 // ↳ result Wednesday
-console.log(nowInChongqinInPolish.monthName);
+console.log(inChongqinInPolish.monthName);
 // ↳ result January
 console.log(nowInChongqinInPolish.zoneDayname);
 // ↳ result czwartek
-console.log(nowInChongqinInPolish.zoneMonthname);
+console.log(inChongqinInPolish.zoneMonthname);
 // ↳ result styczeń 
-console.log(nowInChongqinInPolish.dateTime);
+console.log(inChongqinInPolish.dateTime);
 /* ↳ result {
   values4Timezone: 'Europe/Amsterdam',
   year: 2025,
@@ -52,7 +52,7 @@ console.log(nowInChongqinInPolish.dateTime);
   seconds: 0,
   milliseconds: 0 }
  */
-console.log(nowInChongqinInPolish.zoneDateTime);
+console.log(inChongqinInPolish.zoneDateTime);
 /* ↳ result {
   values4Timezone: 'Asia/Shanghai',
   year: 2025,
