@@ -3,7 +3,7 @@
 A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) ES20xx `Date` extension.
 
 It presents a wrapped *locale and time zone sensitive* `JS-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
-The bundled file size is around 19kb.
+The bundled file size is a mere 20kb.
 
 ### locale and timeZone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 

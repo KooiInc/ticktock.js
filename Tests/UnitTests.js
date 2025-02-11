@@ -2,7 +2,6 @@ import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
 import {retrieveDateValueFromInput, localeInfoValidator} from "../src/genericHelpers.js";
-import {toLocalString} from "../src/instanceHelpers.js";
 
 // globally used
 const tzs = {
@@ -18,7 +17,7 @@ describe(`Basics $D`, () => {
   const now = new Date();
   const dateToTestAgainst = new Date(2000, 0, 1, 13, 0, 0).toISOString();
   it(`$D(new Date("2000/01/01 13:00:00")) should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.equal($D(new Date("2000/01/01 13:00:00")).ISO, dateToTestAgainst) );
+    assert.strictEqual($D(new Date("2000/01/01 13:00:00")).ISO, dateToTestAgainst) );
   it(`$D([any Number]) should return current Date`, () => {
     assert.strictEqual(String(retrieveDateValueFromInput(42)), String(new Date()));
     assert.strictEqual(
@@ -31,11 +30,11 @@ describe(`Basics $D`, () => {
     assert.strictEqual(now$.ISO, now.toISOString());
   });
   it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.equal($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst) );
+    assert.strictEqual($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst) );
   it(`$D([2020]) should return instance with date 2020/01/01`, () =>
-    assert.equal($D([2020]).ISO, new Date(2020,0,1).toISOString()) );
+    assert.strictEqual($D([2020]).ISO, new Date(2020,0,1).toISOString()) );
   it(`$D("2000/01/01 13:00:00") should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.equal($D("2000/01/01 13:00:00").ISO, dateToTestAgainst) );
+    assert.strictEqual($D("2000/01/01 13:00:00").ISO, dateToTestAgainst) );
   it(`$D("invalid") should return instance with current Date`, () => {
     const now$ = $D("invalid");
     const now = new Date();
@@ -96,16 +95,16 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual($D.localWeekdaynames(`zh`).long[0], "星期日");
     assert.strictEqual($D.localWeekdaynames(`zh`).short[0], "周日");
   });
-  it(`$D.daysInMonth(1) should be 31`, () => assert.equal($D.daysInMonth(1), 31));
+  it(`$D.daysInMonth(1) should be 31`, () => assert.strictEqual($D.daysInMonth(1), 31));
   it(`$D.validateLocaleInformation({locale: "nl"}).locale should be "nl" (and timeZone the user TZ)`, () => {
     const validatedNL = $D.validateLocaleInformation({locale: `nl`});
-    assert.equal(validatedNL.locale, `nl`);
-    assert.equal(validatedNL.timeZone, localZoneInformation.timeZone);
+    assert.strictEqual(validatedNL.locale, `nl`);
+    assert.strictEqual(validatedNL.timeZone, localZoneInformation.timeZone);
   });
   it(`$D.validateLocaleInformation({TimeZone: "Pacific/Auckland"}).timeZone should be "Pacific/Auckland" (and locale the user locale)`, () => {
     const validatedNL = $D.validateLocaleInformation({timeZone: tzs.auckland});
-    assert.equal(validatedNL.locale, localZoneInformation.locale);
-    assert.equal(validatedNL.timeZone, tzs.auckland);
+    assert.strictEqual(validatedNL.locale, localZoneInformation.locale);
+    assert.strictEqual(validatedNL.timeZone, tzs.auckland);
   });
   it(`$D.validateLocaleInformation() should return Intl.DateTimeFormat().resolvedOptions()`, () => {
     const validatedHere = $D.validateLocaleInformation();
@@ -113,17 +112,17 @@ describe(`Constructor ($D) static methods/getters`, () => {
   });
   it(`$D.from(2020, 0, 5, 13, 0, 0) should return a TickTock instance with ISOstring "2020-01-05T12:00:00.000Z"`, () => {
     const testD = $D.from(2020, 0, 5, 13, 0, 0);
-    assert.equal(testD.ISO, '2020-01-05T12:00:00.000Z');
+    assert.strictEqual(testD.ISO, '2020-01-05T12:00:00.000Z');
   });
   it(`$D.from(2000) (single value) should return a TickTock instance with value new Date(2000, 0, 1) (so: now)`, () => {
     const nowISO = new Date(2000, 0, 1).toISOString();
     const testD_ISO = $D.from(2000).ISO;
-    assert.equal(testD_ISO, nowISO);
+    assert.strictEqual(testD_ISO, nowISO);
   });
   it(`$D.from() should return a TickTock instance with value new Date() (so: now)`, () => {
     const nowISO = new Date().toISOString();
     const testD_ISO = $D.from().ISO;
-    assert.equal(testD_ISO, nowISO);
+    assert.strictEqual(testD_ISO, nowISO);
   });
   it(`$D.timeAcrossZones for ${timeZoneDate}, ${tzs.vancouver} vs ${tzs.amsterdam}`, () => {
     const vancouver = $D.timeAcrossZones({
@@ -159,35 +158,35 @@ describe(`Constructor ($D) static methods/getters`, () => {
   });
   it(`$D.yearCalendar({year: 2000, locale: "de"})`, () => {
     const {year, calendar} = $D.yearCalendar({year: 2000, locale: "de"});
-    assert.equal(year, 2000);
-    assert.equal(calendar.january[0].isLeapYear, true, `isLeapyear not true`);
-    assert.equal(calendar.january[0].zoneMonthname, `Januar`, "zoneMonthname 01/01 not 'Januar'");
-    assert.equal(calendar.december[0].zoneMonthname, `Dezember`, "zoneMonthname 01/12 not 'Dezember'");
-    assert.equal(calendar.december[0].local, `1.12.2000, 00:00:00`, "1/2 local not '1.12.2000, 00:00:00'");
-    assert.equal(calendar.december[0].hasDST, true, `hasDST not true`);
-    assert.equal(calendar.december[0].DSTActive, false, `DSTActive winter not false`);
-    assert.equal(calendar.may[0].DSTActive, true, `DSTActive summer not true`);
+    assert.strictEqual(year, 2000);
+    assert.strictEqual(calendar.january[0].isLeapYear, true, `isLeapyear not true`);
+    assert.strictEqual(calendar.january[0].zoneMonthname, `Januar`, "zoneMonthname 01/01 not 'Januar'");
+    assert.strictEqual(calendar.december[0].zoneMonthname, `Dezember`, "zoneMonthname 01/12 not 'Dezember'");
+    assert.strictEqual(calendar.december[0].local, `1.12.2000, 00:00:00`, "1/2 local not '1.12.2000, 00:00:00'");
+    assert.strictEqual(calendar.december[0].hasDST, true, `hasDST not true`);
+    assert.strictEqual(calendar.december[0].DSTActive, false, `DSTActive winter not false`);
+    assert.strictEqual(calendar.may[0].DSTActive, true, `DSTActive summer not true`);
   });
   it(`$D.monthCalendar({year: 2000, monthNr: 2, locale: "fr"})`, () => {
     const calendar = $D.monthCalendar({year: 2000, monthNr: 2, locale: `fr`});
-    assert.equal(calendar[0].year, 2000);
-    assert.equal(calendar[0].zoneMonthname, "février");
-    assert.equal(calendar[0].local, "01/02/2000 00:00:00");
-    assert.equal(calendar[0].isLeapYear, true);
-    assert.equal(calendar.slice(-1)[0].date.date, 29);
+    assert.strictEqual(calendar[0].year, 2000);
+    assert.strictEqual(calendar[0].zoneMonthname, "février");
+    assert.strictEqual(calendar[0].local, "01/02/2000 00:00:00");
+    assert.strictEqual(calendar[0].isLeapYear, true);
+    assert.strictEqual(calendar.slice(-1)[0].date.date, 29);
   });
   it(`$D.localeInformation equals Intl.DateTimeFormat().resolvedOptions()`, () => {
     assert.deepStrictEqual($D.localeInformation, Intl.DateTimeFormat().resolvedOptions());
   });
   it(`$D.addCustom added non enumerable getter "addEra"`, () => {
     assert($D.keys.indexOf(`addEra`) < 0, "addEra is NOT expected to be in the $D.keys collection");
-    assert.equal($D(`2000/01/01`).addEra.year, 2100);
+    assert.strictEqual($D(`2000/01/01`).addEra.year, 2100);
   });
   it(`$D.addCustom added enumerable method "quarterString"`, () => {
     assert($D.keys.indexOf(`quarterString`) > -1, "quarterString is expected to be in the $D.keys collection");
     const d = $D(`2000/01/01`, {locale: `en-CA`});
-    assert.equal(d.quarterString(), `First quarter`);
-    assert.equal(d.quarterString(true), `2000-01-01, 12:00:00 a.m. is in the first quarter`);
+    assert.strictEqual(d.quarterString(), `First quarter`);
+    assert.strictEqual(d.quarterString(true), `2000-01-01, 12:00:00 a.m. is in the first quarter`);
   });
   it(`$D.keys is Array and contains all (enumerable) instance getter/method names`, () => {
     const keys = $D.keys;
@@ -207,14 +206,14 @@ describe(`$D instance extensions`, () => {
       const dateInitial = now$.dateNr;
       assert.notStrictEqual(now$, clone);
       clone.date = {date: dateInitial + 5};
-      assert(clone.dateNr === dateInitial + 5);
-      assert(clone.dateNr - 5 === dateInitial);
+      assert.strictEqual(clone.dateNr, dateInitial + 5);
+      assert.strictEqual(clone.dateNr - 5, dateInitial);
     });
     it(`.cloneWith without a Date parameter returns instance clone`, () => {
       const now$ = $D.now;
       const clone = now$.cloneWith();
       assert.notStrictEqual(now$, clone);
-      assert(String(now$) === String(clone), `toString clone and now should be equal`);
+      assert.strictEqual(String(now$), String(clone));
     });
     it(`.cloneWith with an invalid Date parameter returns instance clone`, () => {
       const now$ = $D.now;
@@ -227,14 +226,14 @@ describe(`$D instance extensions`, () => {
       const now$ = $D.now;
       const clone = now$.cloneWith(new Date(`2000/01/01`));
       assert.notEqual(String(now$), String(clone));
-      assert.notEqual(String(now$), String(clone), `toString clone and now should NOT be equal`);
-      assert(clone.year === 2000, `clone year should be 2000`);
+      assert.notEqual(String(now$), String(clone));
+      assert.strictEqual(clone.year, 2000);
     });
     it(`.cloneWith with [TickTock instance] gives a new instance with new [given TickTock instance value]`, () => {
       const now$ = $D.now;
       const clone = now$.cloneWith($D(`2000/01/01`));
       assert.notEqual(String(now$), String(clone), `toString clone and now should NOT be equal`);
-      assert(clone.year === 2000, `clone year should be 2000`);
+      assert.strictEqual(clone.year, 2000, `clone year should be 2000`);
     });
     it(`.revalue without parameters returns current instance (not a clone)`, () => {
       const now$ = $D.now;
@@ -271,6 +270,52 @@ describe(`$D instance extensions`, () => {
       const previousDayName = now$.zoneNames.dayNames.long[now$.getDay() - 1];
       const previous = now$.previous(previousDayName);
       assert.strictEqual(previous.dateNr, now$.dateNr - 1);
+    });
+  });
+  
+  describe(`.between`, () => {
+    it(`.between({start: [now - 1 day], end: [now + 1 year]}) is true`, () => {
+      assert.strictEqual($D.now.between({start: $D.now.subtract(`1 day`), end: $D.now.add(`1 year`)}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year]}) is false`, () => {
+      const now$ = $D.now;
+      assert.strictEqual(now$.between({start: now$, end: $D.now.add(`1 year`)}), false);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {start: true}}) is true`, () => {
+      const now$ = $D.now;
+      assert.strictEqual(now$.between({start: now$, end: $D.now.add(`1 year`), include: {start: true}}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {end: true}}) is true`, () => {
+      const now$PlusOneYear = $D.now.add(`1 year`);
+      assert.strictEqual(now$PlusOneYear.between({start: $D.now, end: now$PlusOneYear, include: {end: true}}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {start: true, end: true}}) is true`, () => {
+      const now$PlusOneYear = $D.now.add(`1 year`);
+      assert.strictEqual($D.now.between({start: $D.now, end: now$PlusOneYear, include: {start: true, end: true}}), true);
+    });
+    // same with plain dates
+    it(`.between({start: [now - 1 day], end: [now + 1 year]}) start/end plain dates is true`, () => {
+      assert.strictEqual($D.now.between(
+        {start: $D.now.subtract(`1 day`).value, end: $D.now.add(`1 year`).value}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year]}) start/end plain dates is false`, () => {
+      const now$ = $D.now;
+      assert.strictEqual(now$.between({start: now$.value, end: $D.now.add(`1 year`).value}), false);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {start: true}}) start/end plain dates is true`, () => {
+      const now$ = $D.now;
+      assert.strictEqual(now$.between(
+        {start: now$.value, end: $D.now.add(`1 year`).value, include: {start: true}}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {end: true}}) start/end plain dates  is true`, () => {
+      const now$PlusOneYear = $D.now.add(`1 year`);
+      assert.strictEqual(now$PlusOneYear.between(
+        {start: $D.now.value, end: now$PlusOneYear.value, include: {end: true}}), true);
+    });
+    it(`.between({start: [now], end: [now + 1 year], include: {start: true, end: true}}) start/end plain dates is true`, () => {
+      const now$PlusOneYear = $D.now.add(`1 year`);
+      assert.strictEqual(
+        $D.now.between({start: $D.now.value, end: now$PlusOneYear.value, include: {start: true, end: true}}), true);
     });
   });
   
@@ -383,9 +428,10 @@ describe(`$D instance extensions`, () => {
       const birthDate = $D.from(1933,1,5);
       assert.strictEqual(birthDate.age, birthDate.differenceTo(new Date()).years);
     });
-    it(`.ageFull for $D.from(1933,1,5) equals ${$D.from(1933,1,5).differenceTo(new Date()).clean}`, () => {
+    it(`.ageFull for $D.from(1933,1,5) works as expected`, () => {
       const birthDate = $D.from(1933,1,5);
-      assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(new Date()).clean);
+      const now$ = $D.now;
+      assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(now$).clean);
     });
     it(`.dateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for user timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
@@ -417,41 +463,30 @@ describe(`$D instance extensions`, () => {
       const prevMonday = now$.previous(`monday`);
       assert.strictEqual(prevMonday.local, fwdMonday.local, `${fwdMonday.local} !== ${prevMonday.local}`);
     });
-    it(`.isFuture([no parameter]) works as expected`, () => {
-      const now$ = $D.now;
-      now$.dateNr += 5;
-      assert(now$.isFuture() === true, "now$ should be future");
+    it(`.isFuture([no parameter]) is false`, () => {
+      assert.strictEqual($D.now.addDays(5).isFuture(),true);
     });
-    it(`.isFuture([plain (past) Date]) works as expected`, () => {
-      const now$ = $D.now;
-      const then = now$.clone;
-      then.dateNr -= 5;
-      assert(now$.isFuture(then.value) === true, "now$ should not be future for $D.now.addDays(-15).value");
+    it(`.isFuture([plain (past) Date]) is true`, () => {
+      assert.strictEqual($D.now.isFuture($D.now.addDays(-5).value), true);
     });
-    it(`.isFuture([TickTock (past) instance]) works as expected`, () => {
-      const now$ = $D.now;
-      now$.date = {date: now$.date.date + 5};
-      assert(now$.isFuture() === true, "now$ should be future");
-      assert($D.now.isFuture($D(`2000/01/01`)) === true, "now$ should be future for 2000/01/01");
+    it(`.isFuture([TickTock (past) instance]) is true`, () => {
+      assert.strictEqual($D.now.isFuture($D.now.addDays(-5)), true);
     });
     it(`.isLeapYear for $D.from(2000, 0, 1) is true`, () => {
-      assert.equal($D.from(2000, 0, 1).isLeapYear, true);
+      assert.strictEqual($D.from(2000, 0, 1).isLeapYear, true);
     });
     it(`.isLeapYear for $D.from(2005, 0, 1) is false`, () => {
-      assert.equal($D.from(2005, 0, 1).isLeapYear, false);
+      assert.strictEqual($D.from(2005, 0, 1).isLeapYear, false);
     });
     it(`.isPast([no parameter]) for $D.now is false`, () => {
-      assert($D.now.isPast() === false, "now$ should not be past" + $D.now.local);
+      assert.strictEqual($D.now.isPast(), false);
     });
-    it(`.isPast([plain future Date]) works as expected`, () => {
-      assert($D.now.isPast(new Date(2000, 0, 1)) === false, "now$ should not be past for plain Date (2000/01/01)");
-      assert($D.now.isPast($D.now.addDays(15).value) === true, "now$ should not be past for $D.now.addDays(15).value");
+    it(`.isPast([plain future Date]) is true`, () => {
+      assert.strictEqual($D.now.isPast($D.now.addDays(15).value), true);
     });
-    it(`.isPast([TickTock instance]) works as expected`, () => {
-      const then = $D.now.subtract(`10 days`);
-      assert(then.isPast() === true, `then (${then.local}) should be past`);
-      assert($D.now.isPast($D(`2000/01/01`)) === false, "then should not be past to 2000/01/01");
-      assert(then.isPast($D.now.addDays(15)) === true, "then should be past to $D.now");
+    it(`.isPast([TickTock (future) instance]) true`, () => {
+      const then = $D.now.add(`10 days`);
+      assert.strictEqual($D.now.isPast(then), true);
     });
     it(`.local / .localeString) works as expected`, () => {
       const local1 = $D.now;
@@ -475,22 +510,22 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(testD.monthName, localMonthName);
     })
     it(`.quarter for date 2025/02/01 is 'First'`, () => {
-      assert.equal($D(`2025/02/01`).quarter, `First`);
+      assert.strictEqual($D(`2025/02/01`).quarter, `First`);
     });
     it(`.quarter for date 2000/08/01 is 'Third'`, () => {
-      assert.equal($D(`2000/08/01`).quarter, `Third`);
+      assert.strictEqual($D(`2000/08/01`).quarter, `Third`);
     });
     it(`.quarterNr for date 2025/04/01 is 2`, () => {
-      assert.equal($D(`2025/04/01`).quarterNr, 2);
+      assert.strictEqual($D(`2025/04/01`).quarterNr, 2);
     });
     it(`.quarterNr for date 2000/08/01 is 3`, () => {
-      assert.equal($D(`2000/10/01`).quarterNr, 4);
+      assert.strictEqual($D(`2000/10/01`).quarterNr, 4);
     });
     it(`.removeTime sets the instance (initial value 2020/02/01 12:28:30.441) time to 00:00:00.000`, () => {
       const noTime = $D.from(2020, 2, 1, 12, 28, 30, 441);
-      assert.equal(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `12:28:30.441`, noTime.milliseconds);
+      assert.strictEqual(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `12:28:30.441`, noTime.milliseconds);
       noTime.removeTime;
-      assert.equal(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `00:00:00.000`, noTime.milliseconds);
+      assert.strictEqual(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `00:00:00.000`, noTime.milliseconds);
       assert.deepStrictEqual(noTime.time, {
         values4Timezone: localLocaleInformation.timeZone,
         hours: 0,
@@ -525,7 +560,7 @@ describe(`$D instance extensions`, () => {
     it(`.value is a plain Date`, () => {
       const testD = $D(`2020/02/01`);
       assert.strictEqual(testD.value.constructor, new Date(`2020/02/01`).constructor);
-      assert.equal(String(testD.value), String(new Date(`2020/02/01`)));
+      assert.strictEqual(String(testD.value), String(new Date(`2020/02/01`)));
     });
     it(`.weekDayname for 2020/02/01 returns the right day name`, () => {
       const testD = $D(`2020/02/01`);
@@ -537,10 +572,10 @@ describe(`$D instance extensions`, () => {
         assert.strictEqual($D([2004]).weeksInYear, 53);
       });
     it(`.weeknr for 2024/12/30 (UTC) is 1`, () => {
-      assert.equal($D(`2024/12/30`).UTC.weeknr, 1);
+      assert.strictEqual($D(`2024/12/30`).UTC.weeknr, 1);
     });
     it(`.weeknr for 2022/01/01 (UTC) is 52`, () => {
-      assert.equal($D(`2022/01/01`).UTC.weeknr, 52);
+      assert.strictEqual($D(`2022/01/01`).UTC.weeknr, 52);
     });
     it(`.zoneDateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for embedded timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
@@ -570,77 +605,77 @@ describe(`Setters, mutating methods/getters`, () => {
     it(`.year setter sets the instance year to 2050`, () => {
       const now$ = $D.now;
       now$.year = 2050;
-      assert.equal(now$.year, 2050);
+      assert.strictEqual(now$.year, 2050);
     });
     it(`.year setter using += sets the year to year + value`, () => {
       const now$ = $D.now;
       now$.year = 2030;
       now$.year += 10;
-      assert.equal(now$.year, 2040);
+      assert.strictEqual(now$.year, 2040);
     });
     it(`.month setter sets the instance month to march`, () => {
       const now$ = $D.now.relocate({locale: `en`});
       now$.month = 2;
-      assert.equal(now$.month, 2);
-      assert.equal(now$.zoneNames.monthNames.long[now$.month], `March`);
-      assert.equal(now$.zoneMonthname, `March`);
+      assert.strictEqual(now$.month, 2);
+      assert.strictEqual(now$.zoneNames.monthNames.long[now$.month], `March`);
+      assert.strictEqual(now$.zoneMonthname, `March`);
     });
     it(`.month setter using += sets the month to month + value`, () => {
       const now$ = $D(`2000/02/01`).relocate({locale: `en`});
       now$.month += 1;
-      assert.equal(now$.month, 2);
-      assert.equal(now$.zoneMonthname, `March`);
-      assert.equal(now$.zoneNames.monthNames.long[now$.month], `March`);
+      assert.strictEqual(now$.month, 2);
+      assert.strictEqual(now$.zoneMonthname, `March`);
+      assert.strictEqual(now$.zoneNames.monthNames.long[now$.month], `March`);
     });
     it(`.dateNr setter sets the instance date to 18`, () => {
       const now$ = $D.now;
       now$.dateNr = 18;
-      assert.equal(now$.dateNr, 18);
+      assert.strictEqual(now$.dateNr, 18);
     });
     it(`.dateNr setter using += sets the date to hours + value`, () => {
       const now$ = $D(`2000/01/01 17:00:00`);
       now$.dateNr += 1;
-      assert.equal(now$.dateNr, 2);
+      assert.strictEqual(now$.dateNr, 2);
     });
     it(`.hours setter sets the instance hour to 18`, () => {
       const now$ = $D(`2000/01/01`);
       now$.hours = 18;
-      assert.equal(now$.hours, 18);
+      assert.strictEqual(now$.hours, 18);
     });
     it(`.hours setter using += sets the hours to hours + value`, () => {
       const now$ = $D(`2000/01/01 17:00:00`);
       now$.hours += 1;
-      assert.equal(now$.hours, 18);
+      assert.strictEqual(now$.hours, 18);
     });
     it(`.minutes setter sets the instance minutes to 35`, () => {
       const now$ = $D(`2000/01/01`);
       now$.minutes = 35;
-      assert.equal(now$.minutes, 35);
+      assert.strictEqual(now$.minutes, 35);
     });
     it(`.minutes setter using += sets the minutes to minutes + value`, () => {
       const now$ = $D(`2000/01/01 17:10:00`);
       now$.minutes += 25;
-      assert.equal(now$.minutes, 35);
+      assert.strictEqual(now$.minutes, 35);
     });
     it(`.seconds setter sets the instance seconds to 55`, () => {
       const now$ = $D(`2000/01/01`);
       now$.seconds = 55;
-      assert.equal(now$.seconds, 55);
+      assert.strictEqual(now$.seconds, 55);
     });
     it(`.seconds setter using += sets the seconds to seconds + value`, () => {
       const now$ = $D(`2000/01/01 17:10:30`);
       now$.seconds += 25;
-      assert.equal(now$.seconds, 55);
+      assert.strictEqual(now$.seconds, 55);
     });
     it(`.milliseconds setter sets the instance milliseconds to 725`, () => {
       const now$ = $D(`2000/01/01`);
       now$.milliseconds = 725;
-      assert.equal(now$.milliseconds, 725);
+      assert.strictEqual(now$.milliseconds, 725);
     });
     it(`.milliseconds setter using += sets the milliseconds to milliseconds + value`, () => {
       const now$ = $D(`2000/01/01 17:10:30.600`);
       now$.milliseconds += 125;
-      assert.equal(now$.milliseconds, 725);
+      assert.strictEqual(now$.milliseconds, 725);
     });
   });
   

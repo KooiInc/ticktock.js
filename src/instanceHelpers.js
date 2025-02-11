@@ -60,20 +60,16 @@ function addParts2Date(instance, ...parts2Add) {
   return instance;
 }
 
-function compareDates(instance, {start, end, before, include = {start: false, end: false}} = {}) {
+function compareDates(instance, {start, end, future, past, include = {start: false, end: false}} = {}) {
   const instnc = instance.clone.UTC;
   start = start?.value || start?.constructor === Date ? xDate(start?.value || start).UTC : xDate.now.UTC;
+  end = end && end?.value || end?.constructor === Date ? xDate(end?.value || end).UTC : xDate.now.UTC;
   instnc.milliseconds = 0;
   start.milliseconds = 0;
+  end.milliseconds = 0;
   
-  if (!Number.isNaN(+start) && !end) {
-    return before ? +instnc < +start : +instnc > +start
-  }
-
-  end = xDate(end).UTC;
-
-  return (include.start ? +instnc >= +start : +instnc > +start) &&
-    (include.end ? +instnc <= +end : +instnc < +end);
+  return future ? start > end : past ? start < end :
+    (include.start ? +instnc >= +start : +instnc > +start) && (include.end ? +instnc <= +end : +instnc < +end);
 }
 
 function format(instance, formatStr, moreOptions) {
