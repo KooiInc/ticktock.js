@@ -433,6 +433,11 @@ describe(`$D instance extensions`, () => {
       const now$ = $D.now;
       assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(now$).clean);
     });
+    it(`.ageFullUntil for $D.from(1933,1,5) until $D.from(2026,1,5) works as expected`, () => {
+      const birthDate = $D.from(1933,1,5);
+      const nextBirthdate = $D.from(2026,1,5);
+      assert.strictEqual(birthDate.ageFullUntil(nextBirthdate), birthDate.differenceTo(nextBirthdate).clean);
+    });
     it(`.dateValues for 2020/02/01 23:28:30.441, TZ "Asia/Chongqing" returns date values for user timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 23, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.dateValues.join(`,`), `2020,2,1`);
