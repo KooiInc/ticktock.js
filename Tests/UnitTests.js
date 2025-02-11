@@ -543,6 +543,26 @@ describe(`$D instance extensions`, () => {
       const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.timeValues.join(`,`), `12,28,30,441`);
     });
+    it(`.toString no parameters equals plain Date toString (without timeZoneName)`, () => {
+      const now$ = $D.now;
+      const str1 = now$.toString();
+      const str2 = now$.value.toString();
+      assert.strictEqual(str1.slice(0, str1.indexOf(` (`)), str2.slice(0, str2.indexOf(` (`)));
+    });
+    it(`.toString with formatString "yyyy/mm/dd WD" equals .format("yyyy/mm/dd WD")`, () => {
+      const now$ = $D.now;
+      const str1 = now$.toString(`yyyy/mm/dd WD`);
+      const str2 = now$.format(`yyyy/mm/dd WD`);
+      assert.strictEqual(str1, str2);
+    });
+    it(`.toString with formatString "yyyy/mm/dd WD" and locale formatOption "l:pl" equals .format("yyyy/mm/dd WD", "l:pl")`,
+      () => {
+        const now$ = $D.now;
+        const str1 = now$.toString(`yyyy/mm/dd WD`, `l:pl`);
+        const str2 = now$.format(`yyyy/mm/dd WD`, `l:pl`);
+        assert.strictEqual(str1, str2);
+      }
+    );
     it(`.unixEpochTimestamp for 2000/01/01 is 946681200`, () => {
       assert.strictEqual($D.from(2000,0,1).unixEpochTimestamp, 946681200);
     });
