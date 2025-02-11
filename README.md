@@ -5,6 +5,12 @@ A nifty [Class Free Object Oriented](https://depth-first.com/articles/2019/03/04
 It presents a wrapped *locale and time zone sensitive* `JS-Date` 'constructor'. The library has *no dependencies* and a *small footprint*. 
 The bundled file size is a mere 20kb.
 
+### TickTock instances are Proxies
+An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance.
+When one creates a TickTock instance, it behaves like a Date.
+This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
+
 ### locale and timeZone sensitivity
 A 'ticktock date' can be instantiated with locale and time zone information. That information will be embedded within 
 the instance (retrievable by the instance property `localeInfo`) and used for (among other things) display or formatting the date (e.g. 
@@ -16,12 +22,49 @@ day names using `[instance].zoneNames.dayNames.long`, the latter resulting in an
  that time zone* vis a vis the user timeZone (so `$D("2000/01/01", {locale: "zh", timeZone: "Asia/Chongqing"}).local`, 
 will display (within the developer timeZone "Europe/Amsterdam"): `"2000/1/1 07:00:00"`).
 
-### TickTock instances are proxies
-An instance is actually a [`Proxy`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 
-for a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) instance.
-When one creates a TickTock instance, it behaves like a Date.
-This means that all native methods and properties for a `Date` can be used with an instance (e.g. `[instance].toLocaleString()`).
+In summary, a TickTock instance is basically just a JS `Date` as one knows it. 
+<br>Retrieving its values (with getters like `.dateTime`, `dayName` or `monthName`) will return values for the computer/browser/environment 
+locale and timeZone. 
+<br>A TickTock instance can however *also* deliver such values for its embedded locale an timeZone using specific 
+getters like `.zoneDateTime`, `zoneDayname` or `zoneMonthname`.
 
+```javascript
+import $D from "[location of library]";
+const nowInChongqinInPolish = $D(`2025/01/22 22:00`, {locale: "pl", timeZone: `Asia/Chongqing`});
+// note: developer (browser) locale = "en-US" and - timeZone = "Europe/Amsterdam"
+console.log(nowInChongqinInPolish.dayName);
+// ↳ result Wednesday
+console.log(nowInChongqinInPolish.monthName);
+// ↳ result January
+console.log(nowInChongqinInPolish.zoneDayname);
+// ↳ result czwartek
+console.log(nowInChongqinInPolish.zoneMonthname);
+// ↳ result styczeń 
+console.log(nowInChongqinInPolish.dateTime);
+/* ↳ result {
+  values4Timezone: 'Europe/Amsterdam',
+  year: 2025,
+  month: 0,
+  date: 22, <= NOTE
+  hours: 22,
+  minutes: 0,
+  month: 0,
+  seconds: 0,
+  milliseconds: 0 }
+ */
+console.log(nowInChongqinInPolish.zoneDateTime);
+/* ↳ result {
+  values4Timezone: 'Asia/Shanghai',
+  year: 2025,
+  month: 0,
+  date: 23, <= NOTE
+  hours: 5,
+  minutes: 0,
+  month: 0,
+  seconds: 0,
+  milliseconds: 0 }
+ */
+```
 ### Importing and using
 The library exports the TickTock constructor by default, ready for use. Example:
 
