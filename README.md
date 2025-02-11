@@ -28,6 +28,8 @@ locale and timeZone.
 <br>A TickTock instance can however *also* deliver such values for its embedded locale an timeZone using specific 
 getters like `.zoneDateTime`, `zoneDayname` or `zoneMonthname`.
 
+#### Example (locale and timeZone sensitivity)
+
 ```javascript
 import $D from "[location of library]";
 const inChongqinInPolish = $D(`2025/01/22 22:00`, {locale: "pl", timeZone: `Asia/Chongqing`});
