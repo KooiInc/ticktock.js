@@ -878,6 +878,24 @@ describe(`Native Date methods (sample tests)`, () => {
       testDate.setDate(23);
       assert.strictEqual(testDate.dateNr, 23);
     });
+    it(`.setDate(...) and [instance].date = {date} setter are equal`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      const clone = testDate.clone;
+      clone.date = {date: 23};
+      assert.strictEqual(testDate.dateNr, 20);
+      testDate.setDate(23);
+      assert.strictEqual(testDate.dateNr, 23);
+      assert.deepStrictEqual(testDate.date, clone.date);
+    });
+    it(`.setDate(...) and [instance].dateNr setter are equal`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      const clone = testDate.clone;
+      clone.dateNr = 23;
+      assert.strictEqual(testDate.dateNr, 20);
+      testDate.setDate(23);
+      assert.strictEqual(testDate.dateNr, 23);
+      assert.deepStrictEqual(testDate.date, clone.date);
+    });
     it(`.setHours(...) changes the instance time value`, () => {
       const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
       assert.strictEqual(testDate.hours, 3);
