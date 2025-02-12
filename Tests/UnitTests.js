@@ -865,7 +865,7 @@ describe(`Setters, mutating methods/getters`, () => {
 
 describe(`Native Date methods (sample tests)`, () => {
   const getTestDate = () => $D("August 19, 1975 23:15:30 GMT-3:00");
-  describe(`Date setters`, () => {
+  describe(`Native Date setters`, () => {
     it(`.setUTCDate(...) changes the instance date value`, () => {
       const testDate = getTestDate();
       assert.strictEqual(testDate.UTC.dateNr, 20);
@@ -912,7 +912,7 @@ describe(`Native Date methods (sample tests)`, () => {
       assert.strictEqual(testDate.hours, 23);
     });
   });
-  describe(`Date getters`, () => {
+  describe(`Native Date getters`, () => {
     it(`.getUTCDate() equals [instance].UTC.dateNr`, () => {
       const testDate = getTestDate();
       assert.strictEqual(testDate.UTC.dateNr, 20);
@@ -921,6 +921,41 @@ describe(`Native Date methods (sample tests)`, () => {
     it(`.getDate() equals [instance].dateNr`, () => {
       const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
       assert.strictEqual(testDate.dateNr, testDate.getDate());
+    });
+    it(`.toJSON() equals [instance].ISO`, () => {
+      const testDate = getTestDate();
+      assert.strictEqual(testDate.ISO, testDate.toJSON());
+    });
+  });
+  describe(`Native Date misc`, () => {
+    it(`Date.UTC() and [instance].UTC`, () => {
+      const testDate = getTestDate().UTC;
+      assert.strictEqual(
+        testDate.toLocaleString(testDate.locale, testDate.localeInfo.timeZone),
+        new Date(Date.UTC(...testDate.zoneDateTimeValues)).toLocaleString());
+    });
+    it(`new Date(yyyy, mm, dd ... ms) and $D.from(yyyy, mm, dd ... ms) are equal`, () => {
+      const values = getTestDate().dateTimeValues;
+      const testDateParsed = new Date(...values);
+      const dateFrom = $D.from(...values);
+      assert.strictEqual(
+        testDateParsed.toISOString(),
+        dateFrom.ISO);
+    });
+    it(`new Date(yyyy, mm, dd ... ms) and $D([yyyy, mm, dd ... ms]) are equal`, () => {
+      const values = getTestDate().dateTimeValues;
+      const testDateParsed = new Date(...values);
+      const $dateFromArray = $D(values);
+      assert.strictEqual(
+        testDateParsed.toISOString(),
+        $dateFromArray.ISO);
+    });
+    it(`new Date(Date.now()) and $D.now are equal`, () => {
+      const now = new Date(Date.now());
+      const now$ = $D.now;
+      assert.strictEqual(
+        now.toISOString(),
+        now$.ISO);
     });
   })
 });
