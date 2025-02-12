@@ -195,7 +195,7 @@ function createCTORStaticMethods(ctor, customMethods) {
       }
     },
     localeInformation: {
-      value: localLocaleInfo,
+      value: Intl.DateTimeFormat().resolvedOptions(),
     },
     localWeekdaynames: {
       value(locale) {
