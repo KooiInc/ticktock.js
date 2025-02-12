@@ -3,8 +3,10 @@ import {
   retrieveDateValueFromInput as retrieveDateValue,
   getAggregates,
   createCTORStaticMethods,
+  getTraps,
+  instanceCreator,
 } from "./src/genericHelpers.js";
-import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
+//import { getTraps, instanceCreator,} from "./src/instantiationHelpers.js";
 
 let ctorIsExtended = false;
 export default XDateFactory();

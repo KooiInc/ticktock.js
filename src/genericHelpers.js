@@ -1,11 +1,11 @@
 import {add2Date, fullMonth, offset2Number,} from "./instanceHelpers.js";
-import { instanceCreator } from "./instantiationHelpers.js";
+//import { instanceCreator } from "./instantiationHelpers.js";
 import xDate from "../index.js";
 const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
   retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
-  retrieveFormattingFormats, aggregateDateAdder};
+  retrieveFormattingFormats, aggregateDateAdder, getTraps, instanceCreator, };
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -253,4 +253,35 @@ function createCTORStaticMethods(ctor, customMethods) {
   });
   
   return ctor;
+}
+
+function getTraps(exts) {
+  return {
+    get( target, key ) {
+      if (key !== `toString`) {
+        if (key in target && target[key]?.constructor === Function) {
+          return (...args) => target[key](...args);
+        }
+        
+        if (key in target) {
+          return target[key];
+        }
+      }
+      if (key in exts) {
+        return exts[key];
+      }
+      
+      return undefined;
+    },
+    set( target, key, value ) {
+      if (typeof key !== `symbol` && key in exts) {
+        exts[key] = value;
+        return true;
+      }
+      
+      target[key] = value;
+      return true;
+    },
+    has: (target, key) => key in exts || key in target,
+  };
 }
