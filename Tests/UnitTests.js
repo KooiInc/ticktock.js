@@ -862,3 +862,47 @@ describe(`Setters, mutating methods/getters`, () => {
     });
   });
 });
+
+describe(`Native Date methods (sample tests)`, () => {
+  const getTestDate = () => $D("August 19, 1975 23:15:30 GMT-3:00");
+  describe(`Date setters`, () => {
+    it(`.setUTCDate(...) changes the instance date value`, () => {
+      const testDate = getTestDate();
+      assert.strictEqual(testDate.UTC.dateNr, 20);
+      testDate.setUTCDate(19);
+      assert.strictEqual(testDate.UTC.dateNr, 19);
+    });
+    it(`.setDate(...) changes the instance date value`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      assert.strictEqual(testDate.dateNr, 20);
+      testDate.setDate(23);
+      assert.strictEqual(testDate.dateNr, 23);
+    });
+    it(`.setHours(...) changes the instance time value`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      assert.strictEqual(testDate.hours, 3);
+      testDate.setHours(testDate.getHours() - 4);
+      assert.strictEqual(testDate.hours, 23);
+    });
+    it(`.setHours and instance.hours setter are equal`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      assert.strictEqual(testDate.hours, 3);
+      const cloned = testDate.clone;
+      cloned.hours -= 4;
+      testDate.setHours(testDate.getHours() - 4);
+      assert.strictEqual(cloned.hours, 23);
+      assert.strictEqual(testDate.hours, 23);
+    });
+  });
+  describe(`Date getters`, () => {
+    it(`.getUTCDate() equals [instance].UTC.dateNr`, () => {
+      const testDate = getTestDate();
+      assert.strictEqual(testDate.UTC.dateNr, 20);
+      assert.strictEqual(testDate.UTC.dateNr, testDate.getUTCDate());
+    });
+    it(`.getDate() equals [instance].dateNr`, () => {
+      const testDate = getTestDate().relocate({timeZone: `Europe/Berlin`});
+      assert.strictEqual(testDate.dateNr, testDate.getDate());
+    });
+  })
+});
