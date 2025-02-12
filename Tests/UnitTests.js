@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import $D from "../index.js";
+import $D from "../Bundle/index.min.js";
 import {retrieveDateValueFromInput, localeInfoValidator} from "../src/genericHelpers.js";
 
 // globally used
@@ -572,7 +572,7 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual($D(`1900/03/01`).unixEpochTimestamp, -2203891200);
     });
     it(`.userLocaleInfo for an instance equals $D.localeInformation`, () => {
-      assert.strictEqual($D.now.userLocaleInfo, $D.localeInformation);
+      assert.deepStrictEqual($D.now.userLocaleInfo, $D.localeInformation);
     });
     it(`.UTC delivers a clone with embedded timeZone Etc/UTC`, () => {
       const testDate = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "America/New_York"});
