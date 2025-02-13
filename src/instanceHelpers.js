@@ -94,7 +94,6 @@ function formatLocal(instance, formatStr, options) {
   options = (options || ``).startsWith(`+`)
     ? `${localized.localeInfo.formatOptions},${options.slice(1)}`
     : options || localized.localeInfo.formatOptions;
-  console.log(options);
   return dateFormat(localized, formatStr, options);
 }
 
