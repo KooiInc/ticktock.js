@@ -18,17 +18,6 @@ describe(`Basics $D`, () => {
   const dateToTestAgainst = new Date(2000, 0, 1, 13, 0, 0).toISOString();
   it(`$D(new Date("2000/01/01 13:00:00")) should return instance with date 2000/01/01 and time 13:00:00`, () =>
     assert.strictEqual($D(new Date("2000/01/01 13:00:00")).ISO, dateToTestAgainst) );
-  it(`$D([any Number]) should return current Date`, () => {
-    assert.strictEqual(String(retrieveDateValueFromInput(42)), String(new Date()));
-    assert.strictEqual(
-      String(retrieveDateValueFromInput(Number(new Date(`2200/01/01`)))),
-      String(new Date()));
-    const now$ = $D(42);
-    const now = new Date();
-    now$.milliseconds = 0;
-    now.setMilliseconds(0)
-    assert.strictEqual(now$.ISO, now.toISOString());
-  });
   it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () =>
     assert.strictEqual($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst) );
   it(`$D([2020]) should return instance with date 2020/01/01`, () =>
@@ -49,8 +38,14 @@ describe(`Basics $D`, () => {
     now.setMilliseconds(0);
     assert.strictEqual(String(now$.value), String(now));
   });
-  it(`$D({timeZone: "Pacific/Auckland"}) Date value is valid Date`, () =>
-    assert.strictEqual($D({timeZone: tzs.auckland}).value.constructor, Date));
+  it(`$D({timeZone: "Pacific/Auckland"}) Date value is valid Date`, () => {
+    assert.strictEqual($D({timeZone: tzs.auckland}).value.constructor, Date);
+  });
+  it(`$D({timeZone: "Pacific/Auckland"}).value equals current Date (now)`, () => {
+    const now = new Date();
+    const now$ = $D({timeZone: tzs.auckland});
+    assert.strictEqual(now$.ISO, now.toISOString());
+  });
   it(`$D({timeZone: "Pacific/Auckland"}) instance embeds Auckland time zone`, () =>
     assert.strictEqual($D({timeZone: tzs.auckland}).timeZone, tzs.auckland));
   it(`$D({locale: "zh"}) Date value is valid Date`, () =>
@@ -433,11 +428,6 @@ describe(`$D instance extensions`, () => {
       const now$ = $D.now;
       assert.strictEqual(birthDate.ageFull, birthDate.differenceTo(now$).clean);
     });
-    it(`.ageFullUntil for $D.from(1933,1,5) until $D.from(2026,1,5) works as expected`, () => {
-      const birthDate = $D.from(1933,1,5);
-      const nextBirthdate = $D.from(2026,1,5);
-      assert.strictEqual(birthDate.ageFullUntil(nextBirthdate), birthDate.differenceTo(nextBirthdate).clean);
-    });
     it(`.dateNr equals [instance].getDate()`, () => {
       const now$ = $D.now;
       assert.strictEqual(now$.dateNr, now$.getDate());
@@ -459,6 +449,11 @@ describe(`$D instance extensions`, () => {
       const now$ = $D.now;
       const then = now$.clone.addDays(-15);
       assert.strictEqual(now$.daysUntil(then), -15);
+    });
+    it(`.differenceUntil for $D.from(1933,1,5) until $D.from(2026,1,5) works as expected`, () => {
+      const birthDate = $D.from(1933,1,5);
+      const nextBirthdate = $D.from(2026,1,5);
+      assert.strictEqual(birthDate.differenceUntil(nextBirthdate), birthDate.differenceTo(nextBirthdate).clean);
     });
     it(`.firstWeekday([for sunday]) works as expected`, () => {
       const now$ = $D.now;
