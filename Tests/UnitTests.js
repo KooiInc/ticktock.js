@@ -416,6 +416,19 @@ describe(`$D instance extensions`, () => {
         ISOPeriod: "PT21H"
       });
     });
+  });
+  
+  describe(`.format/zoneFormat`, () => {
+    it(`.format("yyyy/mm/dd hh:mmi:ss") for Auckland formats according to user time (${$D.localeInformation.timeZone})`, () => {
+      const testDate = $D(`2020/02/01 17:00:00`).relocate({timeZone: tzs.auckland, locale: $D.localeInformation.locale});
+      assert.strictEqual(testDate.localeInfo.formatOptions, `l:${$D.localeInformation.locale},tz:${tzs.auckland}`);
+      assert.strictEqual(testDate.format("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/01 17:00:00`);
+    });
+    it(`.zoneFormat("yyyy/mm/dd hh:mmi:ss") for Auckland formats according to AuckLand time (${tzs.auckland})`, () => {
+      const testDate = $D(`2020/02/01 17:00:00`);
+      testDate.localeInfo = {timeZone: tzs.auckland, locale: `en`};
+      assert.strictEqual(testDate.zoneFormat("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/02 05:00:00 AM`);
+    });
   })
   
   describe(`various methods/getters`, () => {

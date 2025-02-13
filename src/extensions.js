@@ -20,7 +20,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     differenceTo(date) { return timezoneAwareDifferenceTo({start: instance, end: date}); },
     differenceUntil(date) { return instance.differenceTo(date).clean; },
     firstWeekday({sunday = false, midnight = false} = {}) { return firstWeekday(instance, {sunday, midnight}); },
-    format(formatStr, moreOptions) { return format(instance, {local: true, formatStr, moreOptions}); },
+    format(formatStr, moreOptions) { return format(instance, {formatStr, moreOptions}); },
     fullMonth(forLocale) { return fullMonth(instance, forLocale); },
     isFuture(date) { return compareDates(instance, {start: instance, end: date, future: true}); },
     isPast(date) { return compareDates(instance, {start: instance, end: date, past: true}); },
@@ -31,7 +31,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     revalue(date) { instance = revalue(instance, date); return instance; },
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
-    zoneFormat(formatStr, moreOptions) { return format(instance, {formatStr, moreOptions}); },
+    zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     
     set date({year, month, date}) { setDateParts(instance, {year, month, date}); },
     set dateNr(n) { setDateParts(instance, {date: n }); },
