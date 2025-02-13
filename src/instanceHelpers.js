@@ -72,12 +72,25 @@ function compareDates(instance, {start, end, future, past, include = {start: fal
     (include.start ? +instnc >= +start : +instnc > +start) && (include.end ? +instnc <= +end : +instnc < +end);
 }
 
-function format(instance, formatStr, moreOptions) {
-  if (!instance.localeInfo) {
-    instance.localeInfo = setLocaleInfo();
+function format(instance, {local = false, formatStr, moreOptions} = {}) {
+  if (local) {
+    return formatLocal(instance, formatStr, moreOptions);
   }
+  
+  if (!instance.localeInfo) {
+    instance.localeInfo = localLocaleInfo;
+  }
+  
   moreOptions = moreOptions || instance.localeInfo.formatOptions;
+  
   return dateFormat(instance, formatStr, moreOptions);
+}
+
+function formatLocal(instance, formatStr, moreOptions) {
+  const localized = instance.clone;
+  localized.localeInfo = localLocaleInfo;
+  const opts = moreOptions || localized.localeInfo.formatOptions;
+  return dateFormat(localized, formatStr, opts);
 }
 
 function daysUntil(instance, nextDate) {
