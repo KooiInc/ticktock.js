@@ -1,4 +1,4 @@
-import {add2Date, fullMonth, offset2Number,} from "./instanceHelpers.js";
+import {add2Date, fullMonth, offset2Number, pad0,} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
 const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
@@ -113,7 +113,7 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
 }
 
 function isNumberOrNumberString(value) {
-  return !(Number.isNaN(parseInt(value)) && Number.isNaN(+value));
+  return !Number.isNaN(parseInt(value)) && !Number.isNaN(+value);
 }
 
 function aggregateDateAdder(value, instance, aggregatePart) {
@@ -208,10 +208,11 @@ function createCTORStaticMethods(ctor, customMethods) {
       }
     },
     daysInMonth: {
-      value(monthIndex) {
+      value(monthIndex, leapYear = false) {
         if (isNumberOrNumberString(monthIndex) && +monthIndex >= 1 && +monthIndex <= 12) {
-          return new Date(1970, monthIndex, 0).getDate();
+          return new Date(leapYear ? 2000 : 2005, monthIndex, 0).getDate();
         }
+        
         return `${monthIndex} should be a Number (1 - 12)`;
       },
     },
