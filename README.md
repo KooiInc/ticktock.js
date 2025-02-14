@@ -2,7 +2,7 @@
 
 A nifty ES20xx `Date` extension.
 
-The library presents a wrapped *locale and time zone sensitive* `JS-Date` 'constructor'. The library has *no dependencies* 
+The library presents a wrapped *locale and time zone sensitive* JS `Date` 'constructor'. The library has *no dependencies* 
 and a *small footprint*. The bundled file size is a mere 20kb.
 
 With the constructor, a number of methods/setters/getters for a JS `Date` become available. 
