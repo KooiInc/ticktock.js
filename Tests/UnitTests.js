@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../Bundle/index.min.js";
-import {retrieveDateValueFromInput, localeInfoValidator} from "../src/genericHelpers.js";
+import {localeInfoValidator} from "../src/genericHelpers.js";
 
 // globally used
 const tzs = {
@@ -16,14 +16,18 @@ const localLocaleInformation = localeInfoValidator();
 describe(`Basics $D`, () => {
   const now = new Date();
   const dateToTestAgainst = new Date(2000, 0, 1, 13, 0, 0).toISOString();
-  it(`$D(new Date("2000/01/01 13:00:00")) should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.strictEqual($D(new Date("2000/01/01 13:00:00")).ISO, dateToTestAgainst) );
-  it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.strictEqual($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst) );
-  it(`$D([2020]) should return instance with date 2020/01/01`, () =>
-    assert.strictEqual($D([2020]).ISO, new Date(2020,0,1).toISOString()) );
-  it(`$D("2000/01/01 13:00:00") should return instance with date 2000/01/01 and time 13:00:00`, () =>
-    assert.strictEqual($D("2000/01/01 13:00:00").ISO, dateToTestAgainst) );
+  it(`$D(new Date("2000/01/01 13:00:00")) should return instance with date 2000/01/01 and time 13:00:00`, () => {
+    assert.strictEqual($D(new Date("2000/01/01 13:00:00")).ISO, dateToTestAgainst);
+  } );
+  it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () => {
+    assert.strictEqual($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst);
+  } );
+  it(`$D([2020]) should return instance with date 2020/01/01`, () => {
+    assert.strictEqual($D([2020]).ISO, new Date(2020,0,1).toISOString());
+  } );
+  it(`$D("2000/01/01 13:00:00") should return instance with date 2000/01/01 and time 13:00:00`, () => {
+    assert.strictEqual($D("2000/01/01 13:00:00").ISO, dateToTestAgainst);
+  } );
   it(`$D("invalid") should return instance with current Date`, () => {
     const now$ = $D("invalid");
     const now = new Date();
@@ -46,18 +50,28 @@ describe(`Basics $D`, () => {
     const now$ = $D({timeZone: tzs.auckland});
     assert.strictEqual(now$.ISO, now.toISOString());
   });
-  it(`$D({timeZone: "Pacific/Auckland"}) instance embeds Auckland time zone`, () =>
-    assert.strictEqual($D({timeZone: tzs.auckland}).timeZone, tzs.auckland));
-  it(`$D({locale: "zh"}) Date value is valid Date`, () =>
-    assert.strictEqual($D({locale: "zh"}).value.constructor, Date));
-  it(`$D({locale: "zh"}) instance embeds zh (china) locale`, () =>
-    assert.strictEqual($D({locale: "zh"}).locale, `zh`));
-  it(`Stringified [$D instance].value and new Date() should be equal`, _ =>
-    assert.strictEqual(String(now), String($D(now))));
-  it(`[$D instance].value.constructor and new Date().constructor should be equal`, _ =>
-    assert.strictEqual(now.constructor, $D(now).value.constructor));
-  it(`[$D([[var now = ]new Date())].ISO should equal now.toISOString()`, _ =>
-    assert.strictEqual(now.toISOString(), $D(now).ISO));
+  it(`$D({timeZone: "Pacific/Auckland"}) instance embeds Auckland time zone`, () => {
+    assert.strictEqual($D({timeZone: tzs.auckland}).timeZone, tzs.auckland);
+  });
+  it(`$D({locale: "zh"}) Date value is valid Date`, () => {
+    assert.strictEqual($D({locale: "zh"}).value.constructor, Date);
+  });
+  it(`$D({locale: "zh"}) instance embeds zh (china) locale`, () => {
+    assert.strictEqual($D({locale: "zh"}).locale, `zh`);
+  });
+  it(`Stringified [$D instance].value and new Date() should be equal`, _ => {
+    assert.strictEqual(String(now), String($D(now)));
+  });
+  it(`[$D instance].value.constructor and new Date().constructor should be equal`, _ => {
+    assert.strictEqual(now.constructor, $D(now).value.constructor);
+  });
+  it(`$D(/* var now = */new Date()).ISO should equal new Date().toISOString()`, _ => {
+    const now = new Date();
+    assert.strictEqual(now.toISOString(), $D(now).ISO);
+  });
+  it(`$D([2000]) (single value) should return a TickTock instance with value new Date(2000, 0, 1)`, () => {
+    assert.strictEqual($D([2000]).ISO, new Date(2000, 0, 1).toISOString());
+  });
 });
 
 describe(`Constructor ($D) static methods/getters`, () => {
@@ -90,7 +104,15 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual($D.localWeekdaynames(`zh`).long[0], "星期日");
     assert.strictEqual($D.localWeekdaynames(`zh`).short[0], "周日");
   });
-  it(`$D.daysInMonth(1) should be 31`, () => assert.strictEqual($D.daysInMonth(1), 31));
+  it(`$D.daysInMonth(1) should be 31`, () => {
+    assert.strictEqual($D.daysInMonth(1), 31)
+  });
+  it(`$D.daysInMonth(2) should be 28`, () => {
+    assert.strictEqual($D.daysInMonth(2), 28);
+  });
+  it(`$D.daysInMonth(2, /*leap year = */true) should be 29`, () => {
+    assert.strictEqual($D.daysInMonth(2, true), 29);
+  });
   it(`$D.validateLocaleInformation({locale: "nl"}).locale should be "nl" (and timeZone the user TZ)`, () => {
     const validatedNL = $D.validateLocaleInformation({locale: `nl`});
     assert.strictEqual(validatedNL.locale, `nl`);
@@ -104,20 +126,6 @@ describe(`Constructor ($D) static methods/getters`, () => {
   it(`$D.validateLocaleInformation() should return Intl.DateTimeFormat().resolvedOptions()`, () => {
     const validatedHere = $D.validateLocaleInformation();
     assert.deepStrictEqual(validatedHere, localZoneInformation);
-  });
-  it(`$D.from(2020, 0, 5, 13, 0, 0) should return a TickTock instance with ISOstring "2020-01-05T12:00:00.000Z"`, () => {
-    const testD = $D.from(2020, 0, 5, 13, 0, 0);
-    assert.strictEqual(testD.ISO, '2020-01-05T12:00:00.000Z');
-  });
-  it(`$D.from(2000) (single value) should return a TickTock instance with value new Date(2000, 0, 1) (so: now)`, () => {
-    const nowISO = new Date(2000, 0, 1).toISOString();
-    const testD_ISO = $D.from(2000).ISO;
-    assert.strictEqual(testD_ISO, nowISO);
-  });
-  it(`$D.from() should return a TickTock instance with value new Date() (so: now)`, () => {
-    const nowISO = new Date().toISOString();
-    const testD_ISO = $D.from().ISO;
-    assert.strictEqual(testD_ISO, nowISO);
   });
   it(`$D.timeAcrossZones for ${timeZoneDate}, ${tzs.vancouver} vs ${tzs.amsterdam}`, () => {
     const vancouver = $D.timeAcrossZones({
@@ -190,6 +198,18 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual(keys.find(k => k === `daysUntil`), `daysUntil`, "'daysUntil' in $D.keys should not be null");
     // custom extension quarterString (see top) is enumerable
     assert.strictEqual(keys.find(k => k === `quarterString`), `quarterString`, "'quarterString' in $D.keys should not be null");
+  });
+  it(`$D.from(2020, 0, 5, 13, 0, 0) should return a TickTock instance with ISOstring "2020-01-05T12:00:00.000Z"`, () => {
+    const testD = $D.from(2020, 0, 5, 13, 0, 0);
+    assert.strictEqual(testD.ISO, '2020-01-05T12:00:00.000Z');
+  });
+  it(`$D.from(2000) (single value) should return a TickTock instance with value new Date(2000, 0, 1)`, () => {
+    assert.strictEqual($D.from(2000).ISO, new Date(2000, 0, 1).toISOString());
+  });
+  it(`$D.from() should return a TickTock instance with value new Date() (so: now)`, () => {
+    const nowISO = new Date().toISOString();
+    const testD_ISO = $D.from().ISO;
+    assert.strictEqual(testD_ISO, nowISO);
   });
 });
 
@@ -418,16 +438,15 @@ describe(`$D instance extensions`, () => {
     });
   });
   
-  describe(`.format/zoneFormat`, () => {
+  describe(`.format/.zoneFormat`, () => {
     it(`.format("yyyy/mm/dd hh:mmi:ss") for Auckland formats according to user time (${$D.localeInformation.timeZone})`, () => {
       const testDate = $D(`2020/02/01 17:00:00`).relocate({timeZone: tzs.auckland, locale: $D.localeInformation.locale});
       assert.strictEqual(testDate.localeInfo.formatOptions, `l:${$D.localeInformation.locale},tz:${tzs.auckland}`);
       assert.strictEqual(testDate.format("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/01 17:00:00`);
     });
     it(`.zoneFormat("yyyy/mm/dd hh:mmi:ss") for Auckland formats according to AuckLand time (${tzs.auckland})`, () => {
-      const testDate = $D(`2020/02/01 17:00:00`);
-      testDate.localeInfo = {timeZone: tzs.auckland, locale: `en`};
-      assert.strictEqual(testDate.zoneFormat("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/02 05:00:00 AM`);
+      assert.strictEqual($D(`2020/02/01 17:00:00`).relocate({timeZone: tzs.auckland, locale: `en`})
+        .zoneFormat("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/02 05:00:00 AM`);
     });
   })
   
