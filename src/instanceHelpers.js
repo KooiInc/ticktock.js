@@ -159,12 +159,12 @@ function firstWeekday(instance, {sunday = false} = {}) {
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
-  if (!end?.clone) {
-    end = xDate(end, {timeZone: start.timeZone});
-  }
-
   if (!end) {
     end = start.clone;
+  }
+  
+  if (!end?.clone) {
+    end = xDate(end, {timeZone: start.timeZone});
   }
 
   start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
@@ -367,8 +367,12 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
   return true;
 }
 
+function isDateOrInstance(maybeDate) {
+  return maybeDate?.constructor === Date || maybeDate?.value;
+}
+
 function cloneInstance(instance, date) {
-  if (date?.constructor === Date || date?.value) {
+  if (isDateOrInstance(date)) {
     return xDate(date?.value || date, instance.localeInfo);
   }
 
@@ -392,8 +396,8 @@ function setProxy(proxy) {
   return proxy;
 }
 
-function offset2Number(offsetString, all = false) {
-  if (all) {
+function offset2Number(offsetString, withSign = false) {
+  if (withSign) {
     let values = offsetString.slice(1).split(/[-:]/).map(Number);
     const minus = offsetString.slice(0, 1) === `-`;
     values = values.map(v => minus ? -v : v);
@@ -445,7 +449,7 @@ function relocate(instance, {locale, timeZone} = {}) {
 }
 
 function revalue(instance, date) {
-  if ((date?.value?.constructor || date?.constructor) !== Date) { return instance; }
+  if (!isDateOrInstance(date)) { return instance; }
   instance = xDate(date.value || date, date.localeInfo || instance.localeInfo);
   return instance;
 }
