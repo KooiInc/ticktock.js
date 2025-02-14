@@ -213,7 +213,7 @@ function createCTORStaticMethods(ctor, customMethods) {
           return new Date(leapYear ? 2000 : 2005, monthIndex, 0).getDate();
         }
         
-        return `${monthIndex} should be a Number (1 - 12)`;
+        return `${monthIndex} should be a Number (1 (january) - 12 (december))`;
       },
     },
     yearCalendar: {
