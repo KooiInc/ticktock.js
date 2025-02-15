@@ -11,3 +11,5 @@ Furthermore, the constructor offers the possibility to create your own custom ex
 (see [wiki](https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions)).
 
 Visit [wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentation.
+
+Download or link the bundled library from unpkg (@https://unpkg.com/ticktock-es@1.5.0/Bundle/index.min.js)
