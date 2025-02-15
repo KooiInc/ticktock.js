@@ -12,4 +12,4 @@ Furthermore, the constructor offers the possibility to create your own custom ex
 
 Visit [wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentation.
 
-Download or link the bundled library from unpkg (@https://unpkg.com/ticktock-es@1.5.0/Bundle/index.min.js)
+Download or link the bundled library from unpkg (@https://unpkg.com/ticktock-es/Bundle/index.min.js)
