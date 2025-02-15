@@ -7,16 +7,12 @@ import {
   instanceCreator,
 } from "./src/genericHelpers.js";
 
-let ctorIsExtended = false;
+let ctorIsExtended;
 export default XDateFactory();
 
 function XDateFactory() {
   const customMethods = {};
-  
-  if (!ctorIsExtended) {
-    createCTORStaticMethods(ctor, customMethods);
-    ctorIsExtended = true;
-  }
+  ctorIsExtended = ctorIsExtended || createCTORStaticMethods(ctor, customMethods);
   
   return ctor;
 
