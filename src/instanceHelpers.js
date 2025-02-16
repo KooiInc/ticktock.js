@@ -413,26 +413,20 @@ function removeTime(instance) {
   return instance;
 }
 
+function getTimezoneName(dt, timeZone) {
+  return Intl.DateTimeFormat(`en-CA`, {timeZone, timeZoneName: `long`})
+    .format(dt).split(/,/)[1].trim();
+}
+
 function hasDST(instance) {
   const timeZone = instance.timeZone;
-  const dt1 = new Date(instance.year, 0, 1, 14);
-  const dt2 = new Date(new Date(dt1).setMonth(6));
-  const fmt = Intl.DateTimeFormat(`en-CA`, {
-    year: `numeric`,
-    timeZone: timeZone,
-    timeZoneName: "shortOffset",
-  });
-  const [fmt1, fmt2] = [offset2Number(fmt.format(dt1)), offset2Number(fmt.format(dt2))];
-  
-  return fmt1 - fmt2 !== 0;
+  const janTZN = getTimezoneName(new Date(instance.year, 0, 1), timeZone);
+  const midYrTZN = getTimezoneName(new Date(instance.year, 5, 1), timeZone);
+  return janTZN !== midYrTZN;
 }
 
 function DSTActive(instance) {
-  if (instance.hasDST) {
-    return !/standard/i.test(instance.toString());
-  }
-  
-  return false;
+  return instance.hasDST ? !/standard/i.test(instance.toString()) : false;
 }
 
 function relocate(instance, {locale, timeZone} = {}) {
