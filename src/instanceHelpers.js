@@ -261,7 +261,7 @@ function getAggregatedInfo(instance) {
         dayPeriodTime: pmLocal,
         hasDST: localInstance.hasDST,
         DSTActive: localInstance.DSTActive,
-        offsetFromRemote: timeDifferenceRemote2UserLocal,
+        offsetFromRemote: timeDifferenceUserLocal2Remote,
         string: localInstance.toString()
       },
       remote: {
@@ -272,12 +272,12 @@ function getAggregatedInfo(instance) {
         dayPeriodTime: pmRemote,
         hasDST: instance.hasDST,
         DSTActive: instance.DSTActive,
-        offsetFromUser: timeDifferenceUserLocal2Remote,
+        offsetFromUser: timeDifferenceRemote2UserLocal,
         string: instance.toString(),
       },
     },
     offset: {
-      fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceUserLocal2Remote)
+      fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceRemote2UserLocal)
         + ` ${localInstance.timeZone}`,
       fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset.offset) + ` GMT`
     },
