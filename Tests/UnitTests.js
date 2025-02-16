@@ -395,7 +395,7 @@ describe(`$D instance extensions`, () => {
     it(`.hasDST for timeZone ${tzs.istanbul} false`, () => {
       assert.strictEqual($D.now.relocate({timeZone: tzs.istanbul}).hasDST, false);
     });
-    it(`.hasDST for timeZone ${tzs.chongqing} false`, () => {
+    it(`.hasDST for timeZone ${tzs.chongqing} (does not observe DST) false`, () => {
       assert.strictEqual($D.now.relocate({timeZone: tzs.chongqing}).hasDST, false);
     });
     it(`.DSTActive for 2020/06/01 in Europe/Istanbul (does not observe DST) false`, () => {
