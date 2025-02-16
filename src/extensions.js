@@ -4,7 +4,7 @@ import {
   getDTValues, nextOrPrevious, setTimeParts, setDateParts,
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
   getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
-  removeTime, DSTAcive, cloneInstance, timezoneAwareDifferenceTo,
+  removeTime, DSTActive, cloneInstance, timezoneAwareDifferenceTo,
   offsetFrom, getAggregatedInfo, toJSDateString, getDowNumber,
   fullMonth, localLocaleInfo,
 } from "./instanceHelpers.js";
@@ -55,7 +55,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     get day() { return getDowNumber(instance); },
     get dayName() { return instance.names.dayName; },
     get daysThisMonth() { return daysInMonth(instance); },
-    get DSTActive() { return DSTAcive(instance); },
+    get DSTActive() { return DSTActive(instance); },
     get hasDST() { return hasDST(instance); },
     get hours() { return instance.time.hours; },
     get info() { return getAggregatedInfo(instance); },
