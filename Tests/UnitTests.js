@@ -9,7 +9,10 @@ const tzs = {
   losAngeles: "America/Los_Angeles",
   vancouver: "America/Vancouver",
   amsterdam: "Europe/Amsterdam",
-  paris: "Europe/Paris"
+  paris: "Europe/Paris",
+  berlin: "Europe/Berlin",
+  chongqing: "Asia/Chongqing",
+  istanbul: "Europe/Istanbul",
 };
 const localLocaleInformation = localeInfoValidator();
 
@@ -385,6 +388,33 @@ describe(`$D instance extensions`, () => {
     });
   });
   
+  describe(`.hasDST/.DSTActive`, () => {
+    it(`.hasDST for timeZone ${tzs.berlin} true`, () => {
+      assert.strictEqual($D.now.relocate({timeZone: tzs.berlin}).hasDST, true);
+    });
+    it(`.hasDST for timeZone ${tzs.istanbul} false`, () => {
+      assert.strictEqual($D.now.relocate({timeZone: tzs.istanbul}).hasDST, false);
+    });
+    it(`.hasDST for timeZone ${tzs.chongqing} false`, () => {
+      assert.strictEqual($D.now.relocate({timeZone: tzs.chongqing}).hasDST, false);
+    });
+    it(`.DSTActive for 2020/06/01 in Europe/Istanbul (does not observe DST) false`, () => {
+      assert.strictEqual($D(`2020/06/01`, {timeZone: tzs.istanbul}).DSTActive, false);
+    });
+    it(`.DSTActive for 2020/06/01 in Europe/Amsterdam true`, () => {
+      assert.strictEqual($D(`2020/06/01`, {timeZone: tzs.amsterdam}).DSTActive, true);
+    });
+    it(`.DSTActive for 2020/01/01 in Europe/Paris false`, () => {
+      assert.strictEqual($D(`2020/01/01`, {timeZone: tzs.paris}).DSTActive, false);
+    });
+    it(`.DSTActive for 2020/06/01 in Pacific/Auckland false`, () => {
+      assert.strictEqual($D(`2020/06/01`, {timeZone: tzs.auckland}).DSTActive, false);
+    });
+    it(`.DSTActive for 2020/01/01 in Pacific/Auckland true`, () => {
+      assert.strictEqual($D(`2020/01/01`, {timeZone: tzs.auckland}).DSTActive, true);
+    });
+  });
+  
   describe(`.differenceTo`, () => {
     it(`accurately calculates difference from Auckland - to Los Angeles time zone`, () => {
       const la = $D(new Date(`2025/01/23 22:00:00`), {locale: `en`, timeZone: 'America/Los_Angeles'});
@@ -455,11 +485,13 @@ describe(`$D instance extensions`, () => {
       aucklandSummer, aucklandWinter,
       infoAucklandWinterShouldbe, infoAucklandSummerShouldbe
     } = setUpInfoTest();
-    it(`.info .dateTime.offset Auckland (summertime in Auckland`, () => {
+    it(`.info Auckland (2020/01/01: summertime in Auckland) equals what we expect`, () => {
       assert.deepStrictEqual(aucklandSummer.info, infoAucklandSummerShouldbe);
+      assert.strictEqual(aucklandSummer.info.dateTime.remote.DSTActive, true);
+      assert.strictEqual(aucklandSummer.info.dateTime.user.DSTActive, false);
     });
     
-    it(`.info .dateTime.offset Auckland (wintertime in Auckland)`, () => {
+    it(`.info .dateTime.offset Auckland ((2020/04/01: wintertime in Auckland) equals what we expect`, () => {
       assert.deepStrictEqual(aucklandWinter.info, infoAucklandWinterShouldbe);
     });
   });
@@ -1003,8 +1035,8 @@ describe(`Native Date methods (sample tests)`, () => {
 
 function setUpInfoTest() {
   const aucklandSummer = $D(`2020/01/01`, {timeZone: `Pacific/Auckland`});
-  const aucklandWinter = $D(`2020/04/01`, {timeZone: `Pacific/Auckland`});
-  const infoAucklandSummerShouldbe = {
+  const aucklandWinter = $D(`2020/06/01`, {timeZone: `Pacific/Auckland`});
+  const infoAucklandSummerShouldbe =   {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
       user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
@@ -1043,7 +1075,7 @@ function setUpInfoTest() {
         weekdayName: 'woensdag',
         dayPeriodTime: '12:00:00 p.m.',
         hasDST: true,
-        DSTActive: false,
+        DSTActive: true,
         offsetFromUser: '+12:00',
         string: 'Wed Jan 01 2020 12:00:00 GMT+1300 (New Zealand Daylight Time)'
       }
@@ -1053,7 +1085,7 @@ function setUpInfoTest() {
       fromUTC: 'Pacific/Auckland 13 hours ahead of GMT'
     }
   };
-  const infoAucklandWinterShouldbe = {
+  const infoAucklandWinterShouldbe =  {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
       user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
@@ -1063,43 +1095,43 @@ function setUpInfoTest() {
       user: {
         values4Timezone: 'Europe/Amsterdam',
         year: 2020,
-        month: 3,
+        month: 5,
         date: 1,
         hours: 0,
         minutes: 0,
         seconds: 0,
         milliseconds: 0,
-        monthName: 'april',
+        monthName: 'juni',
         weekdayNr: false,
-        weekdayName: 'woensdag',
+        weekdayName: 'maandag',
         dayPeriodTime: '12:00:00 a.m.',
         hasDST: true,
         DSTActive: true,
-        offsetFromRemote: '-11:00',
-        string: 'Wed Apr 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
+        offsetFromRemote: '-10:00',
+        string: 'Mon Jun 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
       },
       remote: {
         values4Timezone: 'Pacific/Auckland',
         year: 2020,
-        month: 3,
+        month: 5,
         date: 1,
-        hours: 11,
+        hours: 10,
         minutes: 0,
         seconds: 0,
         milliseconds: 0,
-        monthName: 'april',
+        monthName: 'juni',
         weekdayNr: false,
-        weekdayName: 'woensdag',
-        dayPeriodTime: '11:00:00 a.m.',
+        weekdayName: 'maandag',
+        dayPeriodTime: '10:00:00 a.m.',
         hasDST: true,
         DSTActive: false,
-        offsetFromUser: '+11:00',
-        string: 'Wed Apr 01 2020 11:00:00 GMT+1300 (New Zealand Daylight Time)'
+        offsetFromUser: '+10:00',
+        string: 'Mon Jun 01 2020 10:00:00 GMT+1200 (New Zealand Standard Time)'
       }
     },
     offset: {
-      fromUserTime: 'Pacific/Auckland 11 hours ahead of Europe/Amsterdam',
-      fromUTC: 'Pacific/Auckland 13 hours ahead of GMT'
+      fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam',
+      fromUTC: 'Pacific/Auckland 12 hours ahead of GMT'
     }
   };
   return {aucklandSummer, aucklandWinter, infoAucklandWinterShouldbe, infoAucklandSummerShouldbe};
