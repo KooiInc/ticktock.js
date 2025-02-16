@@ -484,7 +484,7 @@ describe(`$D instance extensions`, () => {
     const {
       aucklandSummer, aucklandWinter,
       infoAucklandWinterShouldbe, infoAucklandSummerShouldbe
-    } = setUpInfoTest();
+    } = setUpTestForInfoExtension();
     it(`.info Auckland (2020/01/01: summertime in Auckland) equals what we expect`, () => {
       assert.deepStrictEqual(aucklandSummer.info, infoAucklandSummerShouldbe);
       assert.strictEqual(aucklandSummer.info.dateTime.remote.DSTActive, true);
@@ -1033,7 +1033,7 @@ describe(`Native Date methods (sample tests)`, () => {
   })
 });
 
-function setUpInfoTest() {
+function setUpTestForInfoExtension() {
   const aucklandSummer = $D(`2020/01/01`, {timeZone: `Pacific/Auckland`});
   const aucklandWinter = $D(`2020/06/01`, {timeZone: `Pacific/Auckland`});
   const infoAucklandSummerShouldbe =   {
