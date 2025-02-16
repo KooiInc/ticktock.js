@@ -41,7 +41,7 @@ export {
   getQuarter,
   hasDST,
   removeTime,
-  DSTAcive,
+  DSTActive,
   cloneInstance,
   timezoneAwareDifferenceTo,
   offset2Number,
@@ -237,12 +237,13 @@ function getDowNumber(instance, remote = false) {
 }
 
 function getAggregatedInfo(instance) {
-  const localInstance = instance.clone
-    .relocate({locale: instance.userLocaleInfo.locale, timeZone: instance.userLocaleInfo.timeZone});
+  const userZone = localLocaleInfo;
+  const remoteZone = instance.localeInfo;
+  const localInstance = instance.clone.relocate({locale: userZone.locale, timeZone: userZone.timeZone});
   const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance).offset;
   const timeDifferenceRemote2UserLocal = localInstance.offsetFrom(instance).offset;
-  const local = instance.userLocaleInfo;
-  const remote = instance.localeInfo;
+  const local = userZone;
+  const remote = remoteZone;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
   const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
   
@@ -426,16 +427,11 @@ function hasDST(instance) {
   return fmt1 - fmt2 !== 0;
 }
 
-function DSTAcive(instance) {
+function DSTActive(instance) {
   if (instance.hasDST) {
-    const dtJanuary = instance.clone;
-    dtJanuary.month = 1;
-    dtJanuary.date = 1;
-
-    return dtJanuary.format(`tz`, `${dtJanuary.localeInfo.formatOptions},tzn:shortOffset`) !==
-      instance.format(`tz`, `${instance.localeInfo.formatOptions},tzn:shortOffset`);
+    return !/standard/i.test(instance.toString());
   }
-
+  
   return false;
 }
 
