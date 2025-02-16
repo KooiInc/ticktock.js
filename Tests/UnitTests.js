@@ -1003,7 +1003,7 @@ describe(`Native Date methods (sample tests)`, () => {
 
 function setUpInfoTest() {
   const aucklandSummer = $D(`2020/01/01`, {timeZone: `Pacific/Auckland`});
-  const aucklandWinter = $D(`2020/06/01`, {timeZone: `Pacific/Auckland`});
+  const aucklandWinter = $D(`2020/04/01`, {timeZone: `Pacific/Auckland`});
   const infoAucklandSummerShouldbe = {
     note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
     locales: {
@@ -1063,43 +1063,43 @@ function setUpInfoTest() {
       user: {
         values4Timezone: 'Europe/Amsterdam',
         year: 2020,
-        month: 5,
+        month: 3,
         date: 1,
         hours: 0,
         minutes: 0,
         seconds: 0,
         milliseconds: 0,
-        monthName: 'juni',
+        monthName: 'april',
         weekdayNr: false,
-        weekdayName: 'maandag',
+        weekdayName: 'woensdag',
         dayPeriodTime: '12:00:00 a.m.',
         hasDST: true,
         DSTActive: true,
-        offsetFromRemote: '-10:00',
-        string: 'Mon Jun 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
+        offsetFromRemote: '-11:00',
+        string: 'Wed Apr 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
       },
       remote: {
         values4Timezone: 'Pacific/Auckland',
         year: 2020,
-        month: 5,
+        month: 3,
         date: 1,
-        hours: 10,
+        hours: 11,
         minutes: 0,
         seconds: 0,
         milliseconds: 0,
-        monthName: 'juni',
+        monthName: 'april',
         weekdayNr: false,
-        weekdayName: 'maandag',
-        dayPeriodTime: '10:00:00 a.m.',
+        weekdayName: 'woensdag',
+        dayPeriodTime: '11:00:00 a.m.',
         hasDST: true,
-        DSTActive: true,
-        offsetFromUser: '+10:00',
-        string: 'Mon Jun 01 2020 10:00:00 GMT+1200 (New Zealand Standard Time)'
+        DSTActive: false,
+        offsetFromUser: '+11:00',
+        string: 'Wed Apr 01 2020 11:00:00 GMT+1300 (New Zealand Daylight Time)'
       }
     },
     offset: {
-      fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam',
-      fromUTC: 'Pacific/Auckland 12 hours ahead of GMT'
+      fromUserTime: 'Pacific/Auckland 11 hours ahead of Europe/Amsterdam',
+      fromUTC: 'Pacific/Auckland 13 hours ahead of GMT'
     }
   };
   return {aucklandSummer, aucklandWinter, infoAucklandWinterShouldbe, infoAucklandSummerShouldbe};
