@@ -121,49 +121,52 @@ function aggregateDateAdder(value, instance, aggregatePart) {
     ? add2Date(instance, `${value} ${aggregatePart}`) : instance;
 }
 
-function getAggregates(instance, customExtras) {
-  const aggregates = {
+function retrieveAggregates(forInstance) {
+  return {
     addYears(amount = 1) {
-      return aggregateDateAdder(amount, instance, `years`);
+      return aggregateDateAdder(amount, forInstance, `years`);
     },
     addMonths(amount = 1) {
-      return aggregateDateAdder(amount, instance, `months`);
+      return aggregateDateAdder(amount, forInstance, `months`);
     },
     addWeeks(amount = 1) {
       amount = amount?.constructor === Number ? amount * 7 : 1;
-      return aggregateDateAdder(amount, instance, `days`);
+      return aggregateDateAdder(amount, forInstance, `days`);
     },
     addDays(amount = 1) {
-      return aggregateDateAdder(amount, instance, `days`);
+      return aggregateDateAdder(amount, forInstance, `days`);
     },
     get nextYear() {
-      return add2Date(instance, `1 year`);
+      return add2Date(forInstance, `1 year`);
     },
     get nextWeek() {
-      return add2Date(instance, `7 days`);
+      return add2Date(forInstance, `7 days`);
     },
     get previousWeek() {
-      return add2Date(instance, "-7 days");
+      return add2Date(forInstance, "-7 days");
     },
     get previousYear() {
-      return add2Date(instance, `-1 year`);
+      return add2Date(forInstance, `-1 year`);
     },
     get nextMonth() {
-      return add2Date(instance, `1 month`);
+      return add2Date(forInstance, `1 month`);
     },
     get previousMonth() {
-      return add2Date(instance, `-1 month`);
+      return add2Date(forInstance, `-1 month`);
     },
     get tomorrow() {
-      return add2Date(instance, `1 day`);
+      return add2Date(forInstance, `1 day`);
     },
     get yesterday() {
-      return add2Date(instance, `-1 day`);
+      return add2Date(forInstance, `-1 day`);
     },
   };
+}
+
+function getAggregates(instance, customExtras) {
+  const aggregates = retrieveAggregates(instance);
 
   if (Object.keys(customExtras || {}).length > 0) {
-    customExtras.instance = instance;
     Object.entries(customExtras).forEach(([methodName, methodContainer]) => {
       if (customExtras[methodName].isGetter) {
         Object.defineProperty(
@@ -243,11 +246,13 @@ function createCTORStaticMethods(ctor, customMethods) {
         const customEnumerables = Object.fromEntries(
           Object.entries(customMethods).filter( ([_, v]) => v.enumerable === true )
         );
+        
         const allKeys = [
           ...Object.keys(instanceCreator()),
           ...Object.keys(getAggregates()),
           ...Object.keys(customEnumerables),
         ];
+        
         return allKeys.sort( (a,b) => a.localeCompare(b) );
       }
     },
