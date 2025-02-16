@@ -1,6 +1,6 @@
-import dateFormat from "./dateFormat.js";
-import dateDiffFactory from "./dateDiffFactory.js";
-import dateAddFactory from "./dateAddFactory.js";
+import dateFormat from "./Factories/dateFormatFactory.js";
+import dateDiffFactory from "./Factories/dateDiffFactory.js";
+import dateAddFactory from "./Factories/dateAddFactory.js";
 import xDate from "../index.js";
 import {
   localeMonthnames, localeInfoValidator, localeWeekdays,
