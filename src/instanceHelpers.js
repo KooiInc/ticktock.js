@@ -125,6 +125,15 @@ function firstWeekday(instance, {sunday = false} = {}) {
   return nextOrPrevious(instance, { day: sunday ? `sunday` : `monday` }) ;
 }
 
+function zoneDiff(d1, d2) {
+  let gmt1 = d1.toString().match(/GMT(\+|-)\d+/)?.[0]?.slice(3) ?? `+0000`;
+  let gmt2 = d2.toString().match(/GMT(\+|-)\d+/)?.[0]?.slice(3) ?? `+0000`;
+  gmt1 = offset2Number(gmt1.slice(0, 3) + `:` + gmt1.slice(-2), true);
+  gmt2 = offset2Number(gmt2.slice(0, 3) + `:` + gmt2.slice(-2), true);
+  const realDiff = [-gmt1[0] + gmt2[0], -gmt1[1] + gmt2[1]].map(v => gmt1[0] < 0 ? -v : v);
+  return realDiff;
+}
+
 function timezoneAwareDifferenceTo({start, end} = {}) {
   if (!end) {
     end = start.clone;
@@ -136,8 +145,18 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
 
   start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
   end = xDate(DTInTimezone(end, end.timeZone), {timeZone: end.timeZone});
-
-  return dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
+  const diff = dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
+  const diffZones = zoneDiff(end, start);
+  const aheadBehind = diffZones[0] > 0 ? `ahead of` : `behind`;
+  const [hr, mi] = diffZones.map(v => Math.abs(v));
+  const [hours, minutes] = [
+    `${hr} ${maybePlural(hr, `hour`)}`,
+    `${mi} ${maybePlural(mi, `minute`)}` ];
+  
+  diff.timeZonesOffsetDifference = diff.sign.length < 1 || hr + mi === 0
+    ? `Offsets of ${start.timeZone} and ${end.timeZone} are equal`
+    : `${start.timeZone} is ${hours}${diffZones[1] > 0 ? ` and ${minutes}` : ``} ${aheadBehind} ${end.timeZone}`;
+  return diff;
 }
 
 function flipSign(sign) {
@@ -165,7 +184,7 @@ function pad0(number2Pad, n = 2) {
 }
 
 function maybePlural(value, word) {
-  return `${word}${value > 1 ? `s` : ``}`;
+  return `${word}${value > 1 || value === 0 ? `s` : ``}`;
 }
 
 function timeDiffenceInWords(diffInfo) {
@@ -398,8 +417,8 @@ function DSTActive(instance) {
 
 function relocate(instance, {locale, timeZone} = {}) {
   instance.localeInfo = localeInfoValidator({
-    locale: locale || instance.locale,
-    timeZone: timeZone || instance.timeZone,
+    locale: locale || instance.l || instance.locale,
+    timeZone: timeZone || instance.tz || instance.timeZone,
   });
   
   return instance;

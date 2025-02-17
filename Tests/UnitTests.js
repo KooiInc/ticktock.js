@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-import $D from "../Bundle/index.min.js";
+//import $D from "../Bundle/index.min.js";
+import $D from "../index.js";
 import {localeInfoValidator} from "../src/genericHelpers.js";
 
 // globally used
@@ -463,7 +464,8 @@ describe(`$D instance extensions`, () => {
         clean: "21 hours",
         equalDates: false,
         jsPeriod: "-PT21H",
-        ISOPeriod: "PT21H"
+        ISOPeriod: "PT21H",
+        timeZoneDifference: "Pacific/Auckland is 21 hours ahead of America/Los_Angeles"
       });
     });
   });
