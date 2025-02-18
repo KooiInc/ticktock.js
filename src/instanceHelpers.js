@@ -155,7 +155,7 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   
   diff.timeZonesOffsetDifference = diff.sign.length < 1 || hr + mi === 0
     ? `Offsets of ${start.timeZone} and ${end.timeZone} are equal`
-    : `${start.timeZone} is ${hours}${diffZones[1] > 0 ? ` and ${minutes}` : ``} ${aheadBehind} ${end.timeZone}`;
+    : `${start.timeZone} is ${hours}${mi > 0 ? ` and ${minutes}` : ``} ${aheadBehind} ${end.timeZone}`;
   return diff;
 }
 
