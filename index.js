@@ -17,7 +17,7 @@ function XDateFactory() {
   return ctor;
 
   function ctor(input, localeInfo) {
-    const inputIsLocaleInfo = input?.locale || input?.timeZone;
+    const inputIsLocaleInfo = input?.locale || input?.timeZone || input?.tz || input?.l;
     let maybeDate = new Date(inputIsLocaleInfo ? Date.now() : retrieveDateValueFromInput(input));
     const localeInfoResolved = inputIsLocaleInfo
       ? localeInfoValidator(input) : localeInfoValidator(localeInfo || {});
