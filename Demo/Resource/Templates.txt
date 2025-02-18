@@ -1,0 +1,56 @@
+<div>
+
+<template id="initial">
+// imported TickTock.js as $D
+// variables used:
+const browserTZ = $D.localeInformation.timeZone;
+const browserLocale = $D.localeInformation.locale;
+const now$ = $D.now;
+const chongqin = $D({l:"zh", tz: "Asia/Chongqing"});
+//                                ↳ note: may be corrected by Intl validation
+const auckland = $D({tz: "Pacific/Auckland"});
+const paris = $D({timeZone: "Europe/Paris"}).add("2 days, 3 hours, 22 minutes");
+//                ↳ note: both 'timeZone' and 'tz' are valid
+const berlin = $D({tz: "Europe/Berlin"});
+const vancouver = now$.clone.relocate({l: "en-CA", tz: "America/Vancouver"});
+const la = $D({tz: "America/Los_Angeles"});
+const taiohae = $D.from(2025, 0, 1, 7, 0, 0);
+const utc = $D.now.UTC;
+taiohae.localeInfo = {tz: "Pacific/Marquesas"};
+utc.hours += 3;
+utc.minutes -= 15;
+</template>
+<template id="perf">
+// ------------------------------------------------------------------
+// create an array of 1500 TickTock instances and measure performance
+// ------------------------------------------------------------------
+const results = [];
+let perfStart = performance.now();
+const today = $D.now.dateNr;
+const testValues = [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
+let perfEnd = performance.now() - perfStart;
+let seconds = perfEnd/1000;
+let perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
+let perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
+results.push(`=> &lt;code>testValues&lt;/code> creation in ${
+  seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+  perIterationS} &lt;i>per iteration&lt;/i>`);
+// ---------------------------------------------------------------------
+// create an array of 1500 native Date instances and measure performance
+// ---------------------------------------------------------------------
+perfStart = performance.now();
+const plainDateTestValues = [...Array(1500)].map((_, i) => {
+  const now = new Date();
+  return new Date(now.setDate(i + 1));
+});
+perfEnd = performance.now() - perfStart;
+seconds = perfEnd/1000;
+perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
+perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
+results.push(`=> &lt;code>plainDateTestValues&lt;/code> creation in ${
+  seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+  perIterationS} &lt;i>per iteration&lt;i>`);
+// results are used for reporting ⬇⬇⬇
+</template>
+
+</div>
