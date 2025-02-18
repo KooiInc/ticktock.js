@@ -232,12 +232,10 @@ function getAggregatedInfo(instance) {
   const remote = remoteZone;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
   const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
-  
-  return {
-    note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
+  const userData = {
+    note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
     locales: {
-      user: {locale: local.locale, timeZone: local.timeZone },
-      remote: {locale: remote.locale, timeZone: remote.timeZone }
+      user: {locale: local.locale, timeZone: local.timeZone},
     },
     dateTime: {
       user: {
@@ -251,24 +249,30 @@ function getAggregatedInfo(instance) {
         offsetFromRemote: timeDifferenceUserLocal2Remote,
         string: localInstance.toString()
       },
-      remote: {
-        ...instance.zoneDateTime,
-        monthName: instance.zoneNames.monthName,
-        weekdayNr: getDowNumber(instance, true),
-        weekdayName: instance.zoneNames.dayName,
-        dayPeriodTime: pmRemote,
-        hasDST: instance.hasDST,
-        DSTActive: instance.DSTActive,
-        offsetFromUser: timeDifferenceRemote2UserLocal,
-        string: instance.toString(),
-      },
     },
     offset: {
-      fromUserTime: `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceRemote2UserLocal)
-        + ` ${localInstance.timeZone}`,
       fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset.offset) + ` GMT`
-    },
+    }
   };
+  
+  if (remoteZone.timeZone !== userZone.timeZone) {
+    userData.locales.remote = {locale: remote.locale, timeZone: remote.timeZone };
+    userData.dateTime.remote = {
+      ...instance.zoneDateTime,
+      monthName: instance.zoneNames.monthName,
+      weekdayNr: getDowNumber(instance, true),
+      weekdayName: instance.zoneNames.dayName,
+      dayPeriodTime: pmRemote,
+      hasDST: instance.hasDST,
+      DSTActive: instance.DSTActive,
+      offsetFromUser: timeDifferenceRemote2UserLocal,
+      string: instance.toString(),
+    };
+    userData.offset.fromUserTime = `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceRemote2UserLocal)
+      + ` ${localInstance.timeZone}`;
+  }
+  
+  return userData;
 }
 
 function getDTValues(instance, local = true) {
