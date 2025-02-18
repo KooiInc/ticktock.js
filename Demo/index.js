@@ -61,7 +61,7 @@ print(
       toJSONString(now$.localeInfo, true)),
     
     toDetailsBlock(
-      `<code>chongqin.localeInfo</code> (your locale, Chongqing timeZone)`,
+      `<code>chongqin.localeInfo</code> (chinese locale, Chongqing timeZone)`,
       toJSONString(chongqin.localeInfo, true))),
   
   toDetailChapter(`toString`,
