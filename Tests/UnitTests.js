@@ -279,9 +279,9 @@ describe(`$D instance extensions`, () => {
     it(`.next([day after today]) works as expected`, () => {
       // note: for test we must retrieve the english day name, so relocate and zoneNames
       const now$ = $D.now.relocate({locale: `en`});
-      const nextDayName = now$.zoneNames.dayNames.long[now$.getDay() + 1];
+      const nextDayName = now$.zoneNames.dayNames.long[now$.day + 1];
       const next = now$.next(nextDayName);
-      assert.strictEqual(next.dateNr, now$.dateNr + 1, `${nextDayName}, ${next.local}`);
+      assert.strictEqual(next.dateNr, now$.dateNr + 1, `${next.dateNr}, ${nextDayName}, ${now$.dayName}`);
     });
     it(`.previous([day before today]) works as expected`, () => {
       // note: for test we must retrieve the english day name, so relocate and zoneNames
@@ -309,7 +309,8 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(now$PlusOneYear.between({start: $D.now, end: now$PlusOneYear, include: {end: true}}), true);
     });
     it(`.between({start: [now], end: [now + 1 year], include: {start: true, end: true}}) is true`, () => {
-      const now$PlusOneYear = $D.now.add(`1 year`);
+      const now = $D.now;
+      const now$PlusOneYear = now.clone.add(`1 year`);
       assert.strictEqual($D.now.between({start: $D.now, end: now$PlusOneYear, include: {start: true, end: true}}), true);
     });
     // same with plain dates
@@ -348,46 +349,46 @@ describe(`$D instance extensions`, () => {
     
     it(`.offsetFrom Paris to Auckland (+12)`, () => {
       const parisToAcukland = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00'};
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         now$.offsetFrom({timeZone: `Pacific/Auckland`}),
         parisToAcukland);
     });
     it(`.offsetFrom Auckland to Paris (-12)`, () => {
       const testAucklandToParis = {fromTZ: tzs.auckland, toTZ: tzs.paris, offset: '-12:00'};
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         auckland.offsetFrom($D.now.relocate({timeZone: tzs.paris})),
         testAucklandToParis);
     });
     it(`.offsetFrom Auckland to Los Angeles (-21)`, () => {
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         auckland.offsetFrom($D({timeZone: tzs.losAngeles})),
         testAucklandToLA);
     });
     it(`.offsetFrom Auckland to Los Angeles no matter the date (-21)`, () => {
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         $D(`2022/01/01 13:00:30`, {timeZone: tzs.auckland})
           .offsetFrom($D({timeZone: tzs.losAngeles})),
         testAucklandToLA);
     });
     it(`.offsetFrom Paris *summerTime* to Auckland (+10)`, () => {
       const paris2AucklandSummer = {fromTZ: 'Europe/Paris', toTZ: 'Pacific/Auckland', offset: '+10:00'};
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         $D(`2025/06/01`, {timeZone: tzs.paris}).offsetFrom({timeZone: tzs.auckland}),
         paris2AucklandSummer);
     });
     it(`.offsetFrom Paris *winterTime* to Auckland (+12)`, () => {
       const aucklandSummer2Paris = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00'};
-      assert.deepStrictEqual(
+      assert.partialDeepStrictEqual(
         $D(`2025/01/01`, {timeZone: `Europe/Paris`}).offsetFrom($D.now.relocate({timeZone: `Pacific/Auckland`})),
         aucklandSummer2Paris);
     });
     it(`.UTCOffset getter for Auckland summer time (-13)`, () => {
       const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+13:00'};
-      assert.deepStrictEqual($D(`2025/01/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
+      assert.partialDeepStrictEqual($D(`2025/01/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
     it(`.UTCOffset getter for Auckland winter time (-12)`, () => {
       const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+12:00'};
-      assert.deepStrictEqual($D(`2025/06/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
+      assert.partialDeepStrictEqual($D(`2025/06/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
   });
   
@@ -660,7 +661,7 @@ describe(`$D instance extensions`, () => {
     });
     it(`.UTCOffset for America/New_York is {..., offset: '-05:00'}`, () => {
       const testDate = $D({timeZone: "America/New_York"});
-      assert.deepStrictEqual(testDate.UTCOffset,{fromTZ: 'America/New_York', toTZ: 'UTC', offset: '-05:00'});
+      assert.deepStrictEqual(testDate.UTCOffset,{fromTZ: 'America/New_York', toTZ: 'UTC', offset: '-05:00', offsetText: 'UTC 5 hours behind America/New_York'});
     }),
     it(`.value is a plain Date`, () => {
       const testD = $D(`2020/02/01`);
@@ -907,6 +908,25 @@ describe(`Setters, mutating methods/getters`, () => {
   });
   
   describe(`Mutating methods/getters`, () => {
+    it(`.localeInfo accepts l and locale`, () => {
+      const now$ = $D.now;
+      now$.localeInfo = {l: `zh`};
+      assert.strictEqual(now$.localeInfo.locale, `zh`);
+      now$.localeInfo = {locale: `pt`};
+      assert.strictEqual(now$.localeInfo.locale, `pt`);
+    });
+    it(`.localeInfo accepts tz and timeZone`, () => {
+      const now$ = $D.now;
+      now$.localeInfo = {tz: tzs.berlin};
+      assert.strictEqual(now$.localeInfo.timeZone, tzs.berlin);
+      now$.localeInfo = {timeZone: tzs.auckland};
+      assert.strictEqual(now$.localeInfo.timeZone, tzs.auckland);
+    });
+    it(`.localeInfo timeZone is automatically corrected (by Intl) for ${tzs.chongqing}`, () => {
+      const now$ = $D.now;
+      now$.localeInfo = {tz: tzs.chongqing};
+      assert.strictEqual(now$.localeInfo.timeZone, `Asia/Shanghai`);
+    });
     it(`.revalue([plain JS Date]) changes instance Date value`, () => {
       const now = new Date();
       const newDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
@@ -1042,102 +1062,102 @@ function setUpTestForInfoExtension() {
   const aucklandSummer = $D(`2020/01/01`, {timeZone: `Pacific/Auckland`});
   const aucklandWinter = $D(`2020/06/01`, {timeZone: `Pacific/Auckland`});
   const infoAucklandSummerShouldbe =   {
-    note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
-    locales: {
-      user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
-      remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
-    },
-    dateTime: {
-      user: {
-        values4Timezone: 'Europe/Amsterdam',
-        year: 2020,
-        month: 0,
-        date: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        monthName: 'januari',
-        weekdayNr: false,
-        weekdayName: 'woensdag',
-        dayPeriodTime: '12:00:00 a.m.',
-        hasDST: true,
-        DSTActive: false,
-        offsetFromRemote: '-12:00',
-        string: 'Wed Jan 01 2020 00:00:00 GMT+0100 (Central European Standard Time)'
+      note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
+      locales: {
+        user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
+        remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
       },
-      remote: {
-        values4Timezone: 'Pacific/Auckland',
-        year: 2020,
-        month: 0,
-        date: 1,
-        hours: 12,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        monthName: 'januari',
-        weekdayNr: false,
-        weekdayName: 'woensdag',
-        dayPeriodTime: '12:00:00 p.m.',
-        hasDST: true,
-        DSTActive: true,
-        offsetFromUser: '+12:00',
-        string: 'Wed Jan 01 2020 12:00:00 GMT+1300 (New Zealand Daylight Time)'
+      dateTime: {
+        user: {
+          values4Timezone: 'Europe/Amsterdam',
+          year: 2020,
+          month: 0,
+          date: 1,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+          monthName: 'januari',
+          weekdayNr: 3,
+          weekdayName: 'woensdag',
+          dayPeriodTime: '12:00:00 a.m.',
+          hasDST: true,
+          DSTActive: false,
+          offsetFromRemote: '-12:00',
+          string: 'Wed Jan 01 2020 00:00:00 GMT+0100 (Central European Standard Time)'
+        },
+        remote: {
+          values4Timezone: 'Pacific/Auckland',
+          year: 2020,
+          month: 0,
+          date: 1,
+          hours: 12,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+          monthName: 'januari',
+          weekdayNr: 3,
+          weekdayName: 'woensdag',
+          dayPeriodTime: '12:00:00 p.m.',
+          hasDST: true,
+          DSTActive: true,
+          offsetFromUser: '+12:00',
+          string: 'Wed Jan 01 2020 12:00:00 GMT+1300 (New Zealand Daylight Time)'
+        }
+      },
+      offset: {
+        fromUTC: 'Pacific/Auckland 13 hours ahead of UTC',
+        fromUserTime: 'Pacific/Auckland 12 hours ahead of Europe/Amsterdam'
       }
-    },
-    offset: {
-      fromUTC: 'Pacific/Auckland 13 hours ahead of GMT',
-      fromUserTime: 'Pacific/Auckland 12 hours ahead of Europe/Amsterdam'
-    }
-  };
+    };
   const infoAucklandWinterShouldbe =  {
-    note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
-    locales: {
-      user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
-      remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
-    },
-    dateTime: {
-      user: {
-        values4Timezone: 'Europe/Amsterdam',
-        year: 2020,
-        month: 5,
-        date: 1,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        monthName: 'juni',
-        weekdayNr: false,
-        weekdayName: 'maandag',
-        dayPeriodTime: '12:00:00 a.m.',
-        hasDST: true,
-        DSTActive: true,
-        offsetFromRemote: '-10:00',
-        string: 'Mon Jun 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
+      note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
+      locales: {
+        user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
+        remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
       },
-      remote: {
-        values4Timezone: 'Pacific/Auckland',
-        year: 2020,
-        month: 5,
-        date: 1,
-        hours: 10,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-        monthName: 'juni',
-        weekdayNr: false,
-        weekdayName: 'maandag',
-        dayPeriodTime: '10:00:00 a.m.',
-        hasDST: true,
-        DSTActive: false,
-        offsetFromUser: '+10:00',
-        string: 'Mon Jun 01 2020 10:00:00 GMT+1200 (New Zealand Standard Time)'
+      dateTime: {
+        user: {
+          values4Timezone: 'Europe/Amsterdam',
+          year: 2020,
+          month: 5,
+          date: 1,
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+          monthName: 'juni',
+          weekdayNr: 1,
+          weekdayName: 'maandag',
+          dayPeriodTime: '12:00:00 a.m.',
+          hasDST: true,
+          DSTActive: true,
+          offsetFromRemote: '-10:00',
+          string: 'Mon Jun 01 2020 00:00:00 GMT+0200 (Central European Summer Time)'
+        },
+        remote: {
+          values4Timezone: 'Pacific/Auckland',
+          year: 2020,
+          month: 5,
+          date: 1,
+          hours: 10,
+          minutes: 0,
+          seconds: 0,
+          milliseconds: 0,
+          monthName: 'juni',
+          weekdayNr: 1,
+          weekdayName: 'maandag',
+          dayPeriodTime: '10:00:00 a.m.',
+          hasDST: true,
+          DSTActive: false,
+          offsetFromUser: '+10:00',
+          string: 'Mon Jun 01 2020 10:00:00 GMT+1200 (New Zealand Standard Time)'
+        }
+      },
+      offset: {
+        fromUTC: 'Pacific/Auckland 12 hours ahead of UTC',
+        fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam'
       }
-    },
-    offset: {
-      fromUTC: 'Pacific/Auckland 12 hours ahead of GMT',
-      fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam'
-    }
-  };
+    };
   return {aucklandSummer, aucklandWinter, infoAucklandWinterShouldbe, infoAucklandSummerShouldbe};
 }
