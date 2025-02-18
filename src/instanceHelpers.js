@@ -164,18 +164,19 @@ function flipSign(sign) {
 }
 
 function offsetFrom(instance, from) {
-  const isUTC = String(from).toLowerCase() === `utc`;
+  const isUTC = String(from).toLowerCase() === `utc` || from.timeZone === `UTC`;
   from = isUTC
     ? instance.clone.relocate({timeZone: `UTC`})
     : xDate(instance.value, { timeZone: from.timeZone || localLocaleInfo.timeZone });
   
   const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
   const sign = !isUTC ? diff.sign : flipSign(diff.sign);
-
+  const offset = `${sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
   return {
     fromTZ: instance.timeZone,
     toTZ: from.timeZone,
-    offset: `${sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`
+    offset,
+    offsetText: `${from.timeZone} ` + timeDiffenceInWords(offset) + ` ${instance.timeZone}`
   };
 }
 
@@ -214,20 +215,20 @@ function toJSDateString(instance, withFormat, withFormatOptions) {
 }
 
 function getDowNumber(instance, remote = false) {
-  const dayFormat = Intl.DateTimeFormat(`en-CA`, {
+  const dayFormat = Intl.DateTimeFormat(`en`, {
     timeZone: remote ? instance.timeZone : localLocaleInfo.timeZone,
     weekday: "short",
   });
   
-  return weekdays(dayFormat.format(instance).toLowerCase());
+  return weekdays(dayFormat.format(instance));
 }
 
 function getAggregatedInfo(instance) {
   const userZone = localLocaleInfo;
   const remoteZone = instance.localeInfo;
   const localInstance = instance.clone.relocate({locale: userZone.locale, timeZone: userZone.timeZone});
-  const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance).offset;
-  const timeDifferenceRemote2UserLocal = localInstance.offsetFrom(instance).offset;
+  const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance); //.offset
+  const timeDifferenceRemote2UserLocal = localInstance.offsetFrom(instance);//.offset;
   const local = userZone;
   const remote = remoteZone;
   const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
@@ -241,22 +242,23 @@ function getAggregatedInfo(instance) {
       user: {
         ...instance.dateTime,
         monthName: localInstance.monthName,
-        weekdayNr: getDowNumber(localInstance),
+        weekdayNr: localInstance.day,
         weekdayName: localInstance.dayName,
         dayPeriodTime: pmLocal,
         hasDST: localInstance.hasDST,
         DSTActive: localInstance.DSTActive,
-        offsetFromRemote: timeDifferenceUserLocal2Remote,
+        offsetFromRemote: timeDifferenceUserLocal2Remote.offset,
         string: localInstance.toString()
       },
     },
     offset: {
-      fromUTC: `${instance.timeZone} ` + timeDiffenceInWords(instance.UTCOffset.offset) + ` GMT`
+      fromUTC: instance.UTC.offsetFrom(instance).offsetText,
     }
   };
   
   if (remoteZone.timeZone !== userZone.timeZone) {
     userData.locales.remote = {locale: remote.locale, timeZone: remote.timeZone };
+    
     userData.dateTime.remote = {
       ...instance.zoneDateTime,
       monthName: instance.zoneNames.monthName,
@@ -265,11 +267,10 @@ function getAggregatedInfo(instance) {
       dayPeriodTime: pmRemote,
       hasDST: instance.hasDST,
       DSTActive: instance.DSTActive,
-      offsetFromUser: timeDifferenceRemote2UserLocal,
+      offsetFromUser: timeDifferenceRemote2UserLocal.offset,
       string: instance.toString(),
     };
-    userData.offset.fromUserTime = `${instance.timeZone} ` + timeDiffenceInWords(timeDifferenceRemote2UserLocal)
-      + ` ${localInstance.timeZone}`;
+    userData.offset.fromUserTime = timeDifferenceRemote2UserLocal.offsetText;
   }
   
   return userData;
@@ -379,7 +380,7 @@ function weekdayFactory() {
   return function(day) {
     day = `${day}`.toLowerCase();
     let dayNr = dow.short.indexOf(day);
-    return !isNumberOrNumberString(dayNr) && dow.long.findIndex(v => v === day);
+    return dayNr < 0 ? dow.long.indexOf(day) : dayNr;
   };
 }
 
