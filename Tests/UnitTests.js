@@ -332,9 +332,11 @@ describe(`$D instance extensions`, () => {
         {start: $D.now.value, end: now$PlusOneYear.value, include: {end: true}}), true);
     });
     it(`.between({start: [now], end: [now + 1 year], include: {start: true, end: true}}) start/end plain dates is true`, () => {
-      const now$PlusOneYear = $D.now.add(`1 year`);
+      const now$ = $D.now;
+      const inclusive = now$.clone;
+      const now$PlusOneYear = now$.clone.add(`1 year`);
       assert.strictEqual(
-        $D.now.between({start: $D.now.value, end: now$PlusOneYear.value, include: {start: true, end: true}}), true);
+        inclusive.between({start: $D.now.value, end: now$PlusOneYear.value, include: {start: true, end: true}}), true);
     });
   });
   
@@ -439,7 +441,8 @@ describe(`$D instance extensions`, () => {
         clean: "21 hours",
         equalDates: false,
         jsPeriod: "+PT21H",
-        ISOPeriod: "PT21H"
+        ISOPeriod: "PT21H",
+        timeZonesOffsetDifference: 'America/Los_Angeles is 21 hours behind Pacific/Auckland'
       });
     });
     it(`accurately calculates difference from Los Angeles - to Auckland time zone`, () => {
@@ -465,7 +468,7 @@ describe(`$D instance extensions`, () => {
         equalDates: false,
         jsPeriod: "-PT21H",
         ISOPeriod: "PT21H",
-        timeZoneDifference: "Pacific/Auckland is 21 hours ahead of America/Los_Angeles"
+        timeZonesOffsetDifference: "Pacific/Auckland is 21 hours behind America/Los_Angeles"
       });
     });
   });
@@ -1039,7 +1042,7 @@ function setUpTestForInfoExtension() {
   const aucklandSummer = $D(`2020/01/01`, {timeZone: `Pacific/Auckland`});
   const aucklandWinter = $D(`2020/06/01`, {timeZone: `Pacific/Auckland`});
   const infoAucklandSummerShouldbe =   {
-    note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
+    note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
     locales: {
       user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
       remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
@@ -1083,12 +1086,12 @@ function setUpTestForInfoExtension() {
       }
     },
     offset: {
-      fromUserTime: 'Pacific/Auckland 12 hours ahead of Europe/Amsterdam',
-      fromUTC: 'Pacific/Auckland 13 hours ahead of GMT'
+      fromUTC: 'Pacific/Auckland 13 hours ahead of GMT',
+      fromUserTime: 'Pacific/Auckland 12 hours ahead of Europe/Amsterdam'
     }
   };
   const infoAucklandWinterShouldbe =  {
-    note: "'user' are values for your locale/timeZone, 'remote' idem for the instance",
+    note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
     locales: {
       user: { locale: 'nl-NL', timeZone: 'Europe/Amsterdam' },
       remote: { locale: 'nl-NL', timeZone: 'Pacific/Auckland' }
@@ -1132,8 +1135,8 @@ function setUpTestForInfoExtension() {
       }
     },
     offset: {
-      fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam',
-      fromUTC: 'Pacific/Auckland 12 hours ahead of GMT'
+      fromUTC: 'Pacific/Auckland 12 hours ahead of GMT',
+      fromUserTime: 'Pacific/Auckland 10 hours ahead of Europe/Amsterdam'
     }
   };
   return {aucklandSummer, aucklandWinter, infoAucklandWinterShouldbe, infoAucklandSummerShouldbe};
