@@ -52,16 +52,16 @@ function calenderForYear({year, locale} = {}) {
   return calendar;
 }
 
-function localeInfoValidator({ locale, timeZone, logError = false} = {}) {
+function localeInfoValidator({ locale, timeZone, l, tz, logError = false} = {}) {
   try {
-    return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions(); }
+    return Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions(); }
   catch (error) {
     logError && console.error(`localeValidator: invalid input, using computer locale`);
     return localLocaleInfo; }
 }
 
-function setLocaleInfo({locale, timeZone} = {}) {
-  const info = localeInfoValidator({locale, timeZone}, true);
+function setLocaleInfo({locale, timeZone, l, tz} = {}) {
+  const info = localeInfoValidator({locale, timeZone, l, tz}, true);
   return Object.freeze({...info, formatOptions: retrieveFormattingFormats(info.locale, info.timeZone)});
 }
 
