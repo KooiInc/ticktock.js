@@ -228,7 +228,7 @@ function initialize() {
             summary {
               color: green;
               list-style: inside disclosure-open;
-              span {
+              span:not(.red) {
                 background-color: lightsteelblue;
                 color: cornsilk;
               }
@@ -241,7 +241,7 @@ function initialize() {
             color: black;
             margin-bottom: 0.5rem;
             padding: 0.1rem;
-            span {
+            span:not(.red) {
               padding: 1px 4px;
               &:hover {
                 background-color: #eee;
