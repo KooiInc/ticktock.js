@@ -420,10 +420,10 @@ function DSTActive(instance) {
   return instance.hasDST ? !/standard/i.test(instance.toString()) : false;
 }
 
-function relocate(instance, {locale, timeZone} = {}) {
+function relocate(instance, {locale, timeZone, l, tz} = {}) {
   instance.localeInfo = localeInfoValidator({
-    locale: locale || instance.l || instance.locale,
-    timeZone: timeZone || instance.tz || instance.timeZone,
+    locale: l || locale || instance.l || instance.locale,
+    timeZone: tz || timeZone || instance.tz || instance.timeZone,
   });
   
   return instance;
