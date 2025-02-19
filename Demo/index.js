@@ -37,7 +37,7 @@ print(
 );
 /* endregion header */
 
-/* region Examples */
+/* region All examples */
 /* region ex:locale/timeZone */
 print(
   toDetailChapter(`locale/timeZone`, `ltz`,
