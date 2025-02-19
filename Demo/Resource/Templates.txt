@@ -11,7 +11,8 @@ const chongqin = $D({l:"zh", tz: "Asia/Chongqing"});
 const auckland = $D({tz: "Pacific/Auckland"});
 const paris = $D({timeZone: "Europe/Paris"}).add("2 days, 3 hours, 22 minutes");
 //                ↳ note: both 'timeZone' and 'tz' are valid
-const berlin = $D({l: "de-DE", tz: "Europe/Berlin"});
+const berlin = $D({locale: "de-DE", tz: "Europe/Berlin"});
+//                  ↳ note: both 'locale' and 'l' are valid
 const vancouver = now$.clone.relocate({l: "en-CA", tz: "America/Vancouver"});
 const la = $D({tz: "America/Los_Angeles"});
 const taiohae = $D.from(2025, 0, 1, 7, 0, 0);

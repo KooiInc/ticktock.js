@@ -1,13 +1,15 @@
+/* region import and initialize */
 import $D from "../Bundle/index.min.js";
 window.$D = $D; // use in console for testing
 const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
-window.$ = $;
-initialize();
 const initialCode = toCodeBlock(templates.find$(`#initial`).HTML.get().trim());
-const performanceCode = toCodeBlock(templates.find$(`#perf`).HTML.get().trim())
+const performanceCode = toCodeBlock(templates.find$(`#perf`).HTML.get().trim());
+initialize();
+/* endregion import and initialize */
 
+/* region initialVariables */
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -22,15 +24,22 @@ const utc = $D.now.UTC;
 taiohae.localeInfo = {tz: "Pacific/Marquesas"};
 utc.hours += 3;
 utc.minutes -= 15;
+/* endregion initialVariables */
 
+/* region header */
 print('<p><a target="_top" href="https://github.com/KooiInc/ticktock.js"> Github Repository</a></p>');
 
 print(
   `<h2>TickTock.js Examples (work in progress)</h2>`,
   `${initialCode}`,
   
-  `<button id="bttnOpenClose" data-allopen="0"></button>`,
-  
+  `<button id="bttnOpenClose" data-allopen="0"></button>`
+);
+/* endregion header */
+
+/* region Examples */
+/* region ex:locale/timeZone */
+print(
   toDetailChapter(`locale/timeZone`, `ltz`,
     toDetailsBlock(
       `<code>$D.localeInformation</code>: environment (here: browser) locale- and timeZone information`,
@@ -42,8 +51,12 @@ print(
     
     toDetailsBlock(
       `<code>chongqin.localeInfo</code> (chinese locale, Chongqing timeZone)`,
-      toJSONString(chongqin.localeInfo, true))),
-  
+      toJSONString(chongqin.localeInfo, true)) ),
+);
+/* endregion locale/timeZone */
+
+/* region ex:toString */
+print(
   toDetailChapter(`toString`, `tostring`,
     toDetailsBlock(
       `<code>chongqin.toString()</code> (Chongqing timeZone)`,
@@ -56,17 +69,24 @@ print(
     toDetailsBlock(
       `<code>chongqin.toString("WD d MM yyyy")</code> (see Format)`,
       chongqin.toString("WD d M yyyy"), true),
-  ),
-  
+  )
+);
+/* endregion toString */
+
+/* region ex:Names */
+print(
   toDetailChapter(`Names`, `names`,
     toDetailsBlock(
       `<code>$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")</code>`,
       $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
-    
-    
+      
     toDetailsBlock(
       `<code>berlin.dayName</code>/<code>berlin.zoneDayname</code>`,
       `${berlin.dayName}/${berlin.zoneDayname}`),
+    
+    toDetailsBlock(
+      `<code>berlin.monthName</code>/<code>berlin.zoneMonthname</code>`,
+      `${berlin.monthName}/${berlin.zoneMonthname}`),
     
     toDetailsBlock(
       `<code>chongqin.monthName</code>/<code>chongqin.zoneMonthname</code>`,
@@ -85,14 +105,18 @@ print(
       toJSONString(paris.relocate({l: "fr"}).zoneNames.dayNames.long)),
     
     toDetailsBlock(
-      `<code>paris.relocate({l:"ar-DZ"}).zoneNames.monthNames.long</code>`,
-      toJSONString(paris.relocate({l: "ar-DZ"}).zoneNames.monthNames.long)),
+      `<code>paris.clone.relocate({l:"ar-DZ"}).zoneNames.monthNames.long</code>`,
+      toJSONString(paris.clone.relocate({l: "ar-DZ"}).zoneNames.monthNames.long)),
     
     toDetailsBlock(
       `<code>$D.localMonthnames("fr")</code>`,
       toJSONString($D.localMonthnames("fr")) ),
-  ),
-  
+  )
+);
+/* endregion Names */
+
+/* region ex:Difference */
+print(
   toDetailChapter(`Difference`, `difference`,
     toDetailsBlock(`<code>chongqin.differenceTo(auckland)</code>`,
       toJSONString(chongqin.differenceTo(auckland), true)),
@@ -111,8 +135,12 @@ print(
     
     toDetailsBlock(`<code>paris.differenceTo(berlin)</code>`,
       toJSONString(paris.differenceTo(berlin), true))
-  ),
-  
+  )
+);
+/* endregion Difference */
+
+/* region ex:Date/time values */
+print(
   toDetailChapter(`Date/time values`, `dtvalues`,
     toDetailsBlock("<code>auckland.dateTime</code>", toJSONString(auckland.dateTime)),
     
@@ -120,21 +148,33 @@ print(
     
     toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
       toJSONString(taiohae.zoneDateTime))
-  ),
-  
+  )
+);
+/* endregion Date/time values */
+
+/* region ex:Offset */
+print(
   toDetailChapter(`Offset (from)`, `offset`,
     toDetailsBlock("<code>taiohae.offsetFrom(now$)</code>", toJSONString(taiohae.offsetFrom(now$)), ),
     toDetailsBlock("<code>la.offsetFrom(auckland)</code>", toJSONString(la.offsetFrom(auckland)), ),
     toDetailsBlock("<code>auckland.offsetFrom(la)</code>", toJSONString(auckland.offsetFrom(la)), ),
     toDetailsBlock("<code>utc.offsetFrom(la)</code>", toJSONString(utc.offsetFrom(la)), ),
-  ),
-  
+  )
+);
+/* endregion Offset */
+
+/* region ex:Info */
+print(
   toDetailChapter(`Info`, `info`,
     toDetailsBlock("<code>taiohae.info</code>", toJSONString(taiohae.info), ),
     toDetailsBlock("<code>chongqin.info</code>", toJSONString(chongqin.info), ),
     toDetailsBlock("<code>now$.info</code>", toJSONString(now$.info), )
-  ),
-  
+  )
+);
+/* endregion Info */
+
+/* region ex:Format */
+print(
   toDetailChapter(`Format`, `format`,
     `<div>See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax</div>`,
     toDetailsBlock("<code>auckland.zoneFormat(...)</code> formats to instance embedded locale/timeZone",
@@ -151,42 +191,17 @@ print(
           `{=> Il est}: WD d MM yyyy, hh:mmi:ss dp {dans votre fuseau horaire (${browserTZ})}`,
           `l:fr`)}</div>`,
       true),
-  ),
+  )
 );
+/* endregion Format */
+
+/* region ex:performance */
 const perf = perfRunner();
+
 print(toDetailChapter(`Performance`, false,
   `<div><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
       for processing a gazillion Dates &#128128;</div>`,
   performanceCode, perf.join(`<br>`)));
-
-Prism.highlightAll();
-
-function toCodeBlock(str) {
-  return `<pre class="line-numbers language-javascript"><code class="line-numbers language-javascript">${
-    str}</code></pre>`;
-}
-
-function toJSONString(obj, detail = true) {
-  return `<pre${detail ? ` class="detail"` : ``}>${JSON.stringify(obj, null, 2)}</pre>`;
-}
-
-function toDetailChapter(summary, id, ...lemmas) {
-  return `
-    <details class="chapter" ${id ? id="${id}" : ""}>
-      <summary>
-        <span>
-          <b>${summary}</b>
-          ${id ? `<button data-close="${id}">Close all below</button>` : ``}
-        </span>
-      </summary>
-      ${lemmas.join(``)}
-    </details>`;
-}
-
-function toDetailsBlock(summary, str, open = false) {
-  return `<details${open ? ` open` : ``}><summary>${summary}</summary>
-    <div class="content">${str}</div></details>`;
-}
 
 function perfRunner() {
   const results = [];
@@ -214,6 +229,38 @@ function perfRunner() {
     seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   return results;
+}
+/* endregion performance */
+/* endregion Examples */
+
+/* region helpers */
+Prism.highlightAll();
+
+function toCodeBlock(str) {
+  return `<pre class="line-numbers language-javascript"><code class="line-numbers language-javascript">${
+    str}</code></pre>`;
+}
+
+function toJSONString(obj, detail = true) {
+  return `<pre${detail ? ` class="detail"` : ``}>${JSON.stringify(obj, null, 2)}</pre>`;
+}
+
+function toDetailChapter(summary, id, ...lemmas) {
+  return `
+    <details class="chapter" ${id ? id="${id}" : ""}>
+      <summary>
+        <span>
+          <b>${summary}</b>
+          ${id ? `<button data-close="${id}">Close all below</button>` : ``}
+        </span>
+      </summary>
+      ${lemmas.join(``)}
+    </details>`;
+}
+
+function toDetailsBlock(summary, str, open = false) {
+  return `<details${open ? ` open` : ``}><summary>${summary}</summary>
+    <div class="content">${str}</div></details>`;
 }
 
 function initialize() {
@@ -345,11 +392,11 @@ function initialize() {
     
     if (mainBttn) {
       const allOpen = mainBttn.dataset?.allopen === '1' ?? false;
-      $(`details.chapter`).each(el => {
+      $(`.chapter`).each(el => {
         el.open = !allOpen;
-        
-        if(!el.open) {
-          $(el).find(`details`).forEach(dt => dt.open = false);
+        switch(el.open) {
+          case true: $(el).find(`details`).forEach(dt => dt.open = true); break;
+          default: $(el).find(`details`).forEach(dt => dt.open = false);
         }
       });
       
@@ -388,3 +435,4 @@ async function fetchTemplates() {
   const templatesContainer = $.virtual(templates);
   return templatesContainer;
 }
+/* endregion helpers */
