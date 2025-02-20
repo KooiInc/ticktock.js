@@ -15,3 +15,5 @@ Visit [wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentatio
 Download or link the bundled library @https://unpkg.com/ticktock-es/Bundle/index.min.js
 
 View some [Examples](https://kooiinc.github.io/ticktock.js/Demo/).
+
+Check [test coverage](https://kooiinc.github.io/ticktock.js/Tests/Coverage)
