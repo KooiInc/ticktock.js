@@ -30,11 +30,12 @@ utc.minutes -= 15;
 print('<p><a target="_top" href="https://github.com/KooiInc/ticktock.js"> Github Repository</a></p>');
 
 print(
-  `<h2>TickTock.js Examples (work in progress)</h2>`,
+  `<h2>TickTock.js Examples (work in progress) <span id="tellTime"></span></h2>`,
   `${initialCode}`,
   
   `<button id="bttnOpenClose" data-allopen="0"></button>`
 );
+tellTime();
 /* endregion header */
 
 /* region All examples */
@@ -339,12 +340,37 @@ function toDetailsBlock(summary, str, open = false) {
     <div class="content">${str}</div></details>`;
 }
 
+function firstUp(string) {
+  return string.slice(0, 1).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+function tellTime() {
+  const timeElem = $(`#tellTime`);
+  
+  timer();
+  
+  function timer() {
+    timeElem.HTML.set(firstUp($D.now.format(`WD d MM yyyy hh:mmi:ss`, `hrc:23`)));
+    return setTimeout(timer, 1000);
+  }
+}
+
 function initialize() {
   $.editCssRules(
     `.container {
       inset: 0;
       position: absolute;
       padding: 1rem 2rem;
+    }`,
+    `h2 span#tellTime {
+      display: inline-block;
+      font-size: 14px;
+      line-height: 1em;
+      background-color: #6196cc;
+      color: floralwhite;
+      padding: 3px 5px;
+      border-radius: 5px;
+      box-shadow: 2px 2px 8px #AAA;
     }`,
     `#log2screen {
       margin: 0 auto;
