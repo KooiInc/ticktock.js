@@ -65,7 +65,7 @@ auckland.format(`{${prefix}}WD MM d yyyy, hh:mmi:ss dp`);
 </template>
 
 <template id="formatNowEx">
-now$.clone.relocate({l: "fr-FR"}).format(
+now$.clone.relocate({l: "fr-FR"}).zoneFormat(
    `{=> Il est}: {&lt;b class="red">}WD{&lt/b>} d {&lt;b class="red">}MM{&lt/b>}
       yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)`);
 </template>
