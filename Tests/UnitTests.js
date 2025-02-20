@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
-//import $D from "../Bundle/index.min.js";
 import $D from "../index.js";
 import {localeInfoValidator} from "../src/genericHelpers.js";
 
