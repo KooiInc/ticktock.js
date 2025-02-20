@@ -437,7 +437,7 @@ function initialize() {
         content: "Open all chapters";
       }
     }`,
-    `pre.detail { margin-top: 0.2em; font-size: 1em !important }; }`,
+    `pre.detail { margin-top: 0.2em; }`,
     `a code:hover { text-decoration: underline; }`,
     `sup.inline {
       margin-top: -4px;
