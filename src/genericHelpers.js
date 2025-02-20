@@ -1,7 +1,8 @@
 import {add2Date, fullMonth, offset2Number, pad0,} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
-const localLocaleInfo = Intl.DateTimeFormat().resolvedOptions();
+const localLocaleInfo = localeInfoValidator();
+
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
   retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
@@ -54,8 +55,11 @@ function calenderForYear({year, locale} = {}) {
 
 function localeInfoValidator({ locale, timeZone, l, tz, logError = false} = {}) {
   try {
-    return Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions(); }
-  catch (error) {
+    const info = Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions();
+    info.formatOptions = retrieveFormattingFormats(info.locale, info.timeZone);
+    
+    return info;
+  } catch (error) {
     logError && console.error(`localeValidator: invalid input, using computer locale`);
     return localLocaleInfo; }
 }
@@ -198,7 +202,7 @@ function createCTORStaticMethods(ctor, customMethods) {
       }
     },
     localeInformation: {
-      value: Intl.DateTimeFormat().resolvedOptions(),
+      get() { return localeInfoValidator(); },
     },
     localWeekdaynames: {
       value(locale) {
