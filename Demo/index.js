@@ -1,15 +1,15 @@
 /* region import and initialize */
-import $D from "../Bundle/index.min.js";
+import $D from "../index.js";
 window.$D = $D; // use in console for testing
 const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
-const initialCode = toCodeBlock(templates.find$(`#initial`).HTML.get().trim());
-const performanceCode = toCodeBlock(templates.find$(`#perf`).HTML.get().trim());
 initialize();
 /* endregion import and initialize */
 
 /* region initialVariables */
+const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
+  acrossZonesEx1, acrossZonesEx2 } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -44,6 +44,14 @@ print(
     toDetailsBlock(
       `<code>$D.localeInformation</code>: environment (here: browser) locale- and timeZone information`,
       toJSONString($D.localeInformation, true)),
+    
+    toDetailsBlock(
+      `<code>$D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"})</code> Ok`,
+      toJSONString($D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"}))),
+    
+    toDetailsBlock(
+      `<code>$D.validateLocaleInformation({l:"ch", tz: "Bern"})</code> not ok: browser locale/timeZone`,
+      toJSONString($D.validateLocaleInformation({l:"ch", tz: "Bern"}))),
     
     toDetailsBlock(
       `<code>now$.localeInfo</code>`,
@@ -177,23 +185,79 @@ print(
 print(
   toDetailChapter(`Format`, `format`,
     `<div>See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax</div>`,
-    toDetailsBlock("<code>auckland.zoneFormat(...)</code> formats to instance embedded locale/timeZone",
-      `<code>auckland.zoneFormat('{=>; in Auckland it\'s now} WD d MM yyyy, hh:mmi:ss dp')</code>` +
-      `<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`, true),
+    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Format(...)</code> formats to instance embedded locale/timeZone",
+      `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`, true),
     
-    toDetailsBlock("<code>auckland.format(...)</code> formats to browser locale/timeZone",
-      `<code>auckland.format(
-            <br>&nbsp;&nbsp;\`{=> Il est}: WD d MM yyyy, hh:mmi:ss dp {dans votre fuseau horaire (\${browserTZ})}\`,
-            <br>&nbsp;&nbsp;\`l:fr\`
-            <br> )
-          </code><div>${
-        auckland.format(
-          `{=> Il est}: WD d MM yyyy, hh:mmi:ss dp {dans votre fuseau horaire (${browserTZ})}`,
-          `l:fr`)}</div>`,
+    toDetailsBlock(`auckland.format(...) formats to <i>browser</i> locale/timeZone`,
+      `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
+        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`, true),
+    
+    toDetailsBlock("<code>now$.clone.relocate({l:\"fr-FR\"}).<span class='red'>zone</span>Format(...)</code> " +
+      "formats to browser timeZone, France locale",
+      `${now$FormatEx}<div>${
+        now$.clone.relocate({l:`fr-FR`}).zoneFormat(
+          `{=> Il est}: {<b class="red">}WD{</b>} d {<b class="red">}MM{</b>} yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)}</div>`,
       true),
   )
 );
 /* endregion Format */
+
+/* region ex:timeAcrossZones */
+print(
+  toDetailChapter(`Time across timezones`, `taz`,
+    toDetailsBlock(
+      "<code>$D.timeAcrossZones(...)</code> Auckland time vs browser time",
+      `${toCodeBlock(acrossZonesEx1)}
+      ${toJSONString($D.timeAcrossZones({timeZoneDate: auckland.value, timeZoneID: auckland.timeZone}))}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.timeAcrossZones(...)</code> Auckland time vs Los Angeles time",
+      `${toCodeBlock(acrossZonesEx2)}
+       ${toJSONString($D.timeAcrossZones({timeZoneDate: auckland.value, timeZoneID: auckland.timeZone, userTimeZoneID: la.timeZone}))}`
+    ),
+  )
+);
+/* endregion ex:timeAcrossZones */
+
+/* region ex:daysInMonth */
+print(
+  toDetailChapter(`Days in month`, `dim`,
+    `<div>Static constructor method
+    (<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
+    toDetailsBlock(
+      "<code>$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)</code>",
+      `=> ${$D.daysInMonth(4)}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.daysInMonth($D.now.month + 1)</code>",
+      `=> ${$D.daysInMonth($D.now.month + 1)}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.daysInMonth(2)</code> not leap year",
+      `=> ${$D.daysInMonth(2)}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.daysInMonth(2, <span class=\"comment\">/*leapYear=*/</span>true)</code> leap year",
+      `=> ${$D.daysInMonth(2, true)}`
+    ),
+    
+    `<div><i>Instance getter</i></div>`,
+    toDetailsBlock(
+      "<code>$D(`2000/02/01`).daysThisMonth</code>",
+      `=> ${$D(`2000/02/01`).daysThisMonth}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.now.daysThisMonth</code>",
+      `=> ${$D.now.daysThisMonth}`
+    ),
+  )
+);
+/* endregion ex:daysInMonth */
 
 /* region ex:performance */
 const perf = perfRunner();
@@ -235,6 +299,18 @@ function perfRunner() {
 
 /* region helpers */
 Prism.highlightAll();
+
+function getCodeblocks() {
+  const initialCode = toCodeBlock(templates.find$(`#initial`).HTML.get().trim());
+  const performanceCode = toCodeBlock(templates.find$(`#perf`).HTML.get().trim());
+  const aucklandFormatEx = toCodeBlock(templates.find$(`#formatAucklandEx`).HTML.get().trim());
+  const now$FormatEx = toCodeBlock(templates.find$(`#formatNowEx`).HTML.get().trim());
+  const aucklandZoneFormatEx = toCodeBlock(templates.find$(`#zoneFormatAucklandEx`).HTML.get().trim());
+  const acrossZonesEx1 = toCodeBlock(templates.find$(`#acrossZonesEx1`).HTML.get().trim());
+  const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
+  return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
+          acrossZonesEx1, acrossZonesEx2 };
+}
 
 function toCodeBlock(str) {
   return `<pre class="line-numbers language-javascript"><code class="line-numbers language-javascript">${
@@ -291,13 +367,14 @@ function initialize() {
     }`,
     `details {
        cursor: pointer;
+       font-size: 1em;
        &.chapter {
           &:open {
             summary {
               button { display: inline-block; }
               color: green;
               list-style: inside disclosure-open;
-              span:not(.red) {
+              span:not(.red, .comment) {
                 background-color: #6196cc;
                 color: floralwhite;
                 border-radius: 3px;
@@ -313,7 +390,7 @@ function initialize() {
             color: black;
             margin-bottom: 0.5rem;
             padding: 0;
-            span:not(.red) {
+            span:not(.red,.comment) {
               padding: 2px 4px;
               &:hover {
                 background-color: #6196cc;
@@ -321,6 +398,17 @@ function initialize() {
                 border-radius: 3px;
               }
             }
+          }
+          
+          div {
+            font-weight: normal;
+            font-size: 1.1em;
+            line-height: 1.3em;
+            color: darkolivegreen;
+          }
+          
+          pre[class*="language-javascript"] {
+            max-width: 100%;
           }
           
           details:not(.chapter) {
@@ -349,7 +437,7 @@ function initialize() {
         content: "Open all chapters";
       }
     }`,
-    `pre.detail { margin-top: 0.2em; }`,
+    `pre.detail { margin-top: 0.2em; font-size: 1em !important }; }`,
     `a code:hover { text-decoration: underline; }`,
     `sup.inline {
       margin-top: -4px;
@@ -364,7 +452,7 @@ function initialize() {
     `#log2screen li div {
       font-weight: normal;
       color: darkolivegreen;
-      max-width: 95%;
+      max-width: 100%;
       h3 { color: black; margin: 0; margin-top: 0.2rem !important; }
       div {
         max-width: 95%;

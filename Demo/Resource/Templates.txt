@@ -54,4 +54,38 @@ results.push(`=> &lt;code>plainDateTestValues&lt;/code> creation in ${
 // results are used for reporting ⬇⬇⬇
 </template>
 
+<template id="zoneFormatAucklandEx">
+auckland.zoneFormat("{=>; in Auckland it's now} WD d MM yyyy, hh:mmi:ss dp");
+</template>
+
+<template id="formatAucklandEx">
+const prefix = `=> formatted for (browser) locale '${
+  browserLocale}' and - timeZone '${browserTZ}&lt;br>`;
+auckland.format(`{${prefix}}WD MM d yyyy, hh:mmi:ss dp`);
+</template>
+
+<template id="formatNowEx">
+now$.clone.relocate({l: "fr-FR"}).format(
+   `{=> Il est}: {&lt;b class="red">}WD{&lt/b>} d {&lt;b class="red">}MM{&lt/b>}
+      yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)`);
+</template>
+
+<template id="acrossZonesEx1">
+const auckland = $D({tz: "Pacific/Auckland"});
+$D.timeAcrossZones( {
+  timeZoneDate: auckland,
+  timeZoneID: auckland.timeZone
+} );
+</template>
+
+<template id="acrossZonesEx2">
+const auckland = $D({tz: "Pacific/Auckland"});
+const la = $D({tz: "America/Los_Angeles"});
+$D.timeAcrossZones( {
+  timeZoneDate: auckland,
+  timeZoneID: auckland.timeZone,
+  userTimeZoneID: la.timeZone
+} );
+</template>
+
 </div>
