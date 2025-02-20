@@ -362,15 +362,18 @@ function initialize() {
       position: absolute;
       padding: 1rem 2rem;
     }`,
-    `h2 span#tellTime {
-      display: inline-block;
-      font-size: 14px;
-      line-height: 1em;
-      background-color: #6196cc;
-      color: floralwhite;
-      padding: 3px 5px;
-      border-radius: 5px;
-      box-shadow: 2px 2px 8px #AAA;
+    `h2 {
+       line-height: 1.5em;
+       span#tellTime {
+          display: inline-block;
+          font-size: 14px;
+          line-height: inherit;
+          background-color: #6196cc;
+          color: floralwhite;
+          padding: 0 12px;
+          border-radius: 5px;
+          box-shadow: 2px 2px 8px #AAA;
+       }
     }`,
     `#log2screen {
       margin: 0 auto;
