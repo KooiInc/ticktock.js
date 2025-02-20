@@ -129,7 +129,7 @@ describe(`Constructor ($D) static methods/getters`, () => {
   });
   it(`$D.validateLocaleInformation() should return Intl.DateTimeFormat().resolvedOptions()`, () => {
     const validatedHere = $D.validateLocaleInformation();
-    assert.deepStrictEqual(validatedHere, localZoneInformation);
+    assert.partialDeepStrictEqual(validatedHere, localZoneInformation);
   });
   it(`$D.timeAcrossZones for ${timeZoneDate}, ${tzs.vancouver} vs ${tzs.amsterdam}`, () => {
     const vancouver = $D.timeAcrossZones({
@@ -183,7 +183,11 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual(calendar.slice(-1)[0].date.date, 29);
   });
   it(`$D.localeInformation equals Intl.DateTimeFormat().resolvedOptions()`, () => {
-    assert.deepStrictEqual($D.localeInformation, Intl.DateTimeFormat().resolvedOptions());
+    assert.partialDeepStrictEqual($D.localeInformation, Intl.DateTimeFormat().resolvedOptions());
+  });
+  it(`$D.localeInformation formatOptions`, () => {
+    const localeInfoOpts = $D.localeInformation.formatOptions;
+    assert.strictEqual(localeInfoOpts, `l:${localLocaleInformation.locale},tz:${localLocaleInformation.timeZone}`);
   });
   it(`$D.addCustom added non enumerable getter "addEra"`, () => {
     assert($D.keys.indexOf(`addEra`) < 0, "addEra is NOT expected to be in the $D.keys collection");
