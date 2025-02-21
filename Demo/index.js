@@ -279,12 +279,12 @@ print(
 /* region ex:performance */
 const perf = perfRunner();
 
-print(toDetailChapter(`Performance`, true,
-  toDetailsBlock(`Code used`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
+print(toDetailChapter(`Performance`, false,
+  toDetailsBlock(`Code used and result`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
   
   `<div class="xtraTxt"><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
       for processing a gazillion Dates &#128128;</div>`
-  )
+  ),
 );
 
 function perfRunner() {
