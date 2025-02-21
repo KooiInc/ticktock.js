@@ -679,6 +679,32 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(testD.value.constructor, new Date(`2020/02/01`).constructor);
       assert.strictEqual(String(testD.value), String(new Date(`2020/02/01`)));
     });
+    it(`.values() returns Object with values from embedded timeZone`, () => {
+      const testD = $D.from(2025, 0, 1, 7, 0, 0).relocate({tz: "Pacific/Marquesas"});
+      assert.deepStrictEqual(testD.values(), {
+        values4Timezone: "Pacific/Marquesas",
+        year: 2024,
+        month: 11,
+        date: 31,
+        hours: 20,
+        minutes: 30,
+        seconds: 0,
+        milliseconds: 0
+      });
+    });
+    it(`.values(true) returns Object with values from environment timeZone`, () => {
+      const testD = $D.from(2025, 0, 1, 7, 0, 0).relocate({tz: "Pacific/Marquesas"});
+      assert.deepStrictEqual(testD.values(true), {
+        values4Timezone: localLocaleInformation.timeZone,
+        year: 2025,
+        month: 0,
+        date: 1,
+        hours: 7,
+        minutes: 0,
+        seconds: 0,
+        milliseconds: 0
+      });
+    });
     it(`.weekDayname/.dayName for 2020/02/01 returns the right day name`, () => {
       const testD = $D(`2020/02/01`);
       const localDayName = $D.localWeekdaynames(testD.locale).long[testD.getDay()];
