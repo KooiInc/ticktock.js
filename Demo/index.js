@@ -47,11 +47,11 @@ print(
       toJSONString($D.localeInformation, true)),
     
     toDetailsBlock(
-      `<code>$D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"})</code> Ok`,
+      `<code>$D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"})</code> Valid`,
       toJSONString($D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"}))),
     
     toDetailsBlock(
-      `<code>$D.validateLocaleInformation({l:"ch", tz: "Bern"})</code> not ok: browser locale/timeZone`,
+      `<code>$D.validateLocaleInformation({l:"ch", tz: "Bern"})</code> Not valid, so browser locale/timeZone`,
       toJSONString($D.validateLocaleInformation({l:"ch", tz: "Bern"}))),
     
     toDetailsBlock(
