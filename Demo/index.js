@@ -158,7 +158,16 @@ print(
     toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
       toJSONString(taiohae.zoneDateTime)),
     
-    `<div>Date and time values as <code>Array&lt;Number></code>: <code>toArray</code> method</div>`,
+    `<div>Date and time values as <code>Object&lt;String, Number|String></code>
+      from <code>[instance].values</code> method</div>`,
+    
+    toDetailsBlock("<code>auckland.values(<span class='comment'>/*local=*/</span>false)</code>",
+      toJSONString(auckland.values(false))),
+    
+    toDetailsBlock("<code>auckland.values(true)</code>",
+      toJSONString(auckland.values(true))),
+    
+    `<div>Date and time values as <code>Array&lt;Number></code>: <code>[instance].toArray</code> method</div>`,
     toDetailsBlock("<code>taiohae.toArray(<span class='comment'>/*local=*/</span>false)</code>",
       toJSONString(taiohae.toArray(false), true, true)),
     
