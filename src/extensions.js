@@ -32,6 +32,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toArray(local = false) { return getDTValues(instance, local); },
     toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
+    values(local = false) { return local ? instance.dateTime : instance.zoneDateTime; },
     zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     
     set date({year, month, date}) { setDateParts(instance, {year, month, date}); },
