@@ -158,7 +158,7 @@ print(
     toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
       toJSONString(taiohae.zoneDateTime)),
     
-    `<div>Date and time values as <code>Object&lt;String, Number|String></code>
+    `<div class="xtraTxt">Date and time values as <code>Object&lt;String, Number|String></code>
       from <code>[instance].values</code> method</div>`,
     
     toDetailsBlock("<code>auckland.values(<span class='comment'>/*local=*/</span>false)</code>",
@@ -167,7 +167,7 @@ print(
     toDetailsBlock("<code>auckland.values(true)</code>",
       toJSONString(auckland.values(true))),
     
-    `<div>Date and time values as <code>Array&lt;Number></code>: <code>[instance].toArray</code> method</div>`,
+    `<div class="xtraTxt">Date and time values as <code>Array&lt;Number></code>: <code>[instance].toArray</code> method</div>`,
     toDetailsBlock("<code>taiohae.toArray(<span class='comment'>/*local=*/</span>false)</code>",
       toJSONString(taiohae.toArray(false), true, true)),
     
@@ -262,7 +262,7 @@ print(
       `=> ${$D.daysInMonth(2, true)}`
     ),
     
-    `<div><i>Instance getter</i></div>`,
+    `<div class="xtraTxt"><i>Instance getter</i></div>`,
     toDetailsBlock(
       "<code>$D(`2000/02/01`).daysThisMonth</code>",
       `=> ${$D(`2000/02/01`).daysThisMonth}`
@@ -280,7 +280,7 @@ print(
 const perf = perfRunner();
 
 print(toDetailChapter(`Performance`, false,
-  `<div><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
+  `<div class="xtraTxt"><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
       for processing a gazillion Dates &#128128;</div>`,
   performanceCode, perf.join(`<br>`)));
 
@@ -499,10 +499,17 @@ function initialize() {
       color: darkolivegreen;
       max-width: 100%;
       h3 { color: black; margin: 0; margin-top: 0.2rem !important; }
+      div.xtraTxt {
+        margin: 0.4rem 0.7rem;
+        color: #555;
+        &:before {
+          content: '☑️ ';
+        }
+      }
       div {
-        max-width: 95%;
+        max-width: 100%;
         margin: 0.4rem 0;
-
+        
         code.block {
           display: block;
           padding: 0.5rem;
