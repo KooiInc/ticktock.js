@@ -201,7 +201,7 @@ print(
 /* region ex:Format */
 print(
   toDetailChapter(`Format`, `format`,
-    `<div>See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax</div>`,
+    `<div class="xtraTxt">See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax</div>`,
     toDetailsBlock("<code>auckland.<span class='red'>zone</span>Format(...)</code> formats to instance embedded locale/timeZone",
       `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`, true),
     
@@ -240,7 +240,7 @@ print(
 /* region ex:daysInMonth */
 print(
   toDetailChapter(`Days in month`, `dim`,
-    `<div>Static constructor method
+    `<div class="xtraTxt">Static constructor method
     (<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
     toDetailsBlock(
       "<code>$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)</code>",
@@ -279,10 +279,13 @@ print(
 /* region ex:performance */
 const perf = perfRunner();
 
-print(toDetailChapter(`Performance`, false,
+print(toDetailChapter(`Performance`, true,
+  toDetailsBlock(`Code used`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
+  
   `<div class="xtraTxt"><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
-      for processing a gazillion Dates &#128128;</div>`,
-  performanceCode, perf.join(`<br>`)));
+      for processing a gazillion Dates &#128128;</div>`
+  )
+);
 
 function perfRunner() {
   const results = [];
