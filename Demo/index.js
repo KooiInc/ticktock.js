@@ -156,7 +156,14 @@ print(
     toDetailsBlock("<code>auckland.<span class='red'>zone</span>DateTime</code>", toJSONString(auckland.zoneDateTime)),
     
     toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
-      toJSONString(taiohae.zoneDateTime))
+      toJSONString(taiohae.zoneDateTime)),
+    
+    `<div>Date and time values as <code>Array&lt;Number></code>: <code>toArray</code> method</div>`,
+    toDetailsBlock("<code>taiohae.toArray(<span class='comment'>/*local=*/</span>false)</code>",
+      toJSONString(taiohae.toArray(false), true, true)),
+    
+    toDetailsBlock("<code>taiohae.toArray(true)</code>",
+      toJSONString(taiohae.toArray(true), true, true)),
   )
 );
 /* endregion Date/time values */
@@ -318,8 +325,8 @@ function toCodeBlock(str) {
     str}</code></pre>`;
 }
 
-function toJSONString(obj, detail = true) {
-  return `<pre${detail ? ` class="detail"` : ``}>${JSON.stringify(obj, null, 2)}</pre>`;
+function toJSONString(obj, detail = true, noFormat = false) {
+  return `<pre${detail ? ` class="detail"` : ``}>${JSON.stringify(obj, null, noFormat ? null : 2)}</pre>`;
 }
 
 function toDetailChapter(summary, id, ...lemmas) {
