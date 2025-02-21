@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
-import {localeInfoValidator} from "../src/genericHelpers.js";
 
 // globally used
 const tzs = {
@@ -13,8 +12,9 @@ const tzs = {
   berlin: "Europe/Berlin",
   chongqing: "Asia/Chongqing",
   istanbul: "Europe/Istanbul",
+  taiohae: "Pacific/Marquesas",
 };
-const localLocaleInformation = localeInfoValidator();
+const localLocaleInformation = $D.localeInformation;
 
 describe(`Basics $D`, () => {
   const now = new Date();
@@ -628,6 +628,14 @@ describe(`$D instance extensions`, () => {
     it(`.timeValues for 2020/02/01 12:28:30.441, TZ "Asia/Chongqing" returns values within user timeZone`, () => {
       const dtChina = $D([2020, 2, 1, 12, 28, 30, 441], {timeZone: "Asia/Chongqing"});
       assert.strictEqual(dtChina.timeValues.join(`,`), `12,28,30,441`);
+    });
+    it(`.toArray() returns Array of date/time values for embedded timeZone`, () => {
+      const taiohae = $D.from(2025, 0, 1, 7, 0, 0).relocate({tz: tzs.taiohae});
+      assert.deepStrictEqual(taiohae.toArray(), [2024, 11, 31, 20, 30, 0, 0]);
+    });
+    it(`.toArray(true) returns Array of date/time values for user (local) environment timeZone`, () => {
+      const taiohae = $D.from(2025, 0, 1, 7, 0, 0).relocate({tz: tzs.taiohae});
+      assert.deepStrictEqual(taiohae.toArray(true), [2025, 0, 1, 7, 0, 0, 0]);
     });
     it(`.toString no parameters equals plain Date toString (without timeZoneName)`, () => {
       const now$ = $D.now;

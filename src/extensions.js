@@ -30,6 +30,7 @@ function instanceCreator({instance, localeInfo} = {}) {
     relocate({locale, timeZone, l, tz} = {}) { return relocate(instance, {locale, timeZone, l, tz}); },
     revalue(date) { instance = revalue(instance, date); return instance; },
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
+    toArray(local = false) { return getDTValues(instance, local); },
     toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
     zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     
