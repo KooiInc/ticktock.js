@@ -86,7 +86,6 @@ function instanceCreator({instance, localeInfo} = {}) {
     get UTC() { return instance.clone.relocate({locale: instance.locale, timeZone: `UTC`}); },
     get UTCOffset() { return offsetFrom(instance, `UTC`); },
     get value() { return new Date(instance); },
-    get weekDayname() { return instance.names.dayName; },
     get weeknr() { return getISO8601Weeknr(instance); },
     get weeksInYear() { return getWeeksInYear(instance.year, 31); },
     get year() { return instance.date.year; },
