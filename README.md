@@ -8,10 +8,10 @@ and a *small footprint*. The bundled file size is a mere 20-21Kb.
 Furthermore, the constructor offers the possibility to *create your own custom extensions (getters/methods)* 
 (see [wiki](https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions)).
 
-Visit [wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentation.
+[Wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentation.
 
-Download or link the bundled library @https://unpkg.com/ticktock-es/Bundle/index.min.js
+Download or link to the bundled library @https://unpkg.com/ticktock-es/Bundle/index.min.js
 
-View some [Examples](https://kooiinc.github.io/ticktock.js/Demo/).
+[Examples](https://kooiinc.github.io/ticktock.js/Demo/).
 
-Check [test coverage](https://kooiinc.github.io/ticktock.js/Tests/Coverage)
+[Test coverage](https://kooiinc.github.io/ticktock.js/Tests/Coverage)
