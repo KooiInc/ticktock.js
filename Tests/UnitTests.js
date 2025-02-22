@@ -281,8 +281,9 @@ describe(`$D instance extensions`, () => {
   describe(`.next/previous`, () => {
     it(`.next([day after today]) works as expected`, () => {
       // note: for test we must retrieve the english day name, so relocate and zoneNames
-      const now$ = $D.now.relocate({locale: `en`});
-      const nextDayName = now$.zoneNames.dayNames.long[now$.day + 1];
+      const now$ = $D({locale: `en`});
+      const dayNr = now$.day === 6 ? 0 : now$.day + 1;
+      const nextDayName = now$.zoneNames.dayNames.long[dayNr];
       const next = now$.next(nextDayName);
       assert.strictEqual(next.dateNr, now$.dateNr + 1, `${next.dateNr}, ${nextDayName}, ${now$.dayName}`);
     });
