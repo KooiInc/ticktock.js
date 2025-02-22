@@ -53,20 +53,22 @@ function calenderForYear({year, locale} = {}) {
   return calendar;
 }
 
+function addFormatOptions(localeInfoResolved) {
+  const value = retrieveFormattingFormats(localeInfoResolved.locale, localeInfoResolved.timeZone);
+  Object.defineProperty( localeInfoResolved, `formatOptions`, { value, enumerable: false });
+  return localeInfoResolved;
+}
+
 function localeInfoValidator({ locale, timeZone, l, tz, logError = false} = {}) {
   try {
-    const info = Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions();
-    info.formatOptions = retrieveFormattingFormats(info.locale, info.timeZone);
-    
-    return info;
+    return addFormatOptions(Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions());
   } catch (error) {
     logError && console.error(`localeValidator: invalid input, using computer locale`);
-    return localLocaleInfo; }
+    return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions()); }
 }
 
 function setLocaleInfo({locale, timeZone, l, tz} = {}) {
-  const info = localeInfoValidator({locale, timeZone, l, tz}, true);
-  return Object.freeze({...info, formatOptions: retrieveFormattingFormats(info.locale, info.timeZone)});
+  return addFormatOptions(localeInfoValidator({locale, timeZone, l, tz}, true));
 }
 
 function valiDate(date) {
