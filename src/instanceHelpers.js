@@ -302,7 +302,8 @@ function daysInMonth(instance) {
 }
 
 function fullMonth(instance, forLocale) {
-  const firstDay = instance.clone.relocate({locale: localeInfoValidator({locale: forLocale || `en`}).locale});
+  forLocale = localeInfoValidator({locale: forLocale}).locale;
+  const firstDay = instance.clone.relocate({locale:forLocale});
   firstDay.date = { date: 1 };
   return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.clone.add(`${i+1} days`) ));
 }
