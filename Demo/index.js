@@ -9,7 +9,7 @@ initialize();
 
 /* region initialVariables */
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx1, acrossZonesEx2 } = getCodeblocks();
+  acrossZonesEx1, acrossZonesEx2, fullMonth } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -151,15 +151,24 @@ print(
 /* region ex:Date/time values */
 print(
   toDetailChapter(`Date/time values`, `dtvalues`,
+    toDetailsBlock("<code>auckland.date</code>", toJSONString(auckland.date)),
+    
+    toDetailsBlock("<code>auckland.time</code>", toJSONString(auckland.time)),
+    
     toDetailsBlock("<code>auckland.dateTime</code>", toJSONString(auckland.dateTime)),
+    
+    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Date</code>", toJSONString(auckland.zoneDate)),
+    
+    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Time</code>", toJSONString(auckland.zoneTime)),
     
     toDetailsBlock("<code>auckland.<span class='red'>zone</span>DateTime</code>", toJSONString(auckland.zoneDateTime)),
     
     toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
       toJSONString(taiohae.zoneDateTime)),
     
-    `<div class="xtraTxt">Date and time values as <code>Object&lt;String, Number|String></code>
-      from <code>[instance].values</code> method</div>`,
+    `<div class="xtraTxt">
+        Date and time values as <code>Object&lt;String, Number|String></code>
+          from <code>[instance].values</code> method</div>`,
     
     toDetailsBlock("<code>auckland.values(<span class='comment'>/*local=*/</span>false)</code>",
       toJSONString(auckland.values(false))),
@@ -167,7 +176,10 @@ print(
     toDetailsBlock("<code>auckland.values(true)</code>",
       toJSONString(auckland.values(true))),
     
-    `<div class="xtraTxt">Date and time values as <code>Array&lt;Number></code>: <code>[instance].toArray</code> method</div>`,
+    `<div class="xtraTxt">
+      Date and time values as <code>Array&lt;Number></code>:
+        <code>[instance].toArray</code> method</div>`,
+    
     toDetailsBlock("<code>taiohae.toArray(<span class='comment'>/*local=*/</span>false)</code>",
       toJSONString(taiohae.toArray(false), true, true)),
     
@@ -180,10 +192,12 @@ print(
 /* region ex:Offset */
 print(
   toDetailChapter(`Offset (from)`, `offset`,
-    toDetailsBlock("<code>taiohae.offsetFrom(now$)</code>", toJSONString(taiohae.offsetFrom(now$)), ),
-    toDetailsBlock("<code>la.offsetFrom(auckland)</code>", toJSONString(la.offsetFrom(auckland)), ),
-    toDetailsBlock("<code>auckland.offsetFrom(la)</code>", toJSONString(auckland.offsetFrom(la)), ),
-    toDetailsBlock("<code>utc.offsetFrom(la)</code>", toJSONString(utc.offsetFrom(la)), ),
+    toDetailsBlock( "<code>taiohae.offsetFrom(now$)</code>", toJSONString(taiohae.offsetFrom(now$)) ),
+    toDetailsBlock( "<code>la.offsetFrom(auckland)</code>", toJSONString(la.offsetFrom(auckland)) ),
+    toDetailsBlock( "<code>auckland.offsetFrom(la)</code>", toJSONString(auckland.offsetFrom(la)) ),
+    toDetailsBlock( "<code>utc.offsetFrom(la)</code>", toJSONString(utc.offsetFrom(la)) ),
+    `<div class="xtraTxt">UTC offset can also be retrieved using the <code>[instance].UTCOffset</code> getter`,
+    toDetailsBlock( "<code>la.UTCOffset</code>", toJSONString(la.UTCOffset) ),
   )
 );
 /* endregion Offset */
@@ -201,7 +215,10 @@ print(
 /* region ex:Format */
 print(
   toDetailChapter(`Format`, `format`,
-    `<div class="xtraTxt">See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax</div>`,
+    `<div class="xtraTxt">
+        See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax
+     </div>`,
+    
     toDetailsBlock("<code>auckland.<span class='red'>zone</span>Format(...)</code> formats to instance embedded locale/timeZone",
       `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`, true),
     
@@ -276,16 +293,71 @@ print(
 );
 /* endregion ex:daysInMonth */
 
+/* region ex:fullMonth */
+const [pt, th, local] = getFullMonth();
+print(
+  toDetailChapter(`Full month`, `fm`,
+    `<div class="xtraTxt">
+      <code>[instance].fullMonth([forLocale])</code> delivers
+        an Array of TickTock instances for each day of the
+        month of the instance month value, from which one
+        can for example build a calender.
+    </div>`,
+    
+    toDetailsBlock(`Code used`, fullMonth),
+    
+    toDetailsBlock(
+      `<code>monthLocal.join("&lt;br>")</code> =>`,
+      `${local.join(`<br>`)}`),
+    
+    toDetailsBlock(
+      `<code>monthPT.join("&lt;br>")</code> =>`,
+      `${pt.join(`<br>`)}`),
+    
+    toDetailsBlock(
+      `<code>monthTH.join("&lt;br>")</code> =>`,
+      `${th.join(`<br>`)}`),
+  )
+);
+/* endregion ex:daysInMonth */
+
 /* region ex:performance */
 const perf = perfRunner();
 
 print(toDetailChapter(`Performance`, false,
   toDetailsBlock(`Code used and result`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
   
-  `<div class="xtraTxt"><b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively) using TickTock.js
-      for processing a gazillion Dates &#128128;</div>`
+  `<div class="xtraTxt">
+      <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
+        using TickTock.js for processing a gazillion Dates &#128128;
+   </div>`
   ),
 );
+
+function getFullMonth() {
+  const monthExampleReducer = (acc, v) => {
+    if (v.dateNr < 3  || v.dateNr > 27 ) {
+      const formatted  = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
+      const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
+      
+      return [...acc, ...value2Concat];
+    }
+    
+    return acc;
+  };
+  
+  const monthLocal = $D(`2000/02/12`)
+    .fullMonth()
+    .reduce(monthExampleReducer, []);
+  
+  const monthPT = $D("2000/02/12").fullMonth("pt")
+    .reduce(monthExampleReducer, []);
+  
+  const monthTH = $D("2000/02/12").fullMonth("th")
+    .reduce(monthExampleReducer, []);
+  
+  return [monthPT, monthTH, monthLocal];
+}
 
 function perfRunner() {
   const results = [];
@@ -328,8 +400,9 @@ function getCodeblocks() {
   const aucklandZoneFormatEx = toCodeBlock(templates.find$(`#zoneFormatAucklandEx`).HTML.get().trim());
   const acrossZonesEx1 = toCodeBlock(templates.find$(`#acrossZonesEx1`).HTML.get().trim());
   const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
+  const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim())
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-          acrossZonesEx1, acrossZonesEx2 };
+          acrossZonesEx1, acrossZonesEx2, fullMonth };
 }
 
 function toCodeBlock(str) {

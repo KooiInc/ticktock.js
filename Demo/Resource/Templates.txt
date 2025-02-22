@@ -88,4 +88,32 @@ $D.timeAcrossZones( {
 } );
 </template>
 
+<template id="fullMonth">
+const monthExampleReducer = (acc, v) => {
+  if (v.dateNr < 3  || v.dateNr > 27 ) {
+    const formatted = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
+    const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
+
+    return [...acc, ...value2Concat];
+  }
+
+  return acc;
+};
+
+// Create a few month arrays and reduce them to
+// a few start/end values for example display.
+// Also demonstrates the use of the .fullMonth locale parameter
+const monthLocal = $D("2000/02/12")
+  .fullMonth() // ◀ no locale, so environment (browser) locale is used
+  .reduce(monthExampleReducer, []);
+
+const monthPT = $D("2000/02/12")
+  .fullMonth("pt")
+  .reduce(monthExampleReducer, []);
+
+const monthTH = $D("2000/02/12")
+  .fullMonth("th") // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
+  .reduce(monthExampleReducer, []);
+</template>
+
 </div>
