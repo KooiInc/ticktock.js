@@ -10,8 +10,6 @@ Furthermore, the constructor offers the possibility to *create your own custom e
 
 Download or link to the bundled library @https://unpkg.com/ticktock-es/Bundle/index.min.js
 
-[Wiki pages](https://github.com/KooiInc/ticktock.js/wiki) for documentation.
-
-[Examples](https://kooiinc.github.io/ticktock.js/Demo/).
-
-[Test coverage](https://kooiinc.github.io/ticktock.js/Tests/Coverage)
+☑️ [Wiki pages](https://github.com/KooiInc/ticktock.js/wiki)
+<br>☑️ [Examples](https://kooiinc.github.io/ticktock.js/Demo/)
+<br>☑️ [Test coverage](https://kooiinc.github.io/ticktock.js/Tests/Coverage)
