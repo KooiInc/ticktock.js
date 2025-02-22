@@ -293,6 +293,35 @@ print(
 );
 /* endregion ex:daysInMonth */
 
+/* region ex:weeksInYear */
+print(
+  toDetailChapter(`Weeks in year`, `wiy`,
+    `<div class="xtraTxt">Static constructor method</div>`,
+    
+    toDetailsBlock(
+      "<code>$D.weeksInYear(2020)</code>",
+      `=> ${$D.weeksInYear(2020)}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D.weeksInYear($D(\"2025/01/01\").year)</code>",
+      `=> ${$D.weeksInYear($D("2025/01/01").year)}`
+    ),
+    
+    `<div class="xtraTxt"><i>Instance getter</i></div>`,
+    toDetailsBlock(
+      "<code>$D(`2020/01/01`).weeksInYear</code>",
+      `=> ${$D(`2020/02/01`).weeksInYear}`
+    ),
+    
+    toDetailsBlock(
+      "<code>$D(`2021/01/01`).weeksInYear</code>",
+      `=> ${$D(`2021/01/01`).weeksInYear}`
+    ),
+  )
+);
+/* endregion ex:daysInMonth */
+
 /* region ex:fullMonth */
 const [pt, th, local] = getFullMonth();
 print(
