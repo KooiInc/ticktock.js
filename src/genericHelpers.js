@@ -1,4 +1,4 @@
-import {add2Date, fullMonth, offset2Number, pad0,} from "./instanceHelpers.js";
+import {add2Date, fullMonth, offset2Number, getWeeksInYear} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
 const localLocaleInfo = localeInfoValidator();
@@ -6,7 +6,7 @@ const localLocaleInfo = localeInfoValidator();
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
   retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
-  retrieveFormattingFormats, aggregateDateAdder, getTraps, instanceCreator, };
+  retrieveFormattingFormats, aggregateDateAdder, getTraps, instanceCreator,};
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -247,6 +247,7 @@ function createCTORStaticMethods(ctor, customMethods) {
     },
     validateLocaleInformation: { value: localeInfoValidator },
     timeAcrossZones: { value: timeAcrossZones },
+    weeksInYear: { value(year) { return getWeeksInYear(year, 31); }  },
     keys: {
       get() {
         const customEnumerables = Object.fromEntries(

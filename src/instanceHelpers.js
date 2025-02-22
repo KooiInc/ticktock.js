@@ -436,9 +436,9 @@ function revalue(instance, date) {
   return instance;
 }
 
-function getWeeksInYear(year, date) {
-  const currentWeek = getISO8601Weeknr(new Date(year, 11, date));
-  return currentWeek === 1 ? getWeeksInYear(year, date-1) : currentWeek;
+function getWeeksInYear(year, d) {
+  const currentWeek = getISO8601Weeknr(new Date(year, 11, d || 31));
+  return currentWeek === 1 ? getWeeksInYear(year, (d || 31) - 1) : currentWeek;
 }
 
 function getQuarter(instance, numeric) {
@@ -451,8 +451,8 @@ function getQuarter(instance, numeric) {
   }
 }
 
-function getISO8601Weeknr(instance) {
-  const clone = new Date(instance);
+function getISO8601Weeknr(date) {
+  const clone = new Date(date);
   const dayn = (clone.getDay() + 6) % 7;
   clone.setDate(clone.getDate() - dayn + 3);
   const firstThursday = clone.valueOf();

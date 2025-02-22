@@ -3,10 +3,10 @@ import {
   getNames, getTime, toLocalString, getTimeValues, getDateValues,
   getDTValues, nextOrPrevious, setTimeParts, setDateParts,
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
-  getISO8601Weeknr, getWeeksInYear, getQuarter, hasDST,
-  removeTime, DSTActive, cloneInstance, timezoneAwareDifferenceTo,
-  offsetFrom, getAggregatedInfo, toJSDateString, getDowNumber,
-  fullMonth, localLocaleInfo,
+  getQuarter, hasDST, getWeeksInYear, removeTime, DSTActive,
+  cloneInstance, timezoneAwareDifferenceTo, offsetFrom,
+  getAggregatedInfo, toJSDateString, getDowNumber, fullMonth,
+  localLocaleInfo, getISO8601Weeknr,
 } from "./instanceHelpers.js";
 
 export default instanceCreator;
