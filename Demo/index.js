@@ -310,20 +310,20 @@ print(
     
     `<div class="xtraTxt"><i>Instance getter</i></div>`,
     toDetailsBlock(
-      "<code>$D(`2020/01/01`).weeksInYear</code>",
+      "<code>$D.from(2020).weeksInYear</code>",
       `=> ${$D(`2020/02/01`).weeksInYear}`
     ),
     
     toDetailsBlock(
-      "<code>$D(`2021/01/01`).weeksInYear</code>",
-      `=> ${$D(`2021/01/01`).weeksInYear}`
+      "<code>$D([2021]).weeksInYear</code>",
+      `=> ${$D([2021]).weeksInYear}`
     ),
   )
 );
 /* endregion ex:daysInMonth */
 
 /* region ex:fullMonth */
-const [pt, th, local] = getFullMonth();
+const [pt, th, local, deStatic] = getFullMonth();
 print(
   toDetailChapter(`Full month`, `fm`,
     `<div class="xtraTxt">
@@ -336,31 +336,20 @@ print(
     toDetailsBlock(`Code used`, fullMonth),
     
     toDetailsBlock(
-      `<code>monthLocal.join("&lt;br>")</code> =>`,
+      `<code>monthLocal.join("&lt;br>")</code> (browser locale: ${$D.localeInformation.locale}) =>`,
       `${local.join(`<br>`)}`),
     
     toDetailsBlock(
-      `<code>monthPT.join("&lt;br>")</code> =>`,
+      `<code>monthPT.join("&lt;br>")</code> (Portugese) =>`,
       `${pt.join(`<br>`)}`),
     
+    `<div class="xtraTxt">Also available as static constructor method <code>$D.monthCalendar</code>
+      <br>(<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
+    
     toDetailsBlock(
-      `<code>monthTH.join("&lt;br>")</code> =>`,
-      `${th.join(`<br>`)}`),
+      `<code>monthDeFromStatic.join("&lt;br>")</code> (German) =>`,
+      `${deStatic.join(`<br>`)}`),
   )
-);
-/* endregion ex:daysInMonth */
-
-/* region ex:performance */
-const perf = perfRunner();
-
-print(toDetailChapter(`Performance`, false,
-  toDetailsBlock(`Code used and result`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
-  
-  `<div class="xtraTxt">
-      <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
-        using TickTock.js for processing a gazillion Dates &#128128;
-   </div>`
-  ),
 );
 
 function getFullMonth() {
@@ -385,8 +374,30 @@ function getFullMonth() {
   const monthTH = $D("2000/02/12").fullMonth("th")
     .reduce(monthExampleReducer, []);
   
-  return [monthPT, monthTH, monthLocal];
+  const monthDeFromStatic = $D.monthCalendar({year: 2000, monthNr: 2, locale: `de-DE`})
+    .reduce(monthExampleReducer, []);
+  
+  return [monthPT, monthTH, monthLocal, monthDeFromStatic];
 }
+
+/* region ex:fullYear */
+
+/* endregion ex:fullYear */
+
+/* endregion ex:daysInMonth */
+
+/* region ex:performance */
+const perf = perfRunner();
+
+print(toDetailChapter(`Performance`, false,
+  toDetailsBlock(`Code used and result`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
+  
+  `<div class="xtraTxt">
+      <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
+        using TickTock.js for processing a gazillion Dates &#128128;
+   </div>`
+  ),
+);
 
 function perfRunner() {
   const results = [];
@@ -661,14 +672,12 @@ function initialize() {
     }
     
     if (chapter) {
-      setTimeout(() => {
+      return setTimeout(() => {
         $(chapter).find(`details`).forEach(el => el.open = chapter.open);
         const theDetailsElements = $.nodes(`details.chapter`).filter(el => el.open);
         const theBttn = $.node(`#bttnOpenClose`);
         theBttn.dataset.allopen = theDetailsElements.length ? `1` : `0`;
       });
-      
-      return;
     }
     return true;
   });

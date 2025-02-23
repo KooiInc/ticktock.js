@@ -114,6 +114,10 @@ const monthPT = $D("2000/02/12")
 const monthTH = $D("2000/02/12")
   .fullMonth("th") // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
   .reduce(monthExampleReducer, []);
+
+const monthDeFromStatic = $D
+  .monthCalendar({year: 2000, monthNr: 2, locale: "de-DE"})
+  .reduce(monthExampleReducer, []);
 </template>
 
 </div>
