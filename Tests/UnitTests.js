@@ -181,6 +181,14 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual(calendar[0].isLeapYear, true);
     assert.strictEqual(calendar.slice(-1)[0].date.date, 29);
   });
+  it(`$D.monthCalendar({year: 2000}) should show error message`, () => {
+    const calendar = $D.monthCalendar({year: 2000});
+    assert.strictEqual(calendar, `MonthNr should be a specific number (1 = january - 12 = december)`);
+  });
+  it(`$D.monthCalendar({year: 2000, monthNr: 17}) should show error message`, () => {
+    const calendar = $D.monthCalendar({year: 2000, monthNr: 17});
+    assert.strictEqual(calendar, `MonthNr should be a specific number (1 = january - 12 = december)`);
+  });
   it(`$D.localeInformation equals Intl.DateTimeFormat().resolvedOptions()`, () => {
     assert.partialDeepStrictEqual($D.localeInformation, Intl.DateTimeFormat().resolvedOptions());
   });
@@ -290,7 +298,8 @@ describe(`$D instance extensions`, () => {
     it(`.previous([day before today]) works as expected`, () => {
       // note: for test we must retrieve the english day name, so relocate and zoneNames
       const now$ = $D.now.relocate({locale: `en`});
-      const previousDayName = now$.zoneNames.dayNames.long[now$.getDay() - 1];
+      const dayNr = now$.day === 0 ? 6 : now$.day - 1;
+      const previousDayName = now$.zoneNames.dayNames.long[dayNr];
       const previous = now$.previous(previousDayName);
       assert.strictEqual(previous.dateNr, now$.dateNr - 1);
     });
