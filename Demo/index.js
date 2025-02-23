@@ -325,7 +325,7 @@ print(
 /* region ex:fullMonth */
 const [pt, th, local, deStatic] = getFullMonth();
 print(
-  toDetailChapter(`Full month`, `fm`,
+  toDetailChapter(`Full month localized calendar`, `fm`,
     `<div class="xtraTxt">
       <code>[instance].fullMonth([forLocale])</code> delivers
         an Array of TickTock instances for each day of the
@@ -343,6 +343,10 @@ print(
       `<code>monthPT.join("&lt;br>")</code> (Portugese) =>`,
       `${pt.join(`<br>`)}`),
     
+    toDetailsBlock(
+      `<code>monthTH.join("&lt;br>")</code> (Thai, buddhist year) =>`,
+      `${th.join(`<br>`)}`),
+    
     `<div class="xtraTxt">Also available as static constructor method <code>$D.monthCalendar</code>
       <br>(<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
     
@@ -352,18 +356,18 @@ print(
   )
 );
 
-function getFullMonth() {
-  const monthExampleReducer = (acc, v) => {
-    if (v.dateNr < 3  || v.dateNr > 27 ) {
-      const formatted  = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
-      const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
-      
-      return [...acc, ...value2Concat];
-    }
+function monthExampleReducer(acc, v) {
+  if (v.dateNr < 3  || v.dateNr > 27 ) {
+    const formatted  = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
+    const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
     
-    return acc;
-  };
+    return [...acc, ...value2Concat];
+  }
   
+  return acc;
+}
+
+function getFullMonth() {
   const monthLocal = $D(`2000/02/12`)
     .fullMonth()
     .reduce(monthExampleReducer, []);

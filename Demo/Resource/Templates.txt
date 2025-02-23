@@ -89,7 +89,7 @@ $D.timeAcrossZones( {
 </template>
 
 <template id="fullMonth">
-const monthExampleReducer = (acc, v) => {
+function monthExampleReducer(acc, v) {
   if (v.dateNr < 3  || v.dateNr > 27 ) {
     const formatted = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
     const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
@@ -98,7 +98,7 @@ const monthExampleReducer = (acc, v) => {
   }
 
   return acc;
-};
+}
 
 // Create a few month arrays and reduce them to
 // a few start/end values for example display.
