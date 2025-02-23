@@ -230,11 +230,18 @@ function createCTORStaticMethods(ctor, customMethods) {
     },
     monthCalendar: {
       value({year, monthNr, locale = `en-CA`} = {}) {
-        if (isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12) {
-          return xDate.from(year || new Date().getFullYear, monthNr -1, 1).relocate({locale}).fullMonth(locale);
+        const monthOk = isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12;
+        locale = locale || localLocaleInfo.locale;
+        year = isNumberOrNumberString(monthNr) ? +year : new Date().getFullYear();
+        monthNr = monthOk ? +monthNr - 1 : undefined;
+        
+        if (monthOk) {
+          return xDate.from(year, monthNr, 1)
+            .relocate({locale})
+            .fullMonth(locale);
         }
         
-        return `${monthNr} should be a Number (1 - 12)`;
+        return `${monthNr} should be a number (1 = january - 12 = december)`
       }
     },
     from: { value(...input) { return ctor(input); } },
