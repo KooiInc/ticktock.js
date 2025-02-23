@@ -241,7 +241,7 @@ function createCTORStaticMethods(ctor, customMethods) {
             .fullMonth(locale);
         }
         
-        return `${monthNr} should be a number (1 = january - 12 = december)`
+        return `MonthNr should be a specific number (1 = january - 12 = december)`;
       }
     },
     from: { value(...input) { return ctor(input); } },
