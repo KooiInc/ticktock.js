@@ -53,6 +53,21 @@ function calenderForYear({year, locale} = {}) {
   return calendar;
 }
 
+function calendarForMonth({year, monthNr, locale = `en-CA`} = {}) {
+  const monthOk = isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12;
+  locale = localeInfoValidator({locale}).locale;
+  year = isNumberOrNumberString(monthNr) ? +year : new Date().getFullYear();
+  monthNr = monthOk ? +monthNr - 1 : undefined;
+  
+  if (monthOk) {
+    return xDate.from(year, monthNr, 1)
+      .relocate({locale})
+      .fullMonth(locale);
+  }
+  
+  return `MonthNr should be a specific number (1 = january - 12 = december)`;
+}
+
 function addFormatOptions(localeInfoResolved) {
   const value = retrieveFormattingFormats(localeInfoResolved.locale, localeInfoResolved.timeZone);
   Object.defineProperty( localeInfoResolved, `formatOptions`, { value, enumerable: false });
@@ -229,20 +244,7 @@ function createCTORStaticMethods(ctor, customMethods) {
       value: calenderForYear,
     },
     monthCalendar: {
-      value({year, monthNr, locale = `en-CA`} = {}) {
-        const monthOk = isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12;
-        locale = locale || localLocaleInfo.locale;
-        year = isNumberOrNumberString(monthNr) ? +year : new Date().getFullYear();
-        monthNr = monthOk ? +monthNr - 1 : undefined;
-        
-        if (monthOk) {
-          return xDate.from(year, monthNr, 1)
-            .relocate({locale})
-            .fullMonth(locale);
-        }
-        
-        return `MonthNr should be a specific number (1 = january - 12 = december)`;
-      }
+      value: calendarForMonth,
     },
     from: { value(...input) { return ctor(input); } },
     addCustom: {
