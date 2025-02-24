@@ -33,7 +33,7 @@ let perfEnd = performance.now() - perfStart;
 let seconds = perfEnd/1000;
 let perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
 let perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-results.push(`=> &lt;code>testValues&lt;/code> creation in ${
+results.push(`=> creation in ${
   seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
   perIterationS} &lt;i>per iteration&lt;/i>`);
 // ---------------------------------------------------------------------
@@ -48,7 +48,7 @@ perfEnd = performance.now() - perfStart;
 seconds = perfEnd/1000;
 perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
 perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-results.push(`=> &lt;code>plainDateTestValues&lt;/code> creation in ${
+results.push(`=> creation in ${
   seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
   perIterationS} &lt;i>per iteration&lt;i>`);
 // results are used for reporting ⬇⬇⬇
@@ -127,7 +127,7 @@ const calendarHU = `&lt;ul>${
   Object.values(calendar)
     .reduce((acc, month, i) =>
       acc.concat(`&lt;li>&lt;b>${months[i]}&lt;/b>: [${
-        month.shift().zoneFormat("WD d MM yyyy")} ... ${
+        month.shift().zoneFormat("WD d MM yyyy")}, ..., ${
         month.pop().zoneFormat("WD d MM yyyy")}]&lt;/li>`), "")}&lt;/ul>`;
 </template>
 </div>

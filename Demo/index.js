@@ -406,7 +406,7 @@ function yearCalendarEx() {
   const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
   const months = Object.keys(calendar);
   return `<ul>${Object.values(calendar).reduce((acc, month, i) =>
-    acc.concat(`<li><b>${months[i]}</b>: [${month.shift().zoneFormat(`WD d MM yyyy`)} ... ${
+    acc.concat(`<li><b>${months[i]}</b>: [${month.shift().zoneFormat(`WD d MM yyyy`)}, ..., ${
       month.pop().zoneFormat(`WD d MM yyyy`)}]</li>`), "")}</ul>`
 }
 /* endregion ex:yearCalendar */
@@ -415,7 +415,9 @@ function yearCalendarEx() {
 const perf = perfRunner();
 
 print(toDetailChapter(`Performance`, false,
-  toDetailsBlock(`Code used and result`, performanceCode + `<div style="font-size: 1em;">${perf.join(`<br>`)}</div>`),
+  toDetailsBlock(`Code used`, performanceCode),
+  toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`),
+  toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`),
   
   `<div class="xtraTxt">
       <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
@@ -433,7 +435,7 @@ function perfRunner() {
   let seconds = perfEnd/1000;
   let perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
   let perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-  results.push(`=> <code>testValues</code> creation in ${
+  results.push(`=> creation in ${
     seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   // ---
@@ -446,7 +448,7 @@ function perfRunner() {
   seconds = perfEnd/1000;
   perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
   perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-  results.push(`=> <code>plainDateTestValues</code> creation in ${
+  results.push(`=> creation in ${
     seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   return results;
