@@ -9,7 +9,7 @@ initialize();
 
 /* region initialVariables */
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx1, acrossZonesEx2, fullMonth } = getCodeblocks();
+  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -390,6 +390,28 @@ function getFullMonth() {
 
 /* endregion ex:daysInMonth */
 
+/* region ex:yearCalendar */
+const cal = yearCalendarEx();
+print(
+  toDetailChapter(`Localized year calendar`, `yc`,`<div class="xtraTxt">
+      <code>[constructor].yearCalendar({year, locale})</code> delivers
+        an Array of TickTock instances for each month of the
+        <code>year</code>, if applicable localized for <code>locale</code>.
+    </div>`,
+    toDetailsBlock(`Code used`, yearCalendar),
+    toDetailsBlock(`<code>calendarHU</code> (year 2000, Hungarian locale) =>`, cal))
+);
+$(`#yc`)[0].open = true;
+
+function yearCalendarEx() {
+  const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
+  const months = Object.keys(calendar);
+  return `<ul>${Object.values(calendar).reduce((acc, month, i) =>
+    acc.concat(`<li><b>${months[i]}</b>: ${month.shift().zoneFormat(`WD d MM yyyy`)} ... ${
+      month.pop().zoneFormat(`WD d MM yyyy`)}</li>`), "")}</ul>`
+}
+/* endregion ex:yearCalendar */
+
 /* region ex:performance */
 const perf = perfRunner();
 
@@ -444,9 +466,10 @@ function getCodeblocks() {
   const aucklandZoneFormatEx = toCodeBlock(templates.find$(`#zoneFormatAucklandEx`).HTML.get().trim());
   const acrossZonesEx1 = toCodeBlock(templates.find$(`#acrossZonesEx1`).HTML.get().trim());
   const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
-  const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim())
+  const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim());
+  const yearCalendar = toCodeBlock(templates.find$(`#yearCalendar`).HTML.get().trim());
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-          acrossZonesEx1, acrossZonesEx2, fullMonth };
+          acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar };
 }
 
 function toCodeBlock(str) {
@@ -459,8 +482,9 @@ function toJSONString(obj, detail = true, noFormat = false) {
 }
 
 function toDetailChapter(summary, id, ...lemmas) {
+  const elId = id.length ? `id="${id}"` : "";
   return `
-    <details class="chapter" ${id ? id="${id}" : ""}>
+    <details class="chapter" ${elId}>
       <summary>
         <span>
           <b>${summary}</b>
@@ -612,6 +636,15 @@ function initialize() {
       list-style: none;
       margin: 0.7rem 0px 0px -1.2rem;
       padding-left: 0;
+      
+      ul {
+        margin-left: -1.2rem;
+        li {
+          list-style: "✓";
+          margin: revert;
+          padding-left: 0.2rem;
+        }
+      }
     }`,
     `.red { color: red; font-weight: bold; }`,
     `#log2screen li div {
