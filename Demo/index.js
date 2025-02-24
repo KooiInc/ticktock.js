@@ -406,8 +406,8 @@ function yearCalendarEx() {
   const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
   const months = Object.keys(calendar);
   return `<ul>${Object.values(calendar).reduce((acc, month, i) =>
-    acc.concat(`<li><b>${months[i]}</b>: ${month.shift().zoneFormat(`WD d MM yyyy`)} ... ${
-      month.pop().zoneFormat(`WD d MM yyyy`)}</li>`), "")}</ul>`
+    acc.concat(`<li><b>${months[i]}</b>: [${month.shift().zoneFormat(`WD d MM yyyy`)} ... ${
+      month.pop().zoneFormat(`WD d MM yyyy`)}]</li>`), "")}</ul>`
 }
 /* endregion ex:yearCalendar */
 
