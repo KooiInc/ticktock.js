@@ -393,7 +393,7 @@ function getFullMonth() {
 /* region ex:yearCalendar */
 const cal = yearCalendarEx();
 print(
-  toDetailChapter(`Localized year calendar`, `yc`,`<div class="xtraTxt">
+  toDetailChapter(`Full year localized calendar`, `yc`,`<div class="xtraTxt">
       <code>[constructor].yearCalendar({year, locale})</code> delivers
         an Array of TickTock instances for each month of the
         <code>year</code>, if applicable localized for <code>locale</code>.
@@ -401,7 +401,6 @@ print(
     toDetailsBlock(`Code used`, yearCalendar),
     toDetailsBlock(`<code>calendarHU</code> (year 2000, Hungarian locale) =>`, cal))
 );
-$(`#yc`)[0].open = true;
 
 function yearCalendarEx() {
   const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
@@ -639,6 +638,7 @@ function initialize() {
       
       ul {
         margin-left: -1.2rem;
+        color: #777;
         li {
           list-style: "✓";
           margin: revert;

@@ -121,12 +121,13 @@ const monthDeFromStatic = $D
 </template>
 
 <template id="yearCalendar">
-const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
+const calendar = $D.yearCalendar({year: 2000, locale: "hu"}).calendar;
 const months = Object.keys(calendar)
-const calendarHU = `&lt;ul>${Object.values(calendar)
-  .reduce((acc, month, i) =>
-    acc.concat(`&lt;li>&lt;b>${months[i]}&lt;/b>: ${
-      month.shift().zoneFormat(`WD d MM yyyy`)} ... ${
-      month.pop().zoneFormat(`WD d MM yyyy`)}&lt;/li>`), "")}&lt;/ul>`;
+const calendarHU = `&lt;ul>${
+  Object.values(calendar)
+    .reduce((acc, month, i) =>
+      acc.concat(`&lt;li>&lt;b>${months[i]}&lt;/b>: ${
+        month.shift().zoneFormat("WD d MM yyyy")} ... ${
+        month.pop().zoneFormat("WD d MM yyyy")}&lt;/li>`), "")}&lt;/ul>`;
 </template>
 </div>
