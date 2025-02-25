@@ -16,7 +16,8 @@ const berlin = $D({locale: "de-DE", tz: "Europe/Berlin"});
 const vancouver = now$.clone.relocate({l: "en-CA", tz: "America/Vancouver"});
 const la = $D({tz: "America/Los_Angeles"});
 const taiohae = $D.from(2025, 0, 1, 7, 0, 0);
-const utc = $D.now.UTC;
+const utc = $D.fromUxTS(+now$/1000).UTC;
+//             ↳ from unix epoch timestamp
 taiohae.localeInfo = {tz: "Pacific/Marquesas"};
 utc.hours += 3;
 utc.minutes -= 15;
