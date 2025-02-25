@@ -226,6 +226,23 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const testD_ISO = $D.from().ISO;
     assert.strictEqual(testD_ISO, nowISO);
   });
+  it(`$D.fromUxTS(946681200) should return a TickTock instance with value 2000/01/01`, () => {
+    const fromISO = $D.from(2000,0,1).ISO;
+    const testD_ISO = $D.fromUxTS(946681200).ISO;
+    assert.strictEqual(testD_ISO, fromISO);
+  });
+  it(`$D.fromUxTS() should return a TickTock instance with value new Date() (so now)`, () => {
+    const fromISO = $D.now.removeTime.ISO;
+    const testD_ISO = $D.fromUxTS().removeTime.ISO;
+    assert.strictEqual(testD_ISO, fromISO);
+  });
+  it(`$D.fromUxTS(946681200, {tz: ${
+      tzs.auckland}) should return a TickTock instance with value 2000/01/01 and Auckland timeZone`, () => {
+    const from = $D.from(2000,0,1).relocate({timeZone: tzs.auckland});
+    const testD = $D.fromUxTS(946681200, {timeZone: tzs.auckland});
+    assert.strictEqual(testD.toString(), from.toString());
+    assert.strictEqual(testD.timeZone, from.timeZone);
+  });
 });
 
 describe(`$D instance extensions`, () => {

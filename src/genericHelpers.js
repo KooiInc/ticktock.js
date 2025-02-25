@@ -247,6 +247,12 @@ function createCTORStaticMethods(ctor, customMethods) {
       value: calendarForMonth,
     },
     from: { value(...input) { return ctor(input); } },
+    fromUxTS: { value(ts, localeInfo) {
+        ts = isNumberOrNumberString(ts) ? +ts * 1000 : undefined;
+        const maybeDate = ts ? new Date(ts) : new Date();
+        return xDate(maybeDate, localeInfo || localLocaleInfo);
+      }
+    },
     addCustom: {
       value( { name, method, enumerable = false, isGetter = false } = {} ) {
         if (name?.constructor === String && method?.constructor === Function && method.length > 0) {
