@@ -233,11 +233,13 @@ describe(`$D instance extensions`, () => {
     it(`.clone is indeed a clone`, () => {
       const now$ = $D.now;
       const clone = now$.clone;
-      const dateInitial = now$.dateNr;
+      const monthInitial = now$.month;
       assert.notStrictEqual(now$, clone);
-      clone.date = {date: dateInitial + 5};
-      assert.strictEqual(clone.dateNr, dateInitial + 5);
-      assert.strictEqual(clone.dateNr - 5, dateInitial);
+      const cloneMonth = 12 - monthInitial
+      clone.date = {month: cloneMonth};
+      assert.notStrictEqual(clone, now$);
+      assert.strictEqual(clone.month, cloneMonth);
+      assert.strictEqual(now$.month, monthInitial);
     });
     it(`.cloneWith without a Date parameter returns instance clone`, () => {
       const now$ = $D.now;
