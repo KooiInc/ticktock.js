@@ -2,22 +2,20 @@ import {
   localeInfoValidator,
   retrieveDateValueFromInput,
   getAggregates,
-  createCTORStaticMethods,
+  createExtendedCTOR,
   getTraps,
   instanceCreator,
 } from "./src/genericHelpers.js";
 
 const customMethods = {};
-createCTORStaticMethods(ctor, customMethods);
-
-export default ctor;
+export default createExtendedCTOR(ctor, customMethods);
 
 function ctor(input, localeInfo) {
   const inputIsLocaleInfo = input?.locale || input?.timeZone || input?.tz || input?.l;
   let maybeDate = new Date(inputIsLocaleInfo ? Date.now() : retrieveDateValueFromInput(input));
-  const localeInfoResolved = inputIsLocaleInfo
-    ? localeInfoValidator(input) : localeInfoValidator(localeInfo || {});
+  const localeInfoResolved = inputIsLocaleInfo ? localeInfoValidator(input) : localeInfoValidator(localeInfo || {});
   const instanceExtensions = instanceCreator({localeInfo: localeInfoResolved});
   const instance = instanceExtensions.proxy(maybeDate, getTraps(instanceExtensions));
-  return Object.freeze(instance.addAggregates(instance, getAggregates(instance, customMethods)));
+  instance.addAggregates(getAggregates(instance, customMethods));
+  return Object.freeze(instance);
 }

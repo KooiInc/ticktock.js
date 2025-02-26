@@ -5,7 +5,7 @@ const localLocaleInfo = localeInfoValidator();
 
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
-  retrieveDateValueFromInput, getAggregates, createCTORStaticMethods, isNumberOrNumberString,
+  retrieveDateValueFromInput, getAggregates, createExtendedCTOR, isNumberOrNumberString,
   retrieveFormattingFormats, aggregateDateAdder, getTraps, instanceCreator,};
 
 function retrieveFormattingFormats(locale, timeZone) {
@@ -211,7 +211,7 @@ function getAggregates(instance, customExtras) {
   return aggregates;
 }
 
-function createCTORStaticMethods(ctor, customMethods) {
+function createExtendedCTOR(ctor, customMethods) {
   Object.defineProperties(ctor, {
     now: {
       get() {
@@ -283,7 +283,7 @@ function createCTORStaticMethods(ctor, customMethods) {
   return ctor;
 }
 
-function getTraps(exts) {
+function getTraps(instanceExtensions) {
   return {
     get( target, key ) {
       if (key !== `toString`) {
@@ -295,21 +295,22 @@ function getTraps(exts) {
           return target[key];
         }
       }
-      if (key in exts) {
-        return exts[key];
+      
+      if (key in instanceExtensions) {
+        return instanceExtensions[key];
       }
       
-      return undefined;
+      return target[key] || undefined;
     },
     set( target, key, value ) {
-      if (typeof key !== `symbol` && key in exts) {
-        exts[key] = value;
+      if (typeof key !== `symbol` && key in instanceExtensions) {
+        instanceExtensions[key] = value;
         return true;
       }
       
       target[key] = value;
       return true;
     },
-    has: (target, key) => key in exts || key in target,
+    has: (target, key) => key in instanceExtensions || key in target,
   };
 }

@@ -110,12 +110,18 @@ function instanceCreator({instance, localeInfo} = {}) {
   extensions.localeInfo = localeInfo || localLocaleInfo;
   
   Object.defineProperties(extensions, {
-    proxy: { value(date, traps) { instance = new Proxy(date, traps); return instance; }, enumerable: false },
-    addAggregates: { value(instance, aggregates2Add) {
-      Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
-        .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
-      return instance;
-    }, enumerable: false },
+    proxy: { value(dateValue, traps) {
+        instance = new Proxy(dateValue, traps);
+        return instance;
+      },
+      enumerable: false
+    },
+    addAggregates: { value(aggregates2Add) {
+        Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
+          .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
+      },
+      enumerable: false
+    },
   });
 
   return extensions;
