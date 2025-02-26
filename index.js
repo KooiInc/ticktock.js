@@ -7,16 +7,14 @@ import {
   instanceCreator,
 } from "./src/genericHelpers.js";
 
-let ctorIsExtended;
-export default XDateFactory();
+const customMethods = {};
+const ctor = XDateFactory()
+createCTORStaticMethods(ctor, customMethods);
+
+export default ctor;
 
 function XDateFactory() {
-  const customMethods = {};
-  ctorIsExtended = ctorIsExtended || createCTORStaticMethods(ctor, customMethods);
-  
-  return ctor;
-
-  function ctor(input, localeInfo) {
+  return function(input, localeInfo) {
     const inputIsLocaleInfo = input?.locale || input?.timeZone || input?.tz || input?.l;
     let maybeDate = new Date(inputIsLocaleInfo ? Date.now() : retrieveDateValueFromInput(input));
     const localeInfoResolved = inputIsLocaleInfo
