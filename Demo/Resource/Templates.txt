@@ -131,4 +131,20 @@ const calendarHU = `&lt;ul>${
         month.shift().zoneFormat("WD d MM yyyy")}, ..., ${
         month.pop().zoneFormat("WD d MM yyyy")}]&lt;/li>`), "")}&lt;/ul>`;
 </template>
+
+<template id="custom">
+// a custom, non enumerable getter
+$D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
+
+// a custom, enumerable method
+$D.addCustom( {
+  name: "quarterString",
+  method: qToCustomString,
+  enumerable: true } );
+
+function qToCustomString(instance, showDate = true) {
+  return ` Results for the ${instance.quarter.toLowerCase()} quarter ${
+      (showDate ? `(${instance.local})` : "")}`;
+}
+</template>
 </div>

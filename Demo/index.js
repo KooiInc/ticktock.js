@@ -9,7 +9,7 @@ initialize();
 
 /* region initialVariables */
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar } = getCodeblocks();
+  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -411,6 +411,46 @@ function yearCalendarEx() {
 }
 /* endregion ex:yearCalendar */
 
+/* region ex:customs */
+customsExample();
+print(
+  toDetailChapter(`Create custom methods/getters`, `yc`,
+    toDetailsBlock(`Code used`, customs),
+    
+    toDetailsBlock(
+      `<code>$D.now.addEra.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/dd/mm hh:mmi:ss")</code>`,
+      `=> ${$D.now.addEra.toString(`<b class="red">yyyy</b>/dd/mm hh:mmi:ss`)}`),
+    
+    toDetailsBlock(
+      `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()</code>`,
+      `=> ${$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()}`),
+    
+    toDetailsBlock(
+      `<code>$D("2022/08/01 12:00").quarterString(false)</code>`,
+      `=> ${$D("2022/08/01 12:00").quarterString(false)}`),
+    
+    toDetailsBlock(
+      `<code>$D.keys.filter(k => /addEra|quarterString/.test(k))</code>`,
+      ` => [${$D.keys.filter(k => /addEra|quarterString/.test(k))}]`,)
+  )
+);
+
+function customsExample() {
+// a custom, non enumerable getter
+  $D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
+  
+  // a custom, enumerable method
+  function qToCustomString(instance, showDate = true) {
+    return ` Results for the ${instance.quarter.toLowerCase()} quarter ${
+      (showDate ? `(${instance.local})` : "")}`;
+  }
+  $D.addCustom( {
+    name: "quarterString",
+    method: qToCustomString,
+    enumerable: true } );
+}
+/* endregion ex:customs */
+
 /* region ex:performance */
 const perf = perfRunner();
 
@@ -469,8 +509,9 @@ function getCodeblocks() {
   const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
   const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim());
   const yearCalendar = toCodeBlock(templates.find$(`#yearCalendar`).HTML.get().trim());
+  const customs = toCodeBlock(templates.find$(`#custom`).HTML.get().trim());
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-          acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar };
+          acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs };
 }
 
 function toCodeBlock(str) {
