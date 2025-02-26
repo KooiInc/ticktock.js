@@ -419,8 +419,8 @@ print(
     toDetailsBlock(`Code used`, customs),
     
     toDetailsBlock(
-      `<code>$D.now.addCentury.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/dd/mm hh:mmi:ss")</code>`,
-      `=> ${$D.now.addCentury.toString(`<b class="red">yyyy</b>/dd/mm hh:mmi:ss`)}`),
+      `<code>$D.now.addCentury.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss")</code>`,
+      `=> ${$D.now.addCentury.toString(`<b class="red">yyyy</b>/mm/dd hh:mmi:ss`)}`),
     
     toDetailsBlock(
       `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()</code>`,
