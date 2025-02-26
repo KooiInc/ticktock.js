@@ -4,6 +4,7 @@ window.$D = $D; // use in console for testing
 const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
+const debug = true;
 initialize();
 /* endregion import and initialize */
 
@@ -35,7 +36,7 @@ print(
   
   `<button id="bttnOpenClose" data-allopen="0"></button>`
 );
-tellTime();
+!debug && tellTime();
 /* endregion header */
 
 /* region All examples */
@@ -418,8 +419,8 @@ print(
     toDetailsBlock(`Code used`, customs),
     
     toDetailsBlock(
-      `<code>$D.now.addEra.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/dd/mm hh:mmi:ss")</code>`,
-      `=> ${$D.now.addEra.toString(`<b class="red">yyyy</b>/dd/mm hh:mmi:ss`)}`),
+      `<code>$D.now.addCentury.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/dd/mm hh:mmi:ss")</code>`,
+      `=> ${$D.now.addCentury.toString(`<b class="red">yyyy</b>/dd/mm hh:mmi:ss`)}`),
     
     toDetailsBlock(
       `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()</code>`,
@@ -437,7 +438,7 @@ print(
 
 function customsExample() {
 // a custom, non enumerable getter
-  $D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
+  $D.addCustom({name: "addCentury", method: instance => instance.clone.add("100 years"), isGetter: true});
   
   // a custom, enumerable method
   function qToCustomString(instance, showDate = true) {

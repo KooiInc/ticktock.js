@@ -134,13 +134,17 @@ const calendarHU = `&lt;ul>${
 
 <template id="custom">
 // a custom, non enumerable getter
-$D.addCustom({name: "addEra", method: instance => instance.add("100 years"), isGetter: true});
+$D.addCustom({
+  name: "addCentury",
+  method: instance => instance.clone.add("100 years"), isGetter: true}
+);
 
 // a custom, enumerable method
 $D.addCustom( {
   name: "quarterString",
   method: qToCustomString,
-  enumerable: true } );
+  enumerable: true }
+);
 
 function qToCustomString(instance, showDate = true) {
   return ` Results for the ${instance.quarter.toLowerCase()} quarter ${

@@ -81,7 +81,7 @@ describe(`Constructor ($D) static methods/getters`, () => {
   // local setup
   const timeZoneDate = "2025/01/15 15:00:00";
   const localZoneInformation = Intl.DateTimeFormat().resolvedOptions();
-  $D.addCustom({name: `addEra`, method: instance => instance.add(`100 years`), isGetter: true});
+  $D.addCustom({name: `addCentury`, method: instance => instance.add(`100 years`), isGetter: true});
   $D.addCustom({
     name: `quarterString`,
     method: (instance, showDate = false) => {
@@ -196,9 +196,9 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const localeInfoOpts = $D.localeInformation.formatOptions;
     assert.strictEqual(localeInfoOpts, `l:${localLocaleInformation.locale},tz:${localLocaleInformation.timeZone}`);
   });
-  it(`$D.addCustom added non enumerable getter "addEra"`, () => {
-    assert($D.keys.indexOf(`addEra`) < 0, "addEra is NOT expected to be in the $D.keys collection");
-    assert.strictEqual($D(`2000/01/01`).addEra.year, 2100);
+  it(`$D.addCustom added non enumerable getter "addCentury"`, () => {
+    assert($D.keys.indexOf(`addCentury`) < 0, "addCentury is NOT expected to be in the $D.keys collection");
+    assert.strictEqual($D(`2000/01/01`).addCentury.year, 2100);
   });
   it(`$D.addCustom added enumerable method "quarterString"`, () => {
     assert($D.keys.indexOf(`quarterString`) > -1, "quarterString is expected to be in the $D.keys collection");
