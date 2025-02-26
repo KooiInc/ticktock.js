@@ -4,7 +4,7 @@ window.$D = $D; // use in console for testing
 const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
-const debug = true;
+const debug = false;
 initialize();
 /* endregion import and initialize */
 
