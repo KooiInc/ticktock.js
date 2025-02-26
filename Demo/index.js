@@ -431,8 +431,8 @@ print(
       `=> ${$D("2022/08/01 12:00").quarterString(false)}`),
     
     toDetailsBlock(
-      `<code>$D.keys.filter(k => /addEra|quarterString/.test(k))</code>`,
-      ` => [${$D.keys.filter(k => /addEra|quarterString/.test(k))}]`,)
+      `<code>$D.keys.filter(k => /addCentury|quarterString/.test(k))</code>`,
+      ` => [${$D.keys.filter(k => /addCentury|quarterString/.test(k))}]`,)
   )
 );
 
