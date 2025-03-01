@@ -103,8 +103,8 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const nowFormatted = $D({timeZone: tzs.chongqing}).zoneFormat("yyyy/mm/dd hh:mmi:ss dp");
     assert.strictEqual(nowFormatted, $D.format({date: $D.now, timeZone: tzs.chongqing}));
   });
-  it(`$D.format({date: $D.now, template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}) formats $D.now to "星期六 三月"`, _ => {
-    assert.strictEqual($D.format({date: $D.now, template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}), "星期六 三月");
+  it(`$D.format({date: new Date(2000,0,1), template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}) formats $D.now to "星期六 一月"`, _ => {
+    assert.strictEqual($D.format({date: new Date(2000,0,1), template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}), "星期六 一月");
   });
   it(`$D.localMonthNames("nl-NL")[0] (long and short) should be "januari" and "jan"`, _ => {
     assert.strictEqual($D.localMonthnames(`nl-NL`).long[0], `januari`);
