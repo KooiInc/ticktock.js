@@ -91,6 +91,21 @@ describe(`Constructor ($D) static methods/getters`, () => {
     },
     enumerable: true,
   });
+  it(`$D.format() formats current date to "yyyy/mm/dd hh:mmi:ss dp" string`, _ => {
+    const nowFormatted = $D.now.format("yyyy/mm/dd hh:mmi:ss dp");
+    assert.strictEqual(nowFormatted, $D.format());
+  });
+  it(`$D.format({date: $D.now}) formats $D.now to "yyyy/mm/dd hh:mmi:ss dp" string`, _ => {
+    const nowFormatted = $D.now.format("yyyy/mm/dd hh:mmi:ss dp");
+    assert.strictEqual(nowFormatted, $D.format({date: $D.now}));
+  });
+  it(`$D.format({date: $D.now, timeZone: "Asia/Chongqing"}) formats $D.now to "yyyy/mm/dd hh:mmi:ss dp" string within Chongqing timeZone`, _ => {
+    const nowFormatted = $D({timeZone: tzs.chongqing}).zoneFormat("yyyy/mm/dd hh:mmi:ss dp");
+    assert.strictEqual(nowFormatted, $D.format({date: $D.now, timeZone: tzs.chongqing}));
+  });
+  it(`$D.format({date: $D.now, template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}) formats $D.now to "星期六 三月"`, _ => {
+    assert.strictEqual($D.format({date: $D.now, template: "WD MM", timeZone: tzs.chongqing, locale: "zh"}), "星期六 三月");
+  });
   it(`$D.localMonthNames("nl-NL")[0] (long and short) should be "januari" and "jan"`, _ => {
     assert.strictEqual($D.localMonthnames(`nl-NL`).long[0], `januari`);
     assert.strictEqual($D.localMonthnames(`nl-NL`).short[0], `jan`);
@@ -129,6 +144,24 @@ describe(`Constructor ($D) static methods/getters`, () => {
   it(`$D.validateLocaleInformation() should return Intl.DateTimeFormat().resolvedOptions()`, () => {
     const validatedHere = $D.validateLocaleInformation();
     assert.partialDeepStrictEqual(validatedHere, localZoneInformation);
+  });
+  it(`$D.values() should return values for current date in current time zone`, () => {
+    const now$ = $D.now;
+    const valuesNow = now$.toArray();
+    const valuesStatic = $D.values();
+    // don't consider milliseconds here
+    assert.strictEqual(valuesNow.slice(0, -1).join(`,`), valuesStatic.slice(0, -1).join(`,`));
+  });
+  it(`$D.values({date: $D.now}) should return values $D.now.toArray()`, () => {
+    const now$ = $D.now;
+    assert.strictEqual(now$.toArray().join(`,`), $D.values({date: now$}).join(`,`));
+  });
+  it(`$D.values({date: $D.now, timeZone: "Asia/Chongqing"}) should return values $D({timeZone: "Asia/Chongqing"}).toArray()`, () => {
+    const now$Chongqing = $D({timeZone: "Asia/Chongqing"});
+    // don't consider milliseconds here
+    assert.strictEqual(
+      now$Chongqing.toArray().slice(0, -1).join(`,`),
+      $D.values({date: $D.now, timeZone: "Asia/Chongqing"}).slice(0, -1).join(`,`));
   });
   it(`$D.timeAcrossZones for ${timeZoneDate}, ${tzs.vancouver} vs ${tzs.amsterdam}`, () => {
     const vancouver = $D.timeAcrossZones({
@@ -226,10 +259,10 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const testD_ISO = $D.from().ISO;
     assert.strictEqual(testD_ISO, nowISO);
   });
-  it(`$D.fromUxTS(946681200) should return a TickTock instance with value 2000/01/01`, () => {
-    const fromISO = $D.from(2000,0,1).ISO;
-    const testD_ISO = $D.fromUxTS(946681200).ISO;
-    assert.strictEqual(testD_ISO, fromISO);
+  it(`$D.fromUxTS(946681200) should return a TickTock instance with value 2000/01/01 00:00:00`, () => {
+    const fromISO = $D.from(2000,0,1,0,0,0,0);
+    const testD_ISO = $D.fromUxTS(946681200);
+    assert.strictEqual(testD_ISO.ISO, fromISO.ISO);
   });
   it(`$D.fromUxTS() should return a TickTock instance with value new Date() (so now)`, () => {
     const fromISO = $D.now.removeTime.ISO;
@@ -307,7 +340,7 @@ describe(`$D instance extensions`, () => {
   
   describe(`.next/previous`, () => {
     it(`.next([day after today]) works as expected`, () => {
-      // note: for test we must retrieve the english day name, so relocate and zoneNames
+      // note: for test we must retrieve the english day name, so relocate
       const now$ = $D({locale: `en`});
       const dayNr = now$.day === 6 ? 0 : now$.day + 1;
       const nextDayName = now$.zoneNames.dayNames.long[dayNr];
@@ -315,12 +348,14 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(next.dateNr, now$.dateNr + 1, `${next.dateNr}, ${nextDayName}, ${now$.dayName}`);
     });
     it(`.previous([day before today]) works as expected`, () => {
-      // note: for test we must retrieve the english day name, so relocate and zoneNames
-      const now$ = $D.now.relocate({locale: `en`});
+      // note: for test we must retrieve the english day name, so relocate
+      const now$ = $D({locale: `en`});
       const dayNr = now$.day === 0 ? 6 : now$.day - 1;
       const previousDayName = now$.zoneNames.dayNames.long[dayNr];
-      const previous = now$.previous(previousDayName);
-      assert.strictEqual(previous.dateNr, now$.dateNr - 1);
+      const then$ = now$.clone.previous(previousDayName);
+      assert.strictEqual(now$.differenceTo(then$).clean, `1 day`);
+      assert.strictEqual(then$.zoneDayname, now$.zoneNames.dayNames.long[dayNr]);
+      
     });
   });
   

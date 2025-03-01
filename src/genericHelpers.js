@@ -1,4 +1,4 @@
-import {add2Date, fullMonth, offset2Number, getWeeksInYear} from "./instanceHelpers.js";
+import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
 const localLocaleInfo = localeInfoValidator();
@@ -251,6 +251,26 @@ function createExtendedCTOR(ctor, customMethods) {
         ts = isNumberOrNumberString(ts) ? +ts * 1000 : undefined;
         const maybeDate = ts ? new Date(ts) : new Date();
         return xDate(maybeDate, localeInfo || localLocaleInfo);
+      }
+    },
+    values: {
+      value({date, timeZone} = {}) {
+        date = date || date?.value || new Date();
+        const nrs = dateFormat(date, `yyyy-m-d-h-mi-s`, localeInfoValidator({timeZone}).formatOptions.concat(`,hrc:23`))
+          .split(`-`)
+          .map(Number)
+          .concat(date.getMilliseconds());
+        nrs[1] -= 1;
+        return nrs;
+      }
+    },
+    format: {
+      value({date, template, timeZone, locale, opts} = {}) {
+        date = date || date?.value || new Date();
+        template = template?.constructor === String ? template : `yyyy/mm/dd hh:mmi:ss dp`;
+        let formatOptions = localeInfoValidator({timeZone, locale}).formatOptions;
+        formatOptions += opts ? `,${opts}` : ``;
+        return dateFormat(date, template, formatOptions);
       }
     },
     addCustom: {

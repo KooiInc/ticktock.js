@@ -19,7 +19,7 @@ export {
   getTime, getTimeValues, getWeeksInYear, hasDST, localeInfoValidator, localeMonthnames,
   localeWeekdays, localLocaleInfo, nextOrPrevious, offset2Number, offsetFrom, pad0,
   relocate, removeTime, revalue, setDateParts, setLocaleInfo, setProxy, setTimeParts,
-  timezoneAwareDifferenceTo,toJSDateString,toLocalString,
+  timezoneAwareDifferenceTo,toJSDateString,toLocalString, dateFormat
 };
 
 function addParts2Date(instance, ...parts2Add) {
@@ -286,7 +286,7 @@ function getDTValues(instance, local = true) {
       instance.getMinutes(),
       instance.getSeconds(),
       instance.getMilliseconds()
-    ]
+    ];
   }
 
   const numbers = instance.format("yyyy-m-d-hh-mmi-ss", `${instance.localeInfo.formatOptions},hrc23:true`)
