@@ -306,30 +306,26 @@ function createExtendedCTOR(ctor, customMethods) {
 function getTraps(instanceExtensions) {
   return {
     get( target, key ) {
-      if (key !== `toString`) {
-        if (key in target && target[key]?.constructor === Function) {
+      const notToString = key !== `toString`
+      switch(true) {
+        case notToString && key in target && target[key]?.constructor === Function:
           return (...args) => target[key](...args);
-        }
-        
-        if (key in target) {
+        case notToString && key in target:
           return target[key];
-        }
+        case key in instanceExtensions:
+          return instanceExtensions[key];
+        default:
+          return undefined;
       }
-      
-      if (key in instanceExtensions) {
-        return instanceExtensions[key];
-      }
-      
-      return target[key] || undefined;
     },
     set( target, key, value ) {
-      if (typeof key !== `symbol` && key in instanceExtensions) {
-        instanceExtensions[key] = value;
-        return true;
+      switch(true) {
+        case typeof key !== `symbol` && key in instanceExtensions:
+          instanceExtensions[key] = value;
+          return true;
+        default:
+          return true;
       }
-      
-      target[key] = value;
-      return true;
     },
     has: (target, key) => key in instanceExtensions || key in target,
   };
