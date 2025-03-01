@@ -306,16 +306,14 @@ function createExtendedCTOR(ctor, customMethods) {
 function getTraps(instanceExtensions) {
   return {
     get( target, key ) {
-      const notToString = key !== `toString`
+      const notToString = key !== `toString`;
       switch(true) {
-        case notToString && key in target && target[key]?.constructor === Function:
-          return (...args) => target[key](...args);
         case notToString && key in target:
-          return target[key];
+          return (...args) => target[key](...args);
         case key in instanceExtensions:
           return instanceExtensions[key];
         default:
-          return undefined;
+          return;
       }
     },
     set( target, key, value ) {
