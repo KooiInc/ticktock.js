@@ -470,18 +470,16 @@ print(toDetailChapter(`Performance`, false,
 function perfRunner() {
   const results = [];
   let perfStart = performance.now();
-  const today = $D.now.dateNr;
-  const testValues = [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
+  [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
   let perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
   let perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
   let perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-  results.push(`=> creation in ${
-    seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+  results.push(`=> creation in ${seconds.toFixed(3)} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   // ---
   perfStart = performance.now();
-  const plainDateTestValues = [...Array(1500)].map((_, i) => {
+  [...Array(1500)].map((_, i) => {
     const now = new Date();
     return new Date(now.setDate(i + 1));
   });
@@ -489,8 +487,7 @@ function perfRunner() {
   seconds = perfEnd/1000;
   perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
   perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-  results.push(`=> creation in ${
-    seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+  results.push(`=> creation in ${seconds.toFixed(3)} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   return results;
 }
