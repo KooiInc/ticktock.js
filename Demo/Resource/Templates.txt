@@ -32,10 +32,9 @@ const today = $D.now.dateNr;
 const testValues = [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
 let perfEnd = performance.now() - perfStart;
 let seconds = perfEnd/1000;
-let perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
-let perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-results.push(`=> creation in ${
-  seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+let perIterationMs = (perfEnd/1500) + ` milliseconds`;
+let perIterationS = (seconds/1500) + ` seconds`;
+results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
   perIterationS} &lt;i>per iteration&lt;/i>`);
 // ---------------------------------------------------------------------
 // create an array of 1500 native Date instances and measure performance
@@ -47,10 +46,9 @@ const plainDateTestValues = [...Array(1500)].map((_, i) => {
 });
 perfEnd = performance.now() - perfStart;
 seconds = perfEnd/1000;
-perIterationMs = (perfEnd/1500).toFixed(3) + ` milliseconds`;
-perIterationS = (seconds/1500).toFixed(6) + ` seconds`;
-results.push(`=> creation in ${
-  seconds.toLocaleString(browserLocale)} seconds, ${perIterationMs} / ${
+perIterationMs = (perfEnd/1500) + ` milliseconds`;
+perIterationS = (seconds/1500) + ` seconds`;
+results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
   perIterationS} &lt;i>per iteration&lt;i>`);
 // results are used for reporting ⬇⬇⬇
 </template>
