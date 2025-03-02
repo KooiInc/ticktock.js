@@ -9,10 +9,13 @@ import {
   localLocaleInfo, getISO8601Weeknr,
 } from "./instanceHelpers.js";
 
+import {getAggregates} from "./genericHelpers.js";
+
 export default instanceCreator;
 
-function instanceCreator({instance, localeInfo} = {}) {
-  const extensions = {
+function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
+  let instance;
+  const customDateExtensions = {
     add(...args) { return addParts2Date(instance, ...args); },
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
     cloneWith(date) { return cloneInstance(instance, date); },
@@ -107,22 +110,41 @@ function instanceCreator({instance, localeInfo} = {}) {
     get zoneYear() { return instance.zoneDate.year; },
   };
   
-  extensions.localeInfo = localeInfo || localLocaleInfo;
+  if (!localeInfo && !dateValue) {
+    return customDateExtensions;
+  }
   
-  Object.defineProperties(extensions, {
-    proxy: { value(dateValue, traps) {
-        instance = new Proxy(dateValue, traps);
-        return instance;
-      },
-      enumerable: false
-    },
-    addAggregates: { value(aggregates2Add) {
-        Object.entries(Object.getOwnPropertyDescriptors(aggregates2Add))
-          .forEach( ([key, descriptor]) => Object.defineProperty(extensions, key, descriptor) );
-      },
-      enumerable: false
-    },
-  });
+  customDateExtensions.localeInfo = localeInfo || setLocaleInfo();
+  instance = new Proxy(dateValue, getTraps(customDateExtensions));
+  
+  Object.entries(Object.getOwnPropertyDescriptors(getAggregates(instance, customMethods)))
+    .forEach( ([key, descriptor]) => Object.defineProperty(customDateExtensions, key, descriptor) );
+  
+  return Object.freeze(instance);
+}
 
-  return extensions;
+function getTraps(extensions) {
+  return {
+    get( target, key ) {
+      const notToString = key !== `toString`;
+      switch(true) {
+        case notToString && key in target:
+          return target[key].bind(target);
+        case key in extensions:
+          return Reflect.get(extensions, key);
+        default:
+          return;
+      }
+    },
+    set( target, key, value ) {
+      switch(true) {
+        case key in extensions:
+          Reflect.set(extensions, key, value);
+          return true;
+        default:
+          return true;
+      }
+    },
+    has: (target, key) => key in extensions || key in target,
+  };
 }

@@ -6,7 +6,7 @@ const localLocaleInfo = localeInfoValidator();
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
   retrieveDateValueFromInput, getAggregates, createExtendedCTOR, isNumberOrNumberString,
-  retrieveFormattingFormats, aggregateDateAdder, getTraps, instanceCreator,};
+  retrieveFormattingFormats, aggregateDateAdder, instanceCreator,};
 
 function retrieveFormattingFormats(locale, timeZone) {
   return [
@@ -301,30 +301,4 @@ function createExtendedCTOR(ctor, customMethods) {
   });
   
   return ctor;
-}
-
-function getTraps(instanceExtensions) {
-  return {
-    get( target, key ) {
-      const notToString = key !== `toString`;
-      switch(true) {
-        case notToString && key in target:
-          return (...args) => target[key](...args);
-        case key in instanceExtensions:
-          return instanceExtensions[key];
-        default:
-          return;
-      }
-    },
-    set( target, key, value ) {
-      switch(true) {
-        case typeof key !== `symbol` && key in instanceExtensions:
-          instanceExtensions[key] = value;
-          return true;
-        default:
-          return true;
-      }
-    },
-    has: (target, key) => key in instanceExtensions || key in target,
-  };
 }
