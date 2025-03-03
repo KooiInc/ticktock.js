@@ -110,9 +110,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     get zoneYear() { return instance.zoneDate.year; },
   };
   
-  if (!localeInfo && !dateValue) {
-    return customDateExtensions;
-  }
+  if (!localeInfo && !dateValue) { return customDateExtensions; }
   
   customDateExtensions.localeInfo = localeInfo || setLocaleInfo();
   instance = new Proxy(dateValue, getTraps(customDateExtensions));
@@ -125,25 +123,12 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
 
 function getTraps(extensions) {
   return {
-    get( target, key ) {
-      const notToString = key !== `toString`;
-      switch(true) {
-        case notToString && key in target:
-          return (...args) => target[key](...args);
-        case key in extensions:
-          return Reflect.get(extensions, key);
-        default:
-          return;
-      }
+    get( target, key) {
+      return key !== `toString` && key in target
+        ? target[key].bind(target) : Reflect.get(extensions, key);
     },
     set( target, key, value ) {
-      switch(true) {
-        case key in extensions:
-          Reflect.set(extensions, key, value);
-          return true;
-        default:
-          return true;
-      }
+      return key in extensions && Reflect.set(extensions, key, value);
     },
   };
 }
