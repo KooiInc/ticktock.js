@@ -168,7 +168,7 @@ print(
       toJSONString(taiohae.zoneDateTime)),
     
     `<div class="xtraTxt">
-        Date and time values as <code>Object&lt;String, Number|String></code>
+        Date and time values as <code>Object&lt;string, number|string></code>
           from <code>[instance].values</code> method</div>`,
     
     toDetailsBlock("<code>auckland.values(<span class='comment'>/*local=*/</span>false)</code>",
@@ -416,18 +416,27 @@ function yearCalendarEx() {
 customsExample();
 print(
   toDetailChapter(`Create custom methods/getters`, `yc`,
-    toDetailsBlock(`Code used`, customs),
-    
-    toDetailsBlock(
-      `<code>$D.now.addCentury.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss")</code>`,
+   `<div class="xtraTxt">
+      Use <code>$D.addCustom({name:string, method:function, enumerable:boolean, isGetter:boolean})</code>
+      <br>&nbsp;&nbsp;&nbsp;to create custom getters or methods for the TickTock.js 'constructor'
+      (see <a
+        target="_blank"
+        href="https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions"
+        >Wiki</a>).
+   </div>`,
+   
+  toDetailsBlock(`<b>Code used</b>`, customs, false, true),
+  
+  toDetailsBlock(
+      `<code>$D.now.<span class="red">addCentury</span>.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss")</code>`,
       `=> ${$D.now.addCentury.toString(`<b class="red">yyyy</b>/mm/dd hh:mmi:ss`)}`),
     
     toDetailsBlock(
-      `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()</code>`,
+      `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).<span class="red">quarterString</span>()</code>`,
       `=> ${$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()}`),
     
     toDetailsBlock(
-      `<code>$D("2022/08/01 12:00").quarterString(false)</code>`,
+      `<code>$D("2022/08/01 12:00").<span class="red">quarterString</span>(false)</code>`,
       `=> ${$D("2022/08/01 12:00").quarterString(false)}`),
     
     toDetailsBlock(
@@ -456,7 +465,7 @@ function customsExample() {
 const perf = perfRunner();
 
 print(toDetailChapter(`Performance`, false,
-  toDetailsBlock(`Code used`, performanceCode),
+  toDetailsBlock(`<b>Code used</b>`, performanceCode, false, true),
   toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`),
   toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`),
   
@@ -537,9 +546,12 @@ function toDetailChapter(summary, id, ...lemmas) {
     </details>`;
 }
 
-function toDetailsBlock(summary, str, open = false) {
-  return `<details${open ? ` open` : ``}><summary>${summary}</summary>
-    <div class="content">${str}</div></details>`;
+function toDetailsBlock(summary, str, open = false, noDefaultOpen = false) {
+  return `
+    <details${open ? ` open` : ``}${noDefaultOpen ? ` data-no-default-open="1"` : ``}>
+      <summary>${summary}</summary>
+      <div class="content">${str}</div>
+    </details>`;
 }
 
 function firstUp(string) {
@@ -753,7 +765,7 @@ function initialize() {
     
     if (chapter) {
       return setTimeout(() => {
-        $(chapter).find(`details`).forEach(el => el.open = chapter.open);
+        $(chapter).find(`details`).forEach(el => el.open = el.dataset.noDefaultOpen === `1` ? false : chapter.open);
         const theDetailsElements = $.nodes(`details.chapter`).filter(el => el.open);
         const theBttn = $.node(`#bttnOpenClose`);
         theBttn.dataset.allopen = theDetailsElements.length ? `1` : `0`;
