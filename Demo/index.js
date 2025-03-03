@@ -478,9 +478,9 @@ print(toDetailChapter(`Performance`, false,
 
 function perfRunner() {
   const results = [];
-  let perfStart = performance.now();
+  let perfStart = performance.now(), perfEnd;
   [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
-  let perfEnd = performance.now() - perfStart;
+  perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
   let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3}) + ` milliseconds`;
   let perIterationS = (seconds/1500).toLocaleString(browserLocale, {minimumFractionDigits: 6, maximumFractionDigits: 6}) + ` seconds`;
@@ -490,9 +490,9 @@ function perfRunner() {
   // ---
   perfStart = performance.now();
   [...Array(1500)].map((_, i) => {
-    const now = new Date();
-    return new Date(now.setDate(i + 1));
-  });
+      const now = new Date();
+      return new Date(now.setDate(i + 1));
+    });
   perfEnd = performance.now() - perfStart;
   seconds = perfEnd/1000;
   perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3}) + ` milliseconds`;
