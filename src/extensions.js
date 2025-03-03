@@ -129,7 +129,7 @@ function getTraps(extensions) {
       const notToString = key !== `toString`;
       switch(true) {
         case notToString && key in target:
-          return target[key].bind(target);
+          return (...args) => target[key](...args);
         case key in extensions:
           return Reflect.get(extensions, key);
         default:
@@ -145,6 +145,5 @@ function getTraps(extensions) {
           return true;
       }
     },
-    has: (target, key) => key in extensions || key in target,
   };
 }
