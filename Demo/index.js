@@ -476,6 +476,7 @@ setTimeout( () => {
    </div>`
     ),
   );
+  Prism.highlightAll();
 });
 
 function perfRunner() {
