@@ -8,7 +8,7 @@ const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
 const chongqin = $D({l:"zh", tz: "Asia/Chongqing"});
 //                                ↳ note: may be corrected by Intl validation
-const auckland = $D({tz: "Pacific/Auckland"});
+const auckland = $D({tz: "Pacific/Auckland", l:"en"});
 const paris = $D({timeZone: "Europe/Paris"}).add("2 days, 3 hours, 22 minutes");
 //                ↳ note: both 'timeZone' and 'tz' are valid
 const berlin = $D({locale: "de-DE", tz: "Europe/Berlin"});
