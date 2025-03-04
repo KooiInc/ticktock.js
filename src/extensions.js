@@ -108,6 +108,8 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     get zoneTime() { return getTime(instance); },
     get zoneTimeValues() { return getTimeValues(instance); },
     get zoneYear() { return instance.zoneDate.year; },
+    get zoneValues() { return instance.zoneDateTime; },
+    get zoneArray() { return getDTValues(instance, false); },
   };
   
   if (!localeInfo && !dateValue) { return customDateExtensions; }
@@ -123,7 +125,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
 
 function getTraps(extensions) {
   return {
-    get( target, key) {
+    get( target, key ) {
       return key !== `toString` && key in target
         ? target[key].bind(target) : Reflect.get(extensions, key);
     },
