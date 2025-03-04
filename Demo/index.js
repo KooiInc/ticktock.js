@@ -462,19 +462,21 @@ function customsExample() {
 /* endregion ex:customs */
 
 /* region ex:performance */
-const perf = perfRunner();
-
-print(toDetailChapter(`Performance`, false,
-  toDetailsBlock(`<b>Code used</b>`, performanceCode, false, true),
-  toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`),
-  toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`),
-  
-  `<div class="xtraTxt">
+// don't interfere with the flow
+setTimeout( () => {
+  const perf = perfRunner();
+  print(toDetailChapter(`Performance`, false,
+      toDetailsBlock(`<b>Code used</b>`, performanceCode, false, true),
+      toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`),
+      toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`),
+      
+      `<div class="xtraTxt">
       <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
         using TickTock.js for processing a gazillion Dates &#128128;
    </div>`
-  ),
-);
+    ),
+  );
+});
 
 function perfRunner() {
   const results = [];
