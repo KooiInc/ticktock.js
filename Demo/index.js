@@ -348,7 +348,7 @@ print(
         can for example build a calender.
     </div>`,
     
-    toDetailsBlock(`<b class="blue">Code</b>`, fullMonth, false, true),
+    toDetailsBlock(`<b class="blue">Code</b>`, fullMonth, true),
     
     toDetailsBlock(
       `<code>monthLocal.join("&lt;br>")</code> (browser locale: ${$D.localeInformation.locale}) =>`,
@@ -414,7 +414,7 @@ print(
         an Array of TickTock instances for each month of the
         <code>year</code>, if applicable localized for <code>locale</code>.
     </div>`,
-    toDetailsBlock(`<b class="blue">Code</b>`, yearCalendar, false, true),
+    toDetailsBlock(`<b class="blue">Code</b>`, yearCalendar, true),
     toDetailsBlock(`<code>calendarHU</code> (year 2000, Hungarian locale) =>`, cal))
 );
 
@@ -440,7 +440,7 @@ print(
         >Wiki</a>).
    </div>`,
    
-  toDetailsBlock(`<b class="blue">Code</b>`, customs, false, true),
+  toDetailsBlock(`<b class="blue">Code</b>`, customs, true),
   
   toDetailsBlock(
       `<code>$D.now.<span class="red">addCentury</span>.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss")</code>`,
@@ -481,7 +481,7 @@ function customsExample() {
 setTimeout( () => {
   const perf = perfRunner();
   print(toDetailChapter(`Performance`, false,
-      toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, false, true),
+      toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, true),
       toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`, true),
       toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`, true),
       
@@ -828,7 +828,7 @@ function initialize() {
       $(`.chapter`).each(el => {
         el.open = !allOpen;
         if (!el.open) {
-          $(el).find(`details`).forEach(dt => dt.open = dt.dataset.keepOpen ? true : false);
+          $(el).find(`details`).forEach(dt => dt.open = dt.dataset?.keepOpen ? true : false);
         }
       });
       
@@ -838,7 +838,7 @@ function initialize() {
     if (isLemmaCloser) {
       evt.preventDefault();
       $(evt.target.closest(`.chapter`))
-        .find$(`details`).each(dt => dt.open = false);
+        .find$(`details`).each(dt => dt.open = dt.dataset?.keepOpen ? true : false);
       
       return true;
     }
