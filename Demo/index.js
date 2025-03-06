@@ -36,14 +36,18 @@ print(
   
   `<button id="bttnOpenClose" data-allopen="0"></button>`
 );
-const createClock = clockFactory();
-const myClock = $.div({class: `clockLine`, id:`demoClock`})[Symbol.jql]
-createClock({parent: myClock});
-const headerDims = $(`pre:first-child`).parent.dimensions;
-const clockDims = myClock.dimensions;
-myClock.style({
-  left: (headerDims.left + headerDims.width - clockDims.width - 14) + `px`,
-  top: $(`pre:first-child`).dimensions.top + 12 + `px`});
+
+if (!debug) {
+  const createClock = clockFactory();
+  const myClock = $.div({class: `clockLine`, id: `demoClock`})[Symbol.jql]
+  createClock({parent: myClock});
+  const headerDims = $(`pre:first-child`).dimensions;
+  const clockDims = myClock.dimensions;
+  myClock.style({
+    left: (headerDims.left + headerDims.width - clockDims.width - 14) + `px`,
+    top: (headerDims.top) + 12 + `px`,
+  });
+}
 
 /* endregion header */
 
@@ -205,7 +209,7 @@ print(
     toDetailsBlock( "<code>la.offsetFrom(auckland)</code>", toJSONString(la.offsetFrom(auckland)) ),
     toDetailsBlock( "<code>auckland.offsetFrom(la)</code>", toJSONString(auckland.offsetFrom(la)) ),
     toDetailsBlock( "<code>utc.offsetFrom(la)</code>", toJSONString(utc.offsetFrom(la)) ),
-    `<div class="xtraTxt">UTC offset can also be retrieved using the <code>[instance].UTCOffset</code> getter`,
+    `<div class="xtraTxt">UTC offset can also be retrieved using the <code>[instance].UTCOffset</code> getter</div>`,
     toDetailsBlock( "<code>la.UTCOffset</code>", toJSONString(la.UTCOffset) ),
   )
 );
@@ -229,22 +233,21 @@ print(
      </div>`,
     
     toDetailsBlock("<code>auckland.<span class='red'>zone</span>Format(...)</code> formats to instance embedded locale/timeZone",
-      `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`, true),
+      `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`),
     
-    toDetailsBlock(`auckland.format(...) formats to <i>browser</i> locale/timeZone`,
+    toDetailsBlock(`<code>auckland.format(...)</code> formats to <i>browser</i> locale/timeZone`,
       `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
-        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`, true),
+        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
     
-    toDetailsBlock(`auckland.format(...) formats to <i>browser</i> locale/timeZone`,
+    toDetailsBlock(`<code>auckland.format(...)</code> formats to <i>browser</i> locale/timeZone`,
       `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
-        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`, true),
+        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
     
     toDetailsBlock("<code>now$.clone.relocate({l:\"fr-FR\"}).<span class='red'>zone</span>Format(...)</code> " +
       "formats to browser timeZone, France locale",
       `${now$FormatEx}<div>${
         now$.clone.relocate({l:`fr-FR`}).zoneFormat(
-          `{=> Il est}: {<b class="red">}WD{</b>} d {<b class="red">}MM{</b>} yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)}</div>`,
-      true),
+          `{=> Il est}: {<b class="red">}WD{</b>} d {<b class="red">}MM{</b>} yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)}</div>`,),
   )
 );
 /* endregion Format */
@@ -339,14 +342,13 @@ print(
 const [pt, th, local, deStatic] = getFullMonth();
 print(
   toDetailChapter(`Full month localized calendar`, `fm`,
-    `<div class="xtraTxt">
-      <code>[instance].fullMonth([forLocale])</code> delivers
+    `<div class="xtraTxt">The instance method <code>.fullMonth([forLocale])</code> delivers
         an Array of TickTock instances for each day of the
         month of the instance month value, from which one
         can for example build a calender.
     </div>`,
     
-    toDetailsBlock(`Code used`, fullMonth),
+    toDetailsBlock(`<b class="blue">Code</b>`, fullMonth, false, true),
     
     toDetailsBlock(
       `<code>monthLocal.join("&lt;br>")</code> (browser locale: ${$D.localeInformation.locale}) =>`,
@@ -406,12 +408,13 @@ function getFullMonth() {
 /* region ex:yearCalendar */
 const cal = yearCalendarEx();
 print(
-  toDetailChapter(`Full year localized calendar`, `yc`,`<div class="xtraTxt">
-      <code>[constructor].yearCalendar({year, locale})</code> delivers
+  toDetailChapter(`Full year localized calendar`, `yc`,
+    `<div class="xtraTxt">
+      The constructor method <code>.yearCalendar({year, locale})</code> delivers
         an Array of TickTock instances for each month of the
         <code>year</code>, if applicable localized for <code>locale</code>.
     </div>`,
-    toDetailsBlock(`Code used`, yearCalendar),
+    toDetailsBlock(`<b class="blue">Code</b>`, yearCalendar, false, true),
     toDetailsBlock(`<code>calendarHU</code> (year 2000, Hungarian locale) =>`, cal))
 );
 
@@ -430,14 +433,14 @@ print(
   toDetailChapter(`Create custom methods/getters`, `yc`,
    `<div class="xtraTxt">
       Use <code>$D.addCustom({name:string, method:function, enumerable:boolean, isGetter:boolean})</code>
-      <br>&nbsp;&nbsp;&nbsp;to create custom getters or methods for the TickTock.js 'constructor'
+      to create custom getters or methods for the TickTock.js 'constructor'
       (see <a
         target="_blank"
         href="https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions"
         >Wiki</a>).
    </div>`,
    
-  toDetailsBlock(`<b>Code used</b>`, customs, false, true),
+  toDetailsBlock(`<b class="blue">Code</b>`, customs, false, true),
   
   toDetailsBlock(
       `<code>$D.now.<span class="red">addCentury</span>.toString("{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss")</code>`,
@@ -478,9 +481,9 @@ function customsExample() {
 setTimeout( () => {
   const perf = perfRunner();
   print(toDetailChapter(`Performance`, false,
-      toDetailsBlock(`<b>Code used</b>`, performanceCode, false, true),
-      toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`),
-      toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`),
+      toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, false, true),
+      toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`, true),
+      toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`, true),
       
       `<div class="xtraTxt">
       <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
@@ -561,11 +564,11 @@ function toDetailChapter(summary, id, ...lemmas) {
     </details>`;
 }
 
-function toDetailsBlock(summary, str, open = false, noDefaultOpen = false) {
+function toDetailsBlock(summary, str, open = false) {
   return `
-    <details${open ? ` open` : ``}${noDefaultOpen ? ` data-no-default-open="1"` : ``}>
+    <details${open ? ` open` : ``}${open ? ` data-keep-open="1"` : ``}>
       <summary>${summary}</summary>
-      <div class="content">${str}</div>
+      ${str}
     </details>`;
 }
 
@@ -586,6 +589,7 @@ function tellTime() {
 
 function initialize() {
   $.editCssRules(
+    `body { overflow-y: scroll; overflow-x: auto; }`,
     `.container {
       inset: 0;
       position: absolute;
@@ -628,7 +632,6 @@ function initialize() {
        &.chapter {
           &:open {
             summary {
-              position: relative;
               button { display: inline-block; }
               color: green;
               list-style: inside disclosure-open;
@@ -665,6 +668,7 @@ function initialize() {
           
           details:not(.chapter) {
             margin-left: 2rem;
+            
             summary {
               font-size: 1rem;
               color: green;
@@ -672,11 +676,11 @@ function initialize() {
               text-decoration: none;
               color: black;
               font-weight: normal;
+              margin-bottom: 0.2rem;
             }
             &:open {
-              summary {
-                list-style: outside disclosure-open;
-              }
+              position: relative;
+              summary { list-style: outside disclosure-open; }
             }
           }
         }
@@ -689,7 +693,7 @@ function initialize() {
         content: "Open all chapters";
       }
     }`,
-    `pre.detail { margin-top: 0.2em; }`,
+    `pre.detail { margin: 0.2em 0; position: relative; }`,
     `a code:hover { text-decoration: underline; }`,
     `sup.inline {
       margin-top: -4px;
@@ -713,16 +717,19 @@ function initialize() {
       }
     }`,
     `.red { color: red; font-weight: bold; }`,
+    `.blue { color: blue; }`,
     `#log2screen li div {
       font-weight: normal;
       color: darkolivegreen;
       max-width: 100%;
       h3 { color: black; margin: 0; margin-top: 0.2rem !important; }
       div.xtraTxt {
-        margin: 0.4rem 0.7rem;
         color: #555;
+        padding: 0.2rem 5rem 0.2rem 2.2rem;
+        
         &:before {
           content: '☑️ ';
+          margin-left: -1.6rem;
         }
       }
       div {
@@ -820,9 +827,8 @@ function initialize() {
       const allOpen = mainBttn.dataset?.allopen === '1' ?? false;
       $(`.chapter`).each(el => {
         el.open = !allOpen;
-        switch(el.open) {
-          case true: $(el).find(`details`).forEach(dt => dt.open = true); break;
-          default: $(el).find(`details`).forEach(dt => dt.open = false);
+        if (!el.open) {
+          $(el).find(`details`).forEach(dt => dt.open = dt.dataset.keepOpen ? true : false);
         }
       });
       
@@ -843,7 +849,6 @@ function initialize() {
     
     if (chapter) {
       return setTimeout(() => {
-        $(chapter).find(`details`).forEach(el => el.open = el.dataset.noDefaultOpen === `1` ? false : chapter.open);
         const theDetailsElements = $.nodes(`details.chapter`).filter(el => el.open);
         const theBttn = $.node(`#bttnOpenClose`);
         theBttn.dataset.allopen = theDetailsElements.length ? `1` : `0`;
