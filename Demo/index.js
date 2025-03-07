@@ -34,7 +34,7 @@ print(
   `<h2 data-topline>TickTock.js Examples (work in progress) <span id="tellTime"></span></h2>`,
   `${initialCode}`,
   
-  `<button id="bttnOpenClose" data-allopen="0"></button>`
+  `<button id="bttnOpenClose" data-allopen="0">all chapters</button>`
 );
 
 if (!debug) {
@@ -79,7 +79,7 @@ print(
 
 /* region ex:toString */
 print(
-  toDetailChapter(`toString`, `tostring`,
+  toDetailChapter(`toString`, ``,
     toDetailsBlock(
       `<code>chongqin.toString()</code> (Chongqing timeZone)`,
       chongqin.toString(), true),
@@ -557,7 +557,7 @@ function toDetailChapter(summary, id, ...lemmas) {
       <summary>
         <span>
           <b>${summary}</b>
-          ${id ? `<button data-close="${id}">Close all below</button>` : ``}
+          ${id ? `<button data-close="0">all below</button>` : ``}
         </span>
       </summary>
       ${lemmas.join(``)}
@@ -629,6 +629,17 @@ function initialize() {
     `details {
        cursor: pointer;
        font-size: 1em;
+       
+       button {
+         &[data-close="0"]:before {
+            content: "Open ";
+         }
+         
+         &[data-close="1"]:before {
+            content: "Close ";
+         }
+      }
+       
        &.chapter {
           &:open {
             summary {
@@ -636,6 +647,7 @@ function initialize() {
               color: green;
               list-style: inside disclosure-open;
               span:not(.red, .comment) {
+                padding: 4px 5px;
                 background-color: #6196cc;
                 color: floralwhite;
                 border-radius: 3px;
@@ -687,10 +699,10 @@ function initialize() {
      }`,
     `button {
       &[data-allopen="1"]:before {
-        content: "Close all chapters";
+        content: "Close ";
       }
       &[data-allopen="0"]:before {
-        content: "Open all chapters";
+        content: "Open ";
       }
     }`,
     `pre.detail { margin: 0.2em 0; position: relative; }`,
@@ -817,8 +829,12 @@ function initialize() {
       }
     }`
   );
+  handlers();
+}
+
+function handlers() {
   $.delegate(`click`, `#bttnOpenClose, details.chapter, button[data-close]`, evt => {
-    const isLemmaCloser = evt.target.dataset.close;
+    const isLemmaBttn = evt.target.dataset.close;
     const mainBttn = evt.target.closest(`#bttnOpenClose`);
     const lemma = evt.target.closest(`details:not(.chapter)`);
     const chapter = evt.target.closest(`.chapter`);
@@ -835,16 +851,19 @@ function initialize() {
       return mainBttn.dataset.allopen = allOpen ? `0` : `1`;
     }
     
-    if (isLemmaCloser) {
+    if (isLemmaBttn) {
       evt.preventDefault();
-      $(evt.target.closest(`.chapter`))
-        .find$(`details`).each(dt => dt.open = dt.dataset?.keepOpen ? true : false);
-      
+      const open = isLemmaBttn === `0`;
+      const chapter = $(evt.target.closest(`.chapter`));
+      chapter.find$(`details`).each(dt => dt.open = dt.dataset?.keepOpen ? true : open);
+      evt.target.dataset.close = `${+(!!open)}`;
       return true;
     }
     
     if (lemma) {
-      return true;
+      return setTimeout( () => {
+        $.node(`button`, evt.target.closest(`.chapter`)).dataset.close = `${+(!!lemma.open)}`;
+      });
     }
     
     if (chapter) {
