@@ -736,7 +736,14 @@ describe(`$D instance extensions`, () => {
     });
     it(`.UTCOffset for America/New_York is {..., offset: '-05:00'}`, () => {
       const testDate = $D({timeZone: "America/New_York"});
-      assert.deepStrictEqual(testDate.UTCOffset,{fromTZ: 'America/New_York', toTZ: 'UTC', offset: '-05:00', offsetText: 'UTC 5 hours behind America/New_York'});
+      const dstActive = testDate.DSTActive;
+      const offsetValueShouldbe = dstActive ? `-04:00` : `-05:00`;
+      const offsetTextShouldBe = `UTC ${dstActive ? `4` : `5`} hours behind America/New_York`;
+      assert.deepStrictEqual( testDate.UTCOffset, {
+        fromTZ: 'America/New_York',
+        toTZ: 'UTC',
+        offset: offsetValueShouldbe,
+        offsetText: offsetTextShouldBe } );
     }),
     it(`.value is a plain Date`, () => {
       const testD = $D(`2020/02/01`);
