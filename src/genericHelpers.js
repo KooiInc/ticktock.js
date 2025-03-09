@@ -1,7 +1,7 @@
 import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
-const localLocaleInfo = localeInfoValidator();
+const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
 
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
@@ -74,16 +74,16 @@ function addFormatOptions(localeInfoResolved) {
   return localeInfoResolved;
 }
 
-function localeInfoValidator({ locale, timeZone, l, tz, logError = false} = {}) {
+function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
   try {
     return addFormatOptions(Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions());
   } catch (error) {
-    logError && console.error(`localeValidator: invalid input, using computer locale`);
-    return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions()); }
+    return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+  }
 }
 
 function setLocaleInfo({locale, timeZone, l, tz} = {}) {
-  return addFormatOptions(localeInfoValidator({locale, timeZone, l, tz}, true));
+  return localeInfoValidator({locale, timeZone, l, tz}, true);
 }
 
 function valiDate(date) {
