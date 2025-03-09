@@ -186,28 +186,16 @@ function retrieveAggregates(forInstance) {
 
 function getAggregates(instance, customExtras) {
   const aggregates = retrieveAggregates(instance);
-
-  if (Object.keys(customExtras || {}).length > 0) {
-    Object.entries(customExtras).forEach(([methodName, methodContainer]) => {
-      if (customExtras[methodName].isGetter) {
-        Object.defineProperty(
-          aggregates,
-          methodName, {
-            get() { return methodContainer.method(instance); },
-            enumerable: methodContainer.enumerable,
-          });
-        return false;
-      }
-      
-      Object.defineProperty(
-        aggregates,
-        methodName, {
-          value(...args) { return methodContainer.method(instance, ...args); },
-          enumerable: methodContainer.enumerable,
-        });
-    });
+  
+  for (const [methodName, methodContainer] of Object.entries(customExtras || {})) {
+    const enumerable = methodContainer.enumerable;
+    const prop2Add = methodContainer.isGetter
+      ? { get() { return methodContainer.method(instance); }, enumerable, }
+      : { value(...args) { return methodContainer.method(instance, ...args); }, enumerable, };
+    
+    Object.defineProperty( aggregates, methodName, prop2Add);
   }
-
+  
   return aggregates;
 }
 
