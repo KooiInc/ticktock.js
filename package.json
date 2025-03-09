@@ -1,16 +1,19 @@
 {
   "name": "ticktock-es",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "description": "A Date utility library",
   "type": "module",
-  "main": "index.js",
+  "main": "./Bundle/index.min.js",
   "scripts": {
     "test": "node ./Tests/UnitTests.js"
   },
   "keywords": [
     "DateTime",
     "Temporal",
-    "JS-Date"
+    "JS-Date",
+    "ES-Date",
+    "locale-aware",
+    "timeZone-aware"
   ],
   "author": "KooiInc",
   "license": "MIT License",
