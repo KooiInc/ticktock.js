@@ -239,10 +239,6 @@ print(
       `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
         and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
     
-    toDetailsBlock(`<code>auckland.format(...)</code> formats to <i>browser</i> locale/timeZone`,
-      `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
-        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
-    
     toDetailsBlock("<code>now$.clone.relocate({l:\"fr-FR\"}).<span class='red'>zone</span>Format(...)</code> " +
       "formats to browser timeZone, France locale",
       `${now$FormatEx}<div>${
