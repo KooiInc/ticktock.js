@@ -3,9 +3,13 @@ import dateDiffFactory from "./Factories/dateDiffFactory.js";
 import dateAddFactory from "./Factories/dateAddFactory.js";
 import xDate from "../index.js";
 import {
-  localeMonthnames, localeInfoValidator, localeWeekdays,
-  setLocaleInfo, isNumberOrNumberString, localLocaleInfo,
+  isNumberOrNumberString,
+  localeInfoValidator,
+  localeMonthnames,
+  localeWeekdays,
+  localLocaleInfo,
   retrieveFormattingFormats,
+  setLocaleInfo,
 } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
@@ -126,12 +130,11 @@ function firstWeekday(instance, {sunday = false} = {}) {
 }
 
 function zoneDiff(d1, d2) {
-  let gmt1 = d1.toString().match(/GMT(\+|-)\d+/)?.[0]?.slice(3) ?? `+0000`;
-  let gmt2 = d2.toString().match(/GMT(\+|-)\d+/)?.[0]?.slice(3) ?? `+0000`;
+  let gmt1 = d1.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
+  let gmt2 = d2.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
   gmt1 = offset2Number(gmt1.slice(0, 3) + `:` + gmt1.slice(-2), true);
   gmt2 = offset2Number(gmt2.slice(0, 3) + `:` + gmt2.slice(-2), true);
-  const realDiff = [-gmt1[0] + gmt2[0], -gmt1[1] + gmt2[1]].map(v => gmt1[0] < 0 ? -v : v);
-  return realDiff;
+  return [-gmt1[0] + gmt2[0], -gmt1[1] + gmt2[1]].map(v => gmt1[0] < 0 ? -v : v);
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
@@ -258,7 +261,6 @@ function getAggregatedInfo(instance) {
   
   if (remoteZone.timeZone !== userZone.timeZone) {
     userData.locales.remote = {locale: remote.locale, timeZone: remote.timeZone };
-    
     userData.dateTime.remote = {
       ...instance.zoneDateTime,
       monthName: instance.zoneNames.monthName,
@@ -374,8 +376,8 @@ function cloneInstance(instance, date) {
 
 function weekdayFactory() {
   const dow = {
-    short: `sun,mon,tue,wed,thu,fri,sat`.split(`,`),
-    long: `sunday,monday,tuesday,wednesday,thursday,friday,saturday`.split(`,`),
+    short: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+    long: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
   };
 
   return function(day) {
@@ -448,6 +450,7 @@ function getQuarter(instance, numeric) {
     case currentMonth < 6: return numeric ? 2 : `Second`;
     case currentMonth < 9: return numeric ? 3 : `Third`;
     case currentMonth < 12: return numeric ? 4 : `Fourth`;
+    default: return `unknown`;
   }
 }
 
