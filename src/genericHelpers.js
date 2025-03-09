@@ -8,13 +8,6 @@ export {
   retrieveDateValueFromInput, getAggregates, createExtendedCTOR, isNumberOrNumberString,
   retrieveFormattingFormats, aggregateDateAdder, instanceCreator,};
 
-function retrieveFormattingFormats(locale, timeZone) {
-  return [
-    `${locale && (!(Array.isArray(locale) && locale.length < 1)) ? `l:${locale}` : ``}`,
-    `${timeZone ? `tz:${timeZone}` : ``}`]
-    .filter(v => v).join(`,`);
-}
-
 function localeWeekdays(locale = `en-GB`) {
   locale = localeInfoValidator({locale}).locale;
   return {
@@ -70,8 +63,14 @@ function calendarForMonth({year, monthNr, locale = `en-CA`} = {}) {
 
 function addFormatOptions(localeInfoResolved) {
   const value = retrieveFormattingFormats(localeInfoResolved.locale, localeInfoResolved.timeZone);
-  Object.defineProperty( localeInfoResolved, `formatOptions`, { value, enumerable: false });
-  return localeInfoResolved;
+  return Object.defineProperty( localeInfoResolved, `formatOptions`, { value, enumerable: false });
+}
+
+function retrieveFormattingFormats(locale, timeZone) {
+  return [
+    `${locale && (!(Array.isArray(locale) && locale.length < 1)) ? `l:${locale}` : ``}`,
+    `${timeZone ? `tz:${timeZone}` : ``}`]
+    .filter(v => v).join(`,`);
 }
 
 function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
