@@ -2,6 +2,8 @@ import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat} from "./
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+const dateSetterSynonyms = Object.getOwnPropertyNames(Date.prototype).filter(k => k.startsWith(`set`))
+  .reduce((acc, k) => [...acc,  {native: k, syn: `change`+ k.slice(3) }], []);
 
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
@@ -142,7 +144,7 @@ function aggregateDateAdder(value, instance, aggregatePart) {
 }
 
 function retrieveAggregates(forInstance) {
-  return {
+  const addSubtractAggregates = {
     addYears(amount = 1) {
       return aggregateDateAdder(amount, forInstance, `years`);
     },
@@ -181,6 +183,15 @@ function retrieveAggregates(forInstance) {
       return add2Date(forInstance, `-1 day`);
     },
   };
+  
+  for(const synonym of dateSetterSynonyms) {
+    addSubtractAggregates[synonym.syn] = function(...args) {
+      forInstance[synonym.native](...args);
+      return forInstance;
+    };
+  }
+  
+  return addSubtractAggregates;
 }
 
 function getAggregates(instance, customExtras) {
