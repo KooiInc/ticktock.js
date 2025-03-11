@@ -351,7 +351,7 @@ function setDateParts(instance, {year, month, date} = {}) {
   if (isNumberOrNumberString(year)) { instance.setFullYear(year); }
   if (isNumberOrNumberString(date)) { instance.setDate(date); }
   if (isNumberOrNumberString(month)) { instance.setMonth(month); }
-  return true;
+  return instance;
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
@@ -359,7 +359,7 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
   if (isNumberOrNumberString(minutes)) { instance.setMinutes(minutes); }
   if (isNumberOrNumberString(seconds)) { instance.setSeconds(seconds) }
   if (isNumberOrNumberString(milliseconds)) { instance.setMilliseconds(milliseconds); }
-  return true;
+  return instance;
 }
 
 function isDateOrInstance(maybeDate) {
