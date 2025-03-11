@@ -32,6 +32,9 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     previous(day) { return nextOrPrevious(instance, {day, next: false}); },
     relocate({locale, timeZone, l, tz} = {}) { return relocate(instance, {locale, timeZone, l, tz}); },
     revalue(date) { instance = revalue(instance, date); return instance; },
+    setDateValues({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
+    setTimeValues({hours, minutes, seconds, milliseconds} = {}) {
+      return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toArray(local = false) { return getDTValues(instance, local); },
     toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
