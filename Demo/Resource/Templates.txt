@@ -22,6 +22,7 @@ taiohae.localeInfo = {tz: "Pacific/Marquesas"};
 utc.hours += 3;
 utc.minutes -= 15;
 </template>
+
 <template id="perf">
 // ------------------------------------------------------------------
 // create an array of 1500 TickTock instances and measure performance
@@ -29,7 +30,7 @@ utc.minutes -= 15;
 const results = [];
 let perfStart = performance.now();
 const today = $D.now.dateNr;
-const testValues = [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
+const testValues = [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
 let perfEnd = performance.now() - perfStart;
 let seconds = perfEnd/1000;
 let perIterationMs = (perfEnd/1500) + ` milliseconds`;

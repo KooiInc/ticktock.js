@@ -493,7 +493,7 @@ setTimeout( () => {
 function perfRunner() {
   const results = [];
   let perfStart = performance.now(), perfEnd;
-  [...Array(1500)].map((_, i) => $D.now.setDate(i + 1));
+  [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
   perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
   let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3}) + ` milliseconds`;
