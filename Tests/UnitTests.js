@@ -49,8 +49,8 @@ describe(`Basics $D`, () => {
     assert.strictEqual($D({timeZone: tzs.auckland}).value.constructor, Date);
   });
   it(`$D({timeZone: "Pacific/Auckland"}).value equals current Date (now)`, () => {
-    const now = new Date();
-    const now$ = $D({timeZone: tzs.auckland});
+    const now = new Date(new Date().setMilliseconds(0));
+    const now$ = $D({timeZone: tzs.auckland}).changeMilliseconds(0);
     assert.strictEqual(now$.ISO, now.toISOString());
   });
   it(`$D({timeZone: "Pacific/Auckland"}) instance embeds Auckland time zone`, () => {
@@ -255,8 +255,8 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual($D.from(2000).ISO, new Date(2000, 0, 1).toISOString());
   });
   it(`$D.from() should return a TickTock instance with value new Date() (so: now)`, () => {
-    const nowISO = new Date().toISOString();
-    const testD_ISO = $D.from().ISO;
+    const nowISO = new Date(new Date().setMilliseconds(0)).toISOString();
+    const testD_ISO = $D.from().changeMilliseconds(0).ISO;
     assert.strictEqual(testD_ISO, nowISO);
   });
   it(`$D.fromUxTS(946681200) should return a TickTock instance with value 2000/01/01 00:00:00`, () => {
@@ -335,6 +335,25 @@ describe(`$D instance extensions`, () => {
       const now$ = $D.now;
       const relocateInstance = $D.now.relocate({timeZone: "America/Los_Angeles"});
       assert.strictEqual(now$.revalue(relocateInstance).timeZone, "America/Los_Angeles");
+    });
+  });
+  
+  describe(`'change' chainable setters (setHours => changeHours)`, () => {
+    it(`changeHours(...) equals setHours(...)`, () => {
+      // milliseconds may vary (processing time), so keep that 0
+      const now$ = $D.now.changeHours(23).changeMilliseconds(0);
+      const d = new Date(new Date(new Date().setHours(23)).setMilliseconds(0));
+      assert.strictEqual(d.toISOString(), now$.ISO);
+    });
+    
+    it(`changeFullYear(...) returns instance (so chainable)`, () => {
+      const now$ = $D.now.changeFullYear(2000);
+      assert.strictEqual(now$.clone.toString(), now$.toString());
+    });
+    
+    it(`change time values chained works as expected`, () => {
+      const now$ = $D.now.changeHours(15).changeMinutes(30).changeSeconds(30);
+      assert.partialDeepStrictEqual(now$.time, {hours: 15, minutes: 30, seconds: 30});
     });
   });
   
@@ -566,6 +585,41 @@ describe(`$D instance extensions`, () => {
     
     it(`.info .dateTime.offset Auckland ((2020/04/01: wintertime in Auckland) equals what we expect`, () => {
       assert.deepStrictEqual(aucklandWinter.info, infoAucklandWinterShouldbe);
+    });
+  });
+  
+  describe(`set[Date/Time]Values`, () => {
+    it(`setTimeValues(...) changes instance time values`, () => {
+      const elevenThirty = $D.now.setTimeValues({hours: 11, minutes: 30, seconds: 0});
+      assert.partialDeepStrictEqual(elevenThirty.time, {hours: 11, minutes: 30, seconds: 0});
+    });
+    it(`setTimeValues(...) changes instance time values and can be chained`, () => {
+      const elevenThirty = $D.now.setTimeValues({hours: 11, minutes: 30, seconds: 0}).relocate({locale: `fr-FR`});
+      assert.partialDeepStrictEqual(elevenThirty.time, {hours: 11, minutes: 30, seconds: 0});
+      assert.strictEqual(elevenThirty.locale, `fr-FR`);
+    });
+    it(`$D.from(2000, 1, 1) with timeZone Berlin, setTime(...) and relocate to Auckland works as expected`,
+      () => {
+        const elevenThirty = $D.from(2000, 1, 1)
+          .relocate({tz: tzs.berlin})
+          .setTimeValues({hours: 11, minutes: 30, seconds: 0})
+          .relocate({tz: tzs.auckland});
+        assert.partialDeepStrictEqual(elevenThirty.time, {hours: 11, minutes: 30, seconds: 0});
+        assert.partialDeepStrictEqual(elevenThirty.zoneTime, {hours: 23, minutes: 30, seconds: 0})
+        assert.strictEqual(elevenThirty.timeZone, tzs.auckland); }
+    );
+    it(`setDateValues(...) changes instance date values`, () => {
+      const year2000March = $D.now.setDateValues({year: 2000, month: 2});
+      assert.partialDeepStrictEqual(year2000March.date, {year: 2000, month: 2});
+    });
+    it(`setDateValues(...) changes instance date values and can be chained`, () => {
+      const year2000Feb15_30 = $D.from(2000, 1, 1)
+        .relocate({tz: tzs.berlin})
+        .setTimeValues({hours: 15, minutes: 30, seconds: 0})
+        .setDateValues({year: 2000, month: 2})
+        .relocate({tz: tzs.auckland});
+      assert.partialDeepStrictEqual(year2000Feb15_30.date, {year: 2000, month: 2, date: 1});
+      assert.partialDeepStrictEqual(year2000Feb15_30.zoneDate, {year: 2000, month: 2, date: 2});
     });
   });
   
