@@ -52,6 +52,30 @@ if (!debug) {
 /* endregion header */
 
 /* region All examples */
+/* region instantiation */
+print(
+  toDetailChapter(`Instantiation`, `inst`,
+    `<div class="xtraTxt">
+        There are several ways to create a TickTock date instance. Here are a few examples.
+        <br><b class="note"></b> Instances are displayed using the TickTock library <code>.toString</code> method.
+     </div>`,
+     toDetailsBlock(`<code>$D("2000/01/01 22:00")</code>`, $D("2000/01/01 22:00").toString()),
+     toDetailsBlock(`<code>$D([2000,0,1,22])</code>`, $D([2000,0,1,22]).toString()),
+     toDetailsBlock(`<code>$D.from(2000,0,1,22)</code>`, $D.from(2000,0,1,22).toString()),
+     toDetailsBlock(`<code>$D()</code> (now)`, $D().toString()),
+     toDetailsBlock(`<code>$D.now</code> (now)`, $D.now.toString()),
+     toDetailsBlock(`<code>$D({timeZone: "America/New_York"})</code> (now in New York)`,
+       $D({timeZone: "America/New_York"}).toString()),
+     toDetailsBlock(`<code>$D("2000/01/01 22:00", {tz: "America/New_York"})</code> (in New York)`,
+       $D("2000/01/01 22:00", {tz: "America/New_York"}).toString()),
+     toDetailsBlock(`<code>$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})</code>`,
+       $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
+     toDetailsBlock(`<code>$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)</code>`,
+       $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
+  )
+);
+/* endregion instantiation */
+
 /* region ex:locale/timeZone */
 print(
   toDetailChapter(`locale/timeZone`, `ltz`,
@@ -89,8 +113,12 @@ print(
       chongqin.value.toString(), true),
     
     toDetailsBlock(
-      `<code>chongqin.toString("WD d MM yyyy")</code> (see Format)`,
-      chongqin.toString("WD d M yyyy"), true),
+      `<code>chongqin.toString({<span class="red">local: true</span>})</code> (<i>your</i> timeZone)`,
+      chongqin.toString({local: true}), true),
+    
+    toDetailsBlock(
+      `<code>chongqin.toString({template: "WD d MM yyyy"})</code> (see Format)`,
+      chongqin.toString({template: "WD d M yyyy"}), true),
   )
 );
 /* endregion toString */
@@ -270,7 +298,7 @@ print(
 print(
   toDetailChapter(`Days in month`, `dim`,
     `<div class="xtraTxt">Static constructor method
-    (<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
+    (<b class="note"></b> month number is <b class="red"><i>not</i></b> zero based)</div>`,
     toDetailsBlock(
       "<code>$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)</code>",
       `=> ${$D.daysInMonth(4)}`
@@ -359,7 +387,7 @@ print(
       `${th.join(`<br>`)}`),
     
     `<div class="xtraTxt">Also available as static constructor method <code>$D.monthCalendar</code>
-      <br>(<b class="red">Note</b>: month number is <b class="red"><i>not</i></b> zero based)</div>`,
+      <br>(<b class="note"></b> month number is <b class="red"><i>not</i></b> zero based)</div>`,
     
     toDetailsBlock(
       `<code>monthDeFromStatic.join("&lt;br>")</code> (German) =>`,
@@ -618,6 +646,17 @@ function initialize() {
       display: inline-block;
       border-radius: 4px;
       margin: 1px 0;
+    }`,
+    `b.note {
+      color: red;
+      &:before {
+        content: 'Note'
+      }
+      &:after {
+        color: initial;
+        content: ': ';
+        font-weight: normal;
+      }
     }`,
     `code.language-javascript {
       background-color: inherit;
