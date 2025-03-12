@@ -128,8 +128,8 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
     userTimezone: remoteTZ.timeZone,
     timeDifference: timeDiffInWords,
     result: {
-      [localTZ.timeZone.replace(/\//, `_`)]: xDate(timeZoneDate).toString(`yyyy/mm/dd hh:mmi:ss`, `hrc:23`),
-      [remoteTZ.timeZone.replace(/\//, `_`)]: remote4Real.toString(`yyyy/mm/dd hh:mmi:ss`, `hrc:23`),
+      [localTZ.timeZone.replace(/\//, `_`)]: xDate(timeZoneDate).toString({template: `yyyy/mm/dd hh:mmi:ss`, formatOptions: `hrc:23`}),
+      [remoteTZ.timeZone.replace(/\//, `_`)]: remote4Real.toString({template: `yyyy/mm/dd hh:mmi:ss`, formatOptions: `hrc:23`}),
     }
   };
 }

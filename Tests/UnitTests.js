@@ -96,8 +96,8 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual(nowFormatted, $D.format());
   });
   it(`$D.format({date: $D.now}) formats $D.now to "yyyy/mm/dd hh:mmi:ss dp" string`, _ => {
-    const nowFormatted = $D.now.format("yyyy/mm/dd hh:mmi:ss dp");
-    assert.strictEqual(nowFormatted, $D.format({date: $D.now}));
+    const dateFormatted = $D(`2020/01/03 22:22:22`).format("yyyy/mm/dd hh:mmi:ss dp");
+    assert.strictEqual(dateFormatted, $D.format({date: $D(`2020/01/03 22:22:22`)}));
   });
   it(`$D.format({date: $D.now, timeZone: "Asia/Chongqing"}) formats $D.now to "yyyy/mm/dd hh:mmi:ss dp" string within Chongqing timeZone`, _ => {
     const nowFormatted = $D({timeZone: tzs.chongqing}).zoneFormat("yyyy/mm/dd hh:mmi:ss dp");
@@ -763,13 +763,13 @@ describe(`$D instance extensions`, () => {
     });
     it(`.toString with formatString "yyyy/mm/dd WD" equals .format("yyyy/mm/dd WD")`, () => {
       const now$ = $D.now;
-      const str1 = now$.toString(`yyyy/mm/dd WD`);
+      const str1 = now$.toString({template: `yyyy/mm/dd WD`});
       const str2 = now$.format(`yyyy/mm/dd WD`);
       assert.strictEqual(str1, str2);
     });
     it(`.toString with formatString "yyyy/mm/dd WD" and locale formatOption "l:pl" equals .format("yyyy/mm/dd WD", "l:pl")`, () => {
         const now$ = $D.now;
-        const str1 = now$.toString(`yyyy/mm/dd WD`, `l:pl`);
+        const str1 = now$.toString({template: `yyyy/mm/dd WD`, formatOptions: `l:pl`});
         const str2 = now$.format(`yyyy/mm/dd WD`, `l:pl`);
         assert.strictEqual(str1, str2);
       } );
