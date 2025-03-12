@@ -59,18 +59,18 @@ print(
         There are several ways to create a TickTock date instance. Here are a few examples.
         <br><b class="note"></b> Instances are displayed using the TickTock library <code>.toString</code> method.
      </div>`,
-     toDetailsBlock(`<code>$D("2000/01/01 22:00")</code>`, $D("2000/01/01 22:00").toString()),
-     toDetailsBlock(`<code>$D([2000,0,1,22])</code>`, $D([2000,0,1,22]).toString()),
-     toDetailsBlock(`<code>$D.from(2000,0,1,22)</code>`, $D.from(2000,0,1,22).toString()),
-     toDetailsBlock(`<code>$D()</code> (now)`, $D().toString()),
-     toDetailsBlock(`<code>$D.now</code> (now)`, $D.now.toString()),
-     toDetailsBlock(`<code>$D({timeZone: "America/New_York"})</code> (now in New York)`,
+     toDetailsBlock(`<code>$D("2000/01/01 22:00")</code> (browser time zone)`, $D("2000/01/01 22:00").toString()),
+     toDetailsBlock(`<code>$D([2000,0,1,22])</code> (browser time zone)`, $D([2000,0,1,22]).toString()),
+     toDetailsBlock(`<code>$D.from(2000,0,1,22)</code> (browser time zone)`, $D.from(2000,0,1,22).toString()),
+     toDetailsBlock(`<code>$D()</code> (now, browser time zone)`, $D().toString()),
+     toDetailsBlock(`<code>$D.now</code> (now, browser time zone)`, $D.now.toString()),
+     toDetailsBlock(`<code>$D({timeZone: "America/New_York"})</code> (now New York time zone)`,
        $D({timeZone: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D("2000/01/01 22:00", {tz: "America/New_York"})</code> (in New York)`,
+     toDetailsBlock(`<code>$D("2000/01/01 22:00", {tz: "America/New_York"})</code> (New York time zone)`,
        $D("2000/01/01 22:00", {tz: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})</code>`,
+     toDetailsBlock(`<code>$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})</code> (New York time zone)`,
        $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)</code>`,
+     toDetailsBlock(`<code>$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)</code> (New York time zone)`,
        $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
   )
 );
