@@ -37,7 +37,8 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
       return setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toArray(local = false) { return getDTValues(instance, local); },
-    toString(formatString, formatOptions) { return toJSDateString(instance, formatString, formatOptions); },
+    toString({template, formatOptions, local} = {}) {
+      return toJSDateString(instance, {withFormat: template, formatOptions, local}); },
     values(local = false) { return local ? instance.dateTime : instance.zoneDateTime; },
     zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     

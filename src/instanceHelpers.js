@@ -206,15 +206,18 @@ function toFormattedJSDateString(instance, formatString, formatOptions) {
   return instance.clone.format(formatString, formatOptions || instance.localeInfo.formatOptions);
 }
 
-function toJSDateString(instance, withFormat, withFormatOptions) {
+function toJSDateString(instance, {withFormat, withFormatOptions, local=false} = {}) {
   if (withFormat) {
-    return toFormattedJSDateString(instance, withFormat, withFormatOptions);
+    return local
+      ? toFormattedJSDateString(instance, withFormat, $D.localeInformation.formatOptions)
+      : toFormattedJSDateString(instance, withFormat, withFormatOptions);
   }
   
   const instanceEN = instance.clone.relocate({locale: `en`});
-  const gmtString = instanceEN.format(`tz`, instanceEN.localeInfo.formatOptions + `,tzn:longOffset`).replace(`:`, ``);
+  const fmtOpts = local ? localLocaleInfo.formatOptions : instanceEN.localeInfo.formatOptions;
+  const gmtString = instanceEN.format(`tz`, fmtOpts + `,tzn:longOffset`).replace(`:`, ``);
   const formatString = `wd M dd yyyy hh:mmi:ss ${gmtString} (tz)`;
-  return instanceEN.format(formatString, instanceEN.localeInfo.formatOptions + `,tzn:long, hrc:23`);
+  return instanceEN.format(formatString, fmtOpts + `,tzn:long, hrc:23`);
 }
 
 function getDowNumber(instance, remote = false) {
