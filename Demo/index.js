@@ -1,5 +1,6 @@
 /* region import and initialize */
 import $D from "../index.js";
+
 window.$D = $D; // use in console for testing
 const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
@@ -72,6 +73,8 @@ print(
        $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
      toDetailsBlock(`<code>$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)</code> (New York time zone)`,
        $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
+      toDetailsBlock(`<code>$D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030)</code> (from unix timestamp)`,
+        $D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030).toString()),
   )
 );
 /* endregion instantiation */
@@ -880,7 +883,7 @@ function handlers() {
       $(`.chapter`).each(el => {
         el.open = !allOpen;
         if (!el.open) {
-          $(el).find(`details`).forEach(dt => dt.open = dt.dataset?.keepOpen ? true : false);
+          $(el).find(`details`).forEach(dt => dt.open = !!dt.dataset?.keepOpen);
         }
       });
       
@@ -945,7 +948,7 @@ function clockFactory() {
   }
   
   /**
-   * @param {currentClock} HTMLElement
+   * @param {HTMLElement} currentClock
    * @returns {number} a unique setTimeout return value (integer)
    */
   function tickTock(currentClock) {
@@ -980,7 +983,6 @@ function getClockFace() {
 async function fetchTemplates() {
   $.allowTag(`template`);
   const templates = await fetch(`./Resource/Templates.txt`).then(r => r.text());
-  const templatesContainer = $.virtual(templates);
-  return templatesContainer;
+  return $.virtual(templates);
 }
 /* endregion helpers */
