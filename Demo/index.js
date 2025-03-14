@@ -1,8 +1,7 @@
 /* region import and initialize */
 import $D from "../index.js";
-
+import {$, logFactory} from "./Resource/DOMHelpers.js";
 window.$D = $D; // use in console for testing
-const {$, logFactory} = (await import("https://kooiinc.github.io/SBHelpers/index.browser.js"));
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
 const debug = false;
