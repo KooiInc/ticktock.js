@@ -3,7 +3,7 @@ import dateDiffFactory from "./Factories/dateDiffFactory.js";
 import dateAddFactory from "./Factories/dateAddFactory.js";
 import xDate from "../index.js";
 import {
-  isNumberOrNumberString,
+  isNumeric,
   localeInfoValidator,
   localeMonthnames,
   localeWeekdays,
@@ -351,17 +351,17 @@ function DTInTimezone(date, timeZoneID) {
 }
 
 function setDateParts(instance, {year, month, date} = {}) {
-  if (isNumberOrNumberString(year)) { instance.setFullYear(year); }
-  if (isNumberOrNumberString(date)) { instance.setDate(date); }
-  if (isNumberOrNumberString(month)) { instance.setMonth(month); }
+  if (isNumeric(year)) { instance.setFullYear(parseInt(year)); }
+  if (isNumeric(date)) { instance.setDate(parseInt(date)); }
+  if (isNumeric(month)) { instance.setMonth(parseInt(month)); }
   return instance;
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
-  if (isNumberOrNumberString(hours)) { instance.setHours(hours); }
-  if (isNumberOrNumberString(minutes)) { instance.setMinutes(minutes); }
-  if (isNumberOrNumberString(seconds)) { instance.setSeconds(seconds) }
-  if (isNumberOrNumberString(milliseconds)) { instance.setMilliseconds(milliseconds); }
+  if (isNumeric(hours)) { instance.setHours(parseInt(hours)); }
+  if (isNumeric(minutes)) { instance.setMinutes(parseInt(minutes)); }
+  if (isNumeric(seconds)) { instance.setSeconds(parseInt(seconds)) }
+  if (isNumeric(milliseconds)) { instance.setMilliseconds(parseInt(milliseconds)); }
   return instance;
 }
 

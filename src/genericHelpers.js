@@ -7,7 +7,7 @@ const dateSetterSynonyms = Object.getOwnPropertyNames(Date.prototype).filter(k =
 
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
-  retrieveDateValueFromInput, getAggregates, createExtendedCTOR, isNumberOrNumberString,
+  retrieveDateValueFromInput, getAggregates, createExtendedCTOR, isNumeric,
   retrieveFormattingFormats, aggregateDateAdder, instanceCreator,};
 
 function localeWeekdays(locale = `en-GB`) {
@@ -36,7 +36,7 @@ function localeMonthnames(locale = "en") {
 }
 
 function calenderForYear({year, locale} = {}) {
-  year = isNumberOrNumberString(year) ? +year : new Date().getFullYear();
+  year = isNumeric(year) ? parseInt(year) : new Date().getFullYear();
   const calendar = { year, calendar: {} };
   const monthNames = localeMonthnames().long.map(v => v.toLowerCase());
   
@@ -49,10 +49,11 @@ function calenderForYear({year, locale} = {}) {
 }
 
 function calendarForMonth({year, monthNr, locale = `en-CA`} = {}) {
-  const monthOk = isNumberOrNumberString(monthNr) && +monthNr >= 1 && +monthNr <= 12;
+  year = isNumeric(monthNr) && parseInt(year) || -1;
+  monthNr = isNumeric(monthNr) && parseInt(monthNr) || new Date().getFullYear();
+  const monthOk = monthNr >= 1 && monthNr <= 12;
   locale = localeInfoValidator({locale}).locale;
-  year = isNumberOrNumberString(monthNr) ? +year : new Date().getFullYear();
-  monthNr = monthOk ? +monthNr - 1 : undefined;
+  monthNr = monthOk ? monthNr - 1 : undefined;
   
   if (monthOk) {
     return xDate.from(year, monthNr, 1)
@@ -134,8 +135,8 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   };
 }
 
-function isNumberOrNumberString(value) {
-  return !Number.isNaN(parseInt(value)) && !Number.isNaN(+value);
+function isNumeric(value) {
+  return !Number.isNaN(parseInt(value));
 }
 
 function aggregateDateAdder(value, instance, aggregatePart) {
@@ -231,7 +232,9 @@ function createExtendedCTOR(ctor, customMethods) {
     },
     daysInMonth: {
       value(monthIndex, leapYear = false) {
-        if (isNumberOrNumberString(monthIndex) && +monthIndex >= 1 && +monthIndex <= 12) {
+        monthIndex = isNumeric(monthIndex) ? parseInt(monthIndex) : 0;
+        
+        if (monthIndex >= 1 && monthIndex <= 12) {
           return new Date(leapYear ? 2000 : 2005, monthIndex, 0).getDate();
         }
         
@@ -246,7 +249,7 @@ function createExtendedCTOR(ctor, customMethods) {
     },
     from: { value(...input) { return ctor(input); } },
     fromUxTS: { value(ts, localeInfo) {
-        ts = isNumberOrNumberString(ts) ? +ts * 1000 : undefined;
+        ts = isNumeric(ts) ? parseInt(ts) * 1000 : undefined;
         const maybeDate = ts ? new Date(ts) : new Date();
         return xDate(maybeDate, localeInfo || localLocaleInfo);
       }
