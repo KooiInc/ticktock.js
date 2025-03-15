@@ -1,3 +1,8 @@
+<div align="center">
+  <a target="_blank" href="https://www.npmjs.com/package/ticktock-es"><img src="https://img.shields.io/npm/v/ticktock-es.svg?style=flat-square"></a>
+  <a target="_blank" href="https://www.npmjs.com/package/ticktock-es"><img src="https://badgen.net/bundlephobia/min/ticktock-es"></a>
+</div>
+
 ## TICKTOCK.JS
 
 A nifty ES20xx `Date` extension.
