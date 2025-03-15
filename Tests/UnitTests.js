@@ -646,7 +646,7 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(dtChina.dateTimeValues.join(`,`), `2020,2,1,23,28,30,441`);
     });
     it(`.daysUntil([Date + 15 days]) works as expected (+15)`, () => {
-      const now$ = $D.now;
+      const now$ = $D(`2000/02/01 13:00`);
       const then = now$.clone.addDays(15);
       assert.strictEqual(now$.daysUntil(then), +15);
     });
