@@ -98,10 +98,10 @@ function getTime(instance, inUserTimezone = false) {
 
 function getTimeValues(instance, inUserTimeZone = false) {
   const tzOpt = !inUserTimeZone ? `,tz:${instance.timeZone}` : `,tz:${localLocaleInfo.timeZone}`;
-  const opts = `l:en-CA${tzOpt},hrc:23`;
+  const opts = `l:en-CA${tzOpt},hrc:23,ts:medium`;
   
-  return instance.format("hh-mmi-ss", opts)
-    .split(/-/)
+  return instance.format("", opts)
+    .split(/:/)
     .map(Number)
     .concat(instance.getMilliseconds());
 }
