@@ -570,6 +570,16 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual($D(`2020/02/01 17:00:00`).relocate({timeZone: tzs.auckland, locale: `en`})
         .zoneFormat("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/02 05:00:00 AM`);
     });
+    it(`format ds`, () => {
+      assert.strictEqual($D(`2000/01/01`).format("", "l:en,ds:short"), "1/1/00");
+      assert.strictEqual($D(`2000/01/01`).format("", "l:en,ds:medium"), "Jan 1, 2000");
+      assert.strictEqual($D(`2000/01/01 12:00`).format("", "l:en,tz:UTC,ds:long"), "January 1, 2000");
+    });
+    it(`format ts`, () => {
+      assert.strictEqual($D(`2000/01/01`).format("", "l:en,tz:UTC,ts:short"), "11:00 PM");
+      assert.strictEqual($D(`2000/01/01`).format("", "l:en,tz:UTC,ts:medium"), "11:00:00 PM");
+      assert.strictEqual($D(`2000/01/01 12:00`).format("", "l:en,tz:UTC,ts:long"), "11:00:00 AM UTC");
+    });
   });
   
   describe(`.info`, () => {
