@@ -1,4 +1,4 @@
-import dateFormat from "./Factories/dateFormatFactory.js";
+import dateFormat from "./dateFormatter.js";
 import dateDiffFactory from "./Factories/dateDiffFactory.js";
 import dateAddFactory from "./Factories/dateAddFactory.js";
 import xDate from "../index.js";
