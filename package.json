@@ -1,6 +1,6 @@
 {
   "name": "ticktock-es",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "A Date utility library",
   "type": "module",
   "main": "./Bundle/index.min.js",
