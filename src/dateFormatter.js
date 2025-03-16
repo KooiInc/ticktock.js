@@ -38,7 +38,7 @@ const allOptions = {
 const dtfOptions = {
   ...allOptions,
   retrieveDynamic(fromValue) {
-    const key = fromValue?.slice(0, fromValue.indexOf(`:`));
+    const key = fromValue?.slice(0, fromValue?.indexOf(`:`));
     return allOptions.dynamic[key] && allOptions.dynamic[key](fromValue);
   },
   get re() {
@@ -89,10 +89,11 @@ function extractFromTemplate(rawTemplateString = `dtf`, plainTextIndex = 0) {
   };
 }
 
-function getOpts(dtfOptions, ...opts) {
-  return opts?.reduce((acc, optValue) =>
-      ({...acc, ...(dtfOptions.retrieveDynamic(optValue) || dtfOptions.fixed[optValue]),}),
-    dtfOptions.fixed.dl);
+function getOpts(...opts) {
+  return opts?.reduce((acc, optValue) => {
+    return ({...acc, ...(dtfOptions.retrieveDynamic(optValue) || dtfOptions.fixed[optValue]),});
+  },
+  dtfOptions.fixed.dl);
 }
 
 function dtNoParts(date, xTemplate, moreOptions) {
@@ -102,7 +103,7 @@ function dtNoParts(date, xTemplate, moreOptions) {
 }
 
 function dtFormatted(date, xTemplate, moreOptions) {
-  const optsCollected = getOpts(dtfOptions, ...xTemplate.units.concat(removeSpacing(moreOptions).split(`,`)).flat());
+  const optsCollected = getOpts(...xTemplate.units.concat(removeSpacing(moreOptions).split(`,`)).flat());
   const opts = {...dtfOptions.fixed};
   // note: numeric is locale independent
   const checkNumeric = (type, value) => optsCollected[type] === `numeric` && value.startsWith(`0`)
