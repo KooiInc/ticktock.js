@@ -1,8 +1,9 @@
 {
   "name": "ticktock-es",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "description": "A Date utility library",
   "type": "module",
+  "sideEffects": false,
   "main": "./Bundle/index.min.js",
   "scripts": {
     "test": "node ./Tests/UnitTests.js"
