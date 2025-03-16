@@ -571,14 +571,16 @@ describe(`$D instance extensions`, () => {
         .zoneFormat("yyyy/mm/dd hh:mmi:ss dp"), `2020/02/02 05:00:00 AM`);
     });
     it(`format ds`, () => {
-      assert.strictEqual($D(`2000/01/01`).format("", "l:en,ds:short"), "1/1/00");
-      assert.strictEqual($D(`2000/01/01`).format("", "l:en,ds:medium"), "Jan 1, 2000");
-      assert.strictEqual($D(`2000/01/01 12:00`).format("", "l:en,tz:UTC,ds:long"), "January 1, 2000");
+      const d$ = $D(`2000/01/01`, {l:`en`, tz:`UTC`});
+      assert.strictEqual(d$.zoneFormat("","ds:short"), "12/31/99");
+      assert.strictEqual(d$.zoneFormat("","ds:medium"), "Dec 31, 1999");
+      assert.strictEqual(d$.zoneFormat("","ds:long"), "December 31, 1999");
     });
     it(`format ts`, () => {
-      assert.strictEqual($D(`2000/01/01`).format("", "l:en,tz:UTC,ts:short"), "11:00 PM");
-      assert.strictEqual($D(`2000/01/01`).format("", "l:en,tz:UTC,ts:medium"), "11:00:00 PM");
-      assert.strictEqual($D(`2000/01/01 12:00`).format("", "l:en,tz:UTC,ts:long"), "11:00:00 AM UTC");
+      const d$ = $D(`2000/01/01`, {l:`en`, tz:`UTC`});
+      assert.strictEqual(d$.zoneFormat("","ts:short"), "11:00 PM");
+      assert.strictEqual(d$.zoneFormat("","ts:medium"), "11:00:00 PM");
+      assert.strictEqual(d$.zoneFormat("","ts:long"), "11:00:00 PM UTC");
     });
   });
   
