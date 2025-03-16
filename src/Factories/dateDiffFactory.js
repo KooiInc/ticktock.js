@@ -23,7 +23,7 @@ function dateDiffFactory() {
 
   const stringify = stringifyComposed();
 
-  return function getDifference({start, end, diffs = {}} = {}) {
+  return function({start, end, diffs = {}} = {}) {
     const checks = checkParams(start, end);
     const sign = end > start ? `+` : `-`;
     if (checks.error) { return checks; }
