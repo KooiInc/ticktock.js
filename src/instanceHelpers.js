@@ -44,13 +44,13 @@ function compareDates(instance, {start, end, future, past, include = {start: fal
 }
 
 function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
+  moreOptions = zoneTime
+    ? instance.localeInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '')
+    : localLocaleInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '');
+  
   if (!zoneTime) {
     return formatLocal(instance, formatStr, moreOptions);
   }
-  
-  moreOptions = (moreOptions || ``).startsWith(`+`)
-    ? `${instance.formatOptions},${moreOptions.slice(1)}`
-    : moreOptions || instance.localeInfo.formatOptions;
   
   if (!instance.localeInfo) {
     instance.localeInfo = localLocaleInfo;
@@ -97,8 +97,8 @@ function getTime(instance, inUserTimezone = false) {
 }
 
 function getTimeValues(instance, inUserTimeZone = false) {
-  const tzOpt = !inUserTimeZone ? `,tz:${instance.timeZone}` : `,tz:${localLocaleInfo.timeZone}`;
-  const opts = `l:en-CA${tzOpt},hrc:23,ts:medium`;
+  const tzOpt = !inUserTimeZone ? `tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
+  const opts = `l:en-CA,${tzOpt},hrc:23,ts:medium`;
   
   return instance.format("", opts)
     .split(/:/)

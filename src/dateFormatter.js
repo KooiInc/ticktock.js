@@ -102,19 +102,20 @@ function dtNoParts(date, xTemplate, moreOptions) {
   return xTemplate.finalize(formatted);
 }
 
+function checkNumeric(type, value) {
+  return type === `numeric` && value.startsWith(`0`) ? value.slice(1) : value
+}
+
 function dtFormatted(date, xTemplate, moreOptions) {
   const optsCollected = getOpts(...xTemplate.units.concat(removeSpacing(moreOptions).split(`,`)).flat());
   const opts = {...dtfOptions.fixed};
-  // note: numeric is locale independent
-  const checkNumeric = (type, value) => optsCollected[type] === `numeric` && value.startsWith(`0`)
-    ? value.slice(1) : value;
+
   const dtf = Intl.DateTimeFormat(optsCollected.locale, optsCollected)
     .formatToParts(date)
     .reduce((parts, v) =>
-      ((v.type === `literal` && /[ ,/-]/.test(v.value)) ? parts : {
-        ...parts,
-        [v.type]: checkNumeric(v.type, v.value)
-      }), {});
+      ((v.type === `literal` && /[ ,/-]/.test(v.value))
+        ? parts
+        : { ...parts, [v.type]: checkNumeric(optsCollected[v.type], v.value) }), {});
   opts.ms = optsCollected.fractionalSecondDigits ? opts.msp : opts.ms;
   opts.yyyy = dtf.relatedYear ? opts.ry : opts.yyyy;
   
@@ -124,7 +125,7 @@ function dtFormatted(date, xTemplate, moreOptions) {
         ? getMonthName(date, optsCollected.locale, optsCollected.timeZone, /^M$/.test(dtUnit))
         : dtf[Object.keys(opts[dtUnit]).shift()] || dtUnit);
   
-  return xTemplate.finalize(...[undefined, dtf.dayPeriod, dtf.era, dtf.yearName]);
+  return xTemplate.finalize(...[, dtf.dayPeriod, dtf.era, dtf.yearName]);
 }
 
 function getMonthName(forDate, locale, timeZone, shrt) {
