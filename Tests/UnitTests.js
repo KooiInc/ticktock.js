@@ -276,6 +276,24 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual(testD.toString(), from.toString());
     assert.strictEqual(testD.timeZone, from.timeZone);
   });
+  it(`$D.hasDST({timeZone: ${tzs.auckland}}) => true`, () => {
+    assert.strictEqual($D.hasDST({timeZone: tzs.auckland}), true);
+  });
+  it(`$D.hasDST({timeZone: "Atlantic/Cape_Verde"}) => false`, () => {
+    assert.strictEqual($D.hasDST({timeZone: "Atlantic/Cape_Verde"}), false);
+  });
+  it(`$D.DSTActive({date: new Date(2025, 1, 1), timeZone: ${tzs.auckland}}) => true`, () => {
+    assert.strictEqual($D.DSTActive({date: new Date(2025, 1, 1), timeZone: tzs.auckland}), true);
+  });
+  it(`$D.DSTActive({date: new Date(2025, 5, 1), timeZone: ${tzs.auckland}}) => false`, () => {
+    assert.strictEqual($D.DSTActive({date: new Date(2025, 5, 1), timeZone: tzs.auckland}), false);
+  });
+  it(`$D.DSTActive({date: new Date(2025, 1, 1), timeZone: "Atlantic/Cape_Verde"}) => false`, () => {
+    assert.strictEqual($D.DSTActive({date: new Date(2025, 1, 1), timeZone: "Atlantic/Cape_Verde"}), false);
+  });
+  it(`$D.DSTActive({date: new Date(2025, 5, 1), timeZone: "Atlantic/Cape_Verde"}) => false`, () => {
+    assert.strictEqual($D.DSTActive({date: new Date(2025, 5, 1), timeZone: "Atlantic/Cape_Verde"}), false);
+  });
 });
 
 describe(`$D instance extensions`, () => {
