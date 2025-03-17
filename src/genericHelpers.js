@@ -1,4 +1,4 @@
-import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat} from "./instanceHelpers.js";
+import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat, DSTActive, hasDST} from "./instanceHelpers.js";
 import instanceCreator from "./extensions.js";
 import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
@@ -252,6 +252,16 @@ function createExtendedCTOR(ctor, customMethods) {
         ts = isNumeric(ts) ? parseInt(ts) * 1000 : undefined;
         const maybeDate = ts ? new Date(ts) : new Date();
         return xDate(maybeDate, localeInfo || localLocaleInfo);
+      }
+    },
+    hasDST: {
+      value({date, timeZone} = {}) {
+        return hasDST(date, timeZone);
+      }
+    },
+    DSTActive: {
+      value({date, timeZone} = {}) {
+        return DSTActive(date, timeZone);
       }
     },
     values: {

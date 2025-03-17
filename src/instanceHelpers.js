@@ -415,14 +415,22 @@ function getTimezoneName(dt, timeZone) {
     .format(dt).split(/,/)[1].trim();
 }
 
-function hasDST(instance) {
-  const timeZone = instance.timeZone;
-  const janTZN = getTimezoneName(new Date(instance.year, 0, 1), timeZone);
-  const midYrTZN = getTimezoneName(new Date(instance.year, 5, 1), timeZone);
+function hasDST(instance, timeZone) {
+  timeZone = timeZone || instance?.timeZone || localLocaleInfo.timeZone;
+  instance = instance?.value
+    ? instance : instance?.constructor === Date
+      ? xDate(instance, {timeZone}) : xDate({timeZone});
+  const year = instance.year || instance.getFullYear();
+  const janTZN = getTimezoneName(new Date(year, 0, 1), timeZone);
+  const midYrTZN = getTimezoneName(new Date(year, 5, 1), timeZone);
   return janTZN !== midYrTZN;
 }
 
-function DSTActive(instance) {
+function DSTActive(instance, timeZone) {
+  timeZone = timeZone || instance?.timeZone || localLocaleInfo.timeZone;
+  instance = instance?.hasDST
+    ? instance : instance?.constructor === Date
+      ? xDate(instance, {timeZone}) : xDate({timeZone});
   return instance.hasDST ? !/standard/i.test(instance.toString()) : false;
 }
 
