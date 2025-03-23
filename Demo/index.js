@@ -523,13 +523,15 @@ setTimeout( () => {
 
 function perfRunner() {
   const results = [];
+  const opts1 = {minimumFractionDigits: 3, maximumFractionDigits: 3};
+  const opts2 = {minimumFractionDigits: 6, maximumFractionDigits: 6};
   let perfStart = performance.now(), perfEnd;
   [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
   perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
-  let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3}) + ` milliseconds`;
-  let perIterationS = (seconds/1500).toLocaleString(browserLocale, {minimumFractionDigits: 6, maximumFractionDigits: 6}) + ` seconds`;
-  seconds = seconds.toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3});
+  let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
+  let perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
+  seconds = seconds.toLocaleString(browserLocale, opts1);
   results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   // ---
@@ -540,9 +542,9 @@ function perfRunner() {
     });
   perfEnd = performance.now() - perfStart;
   seconds = perfEnd/1000;
-  perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3}) + ` milliseconds`;
-  perIterationS = (seconds/1500).toLocaleString(browserLocale, {minimumFractionDigits: 6, maximumFractionDigits: 6}) + ` seconds`;
-  seconds = seconds.toLocaleString(browserLocale, {minimumFractionDigits: 3, maximumFractionDigits: 3});
+  perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
+  perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
+  seconds = seconds.toLocaleString(browserLocale, opts1);
   results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
     perIterationS} <i>per iteration</i>`);
   return results;
