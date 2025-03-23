@@ -77,10 +77,26 @@ function retrieveFormattingFormats(locale, timeZone) {
 }
 
 function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
+  timeZone = timeZone || tz;
+  locale = locale || l;
+  
+  if (!locale && ! timeZone) {
+    return localLocaleInfo;
+  }
+  
   try {
-    return addFormatOptions(Intl.DateTimeFormat(locale || l, {timeZone: timeZone || tz}).resolvedOptions());
+    return addFormatOptions(Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions());
   } catch (error) {
-    return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+    switch(true) {
+      case /incorrect locale/i.test(error.message):
+        console.error(`🚫 locale "${locale}" can not be determined, using "${localLocaleInfo.locale}"`);
+        return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
+      case /invalid time zone/i.test(error.message):
+        console.error(`🚫 timeZone "${timeZone}" unknown. Using "${localLocaleInfo.timeZone}"`);
+        return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
+      default:
+        return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+    }
   }
 }
 
