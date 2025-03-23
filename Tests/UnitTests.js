@@ -145,6 +145,36 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const validatedHere = $D.validateLocaleInformation();
     assert.partialDeepStrictEqual(validatedHere, localZoneInformation);
   });
+  it(`$D.validateLocaleInformation({l: "nl"}).locale should be "nl" (and timeZone the user TZ)`, () => {
+    const validatedNL = $D.validateLocaleInformation({l: `nl`});
+    assert.strictEqual(validatedNL.locale, `nl`);
+    assert.strictEqual(validatedNL.timeZone, localZoneInformation.timeZone);
+  });
+  it(`$D.validateLocaleInformation({tz: "Pacific/Auckland"}).timeZone should be "Pacific/Auckland" (and locale the user locale)`, () => {
+    const validatedNL = $D.validateLocaleInformation({tz: tzs.auckland});
+    assert.strictEqual(validatedNL.locale, localZoneInformation.locale);
+    assert.strictEqual(validatedNL.timeZone, tzs.auckland);
+  });
+  it(`$D.validateLocaleInformation({l: "_invalid"}).locale should be ${localZoneInformation.locale} (and timeZone the user TZ)`, () => {
+    const validatedNL = $D.validateLocaleInformation({locale: `_invalid`});
+    assert.strictEqual(validatedNL.locale, localZoneInformation.locale);
+    assert.strictEqual(validatedNL.timeZone, localZoneInformation.timeZone);
+  });
+  it(`$D.validateLocaleInformation({tz: "Not/Valid"}).timeZone should be ${localZoneInformation.timeZone} (and locale the user locale)`, () => {
+    const validatedNL = $D.validateLocaleInformation({tz: "Not/Valid"});
+    assert.strictEqual(validatedNL.locale, localZoneInformation.locale);
+    assert.strictEqual(validatedNL.timeZone, localZoneInformation.timeZone);
+  });
+  it(`$D.validateLocaleInformation({l: "nl", tz: "Not/Valid"}).timeZone should be ${localZoneInformation.timeZone} (and locale "nl")`, () => {
+    const validatedNL = $D.validateLocaleInformation({l: "nl", tz: "Not/Valid"});
+    assert.strictEqual(validatedNL.locale, "nl");
+    assert.strictEqual(validatedNL.timeZone, localZoneInformation.timeZone);
+  });
+  it(`$D.validateLocaleInformation({l: "_invalid", tz: "Europe/Berlin"}).locale should be ${localZoneInformation.locale} (and timeZone "Europe/Berlin")`, () => {
+    const validatedNL = $D.validateLocaleInformation({l: "_invalid", tz: "Europe/Berlin"});
+    assert.strictEqual(validatedNL.locale, localZoneInformation.locale);
+    assert.strictEqual(validatedNL.timeZone, "Europe/Berlin");
+  });
   it(`$D.values() should return values for current date in current time zone`, () => {
     const now$ = $D.now;
     const valuesNow = now$.toArray();
