@@ -86,11 +86,10 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
   
   return tryMe({
     trial: function() {
-      const verified = Intl.DateTimeFormat(locale, {timeZone, localeMatcher: "lookup"}).resolvedOptions();
+      const verified = Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions();
       
       if (locale && verified.locale !== locale) {
-        verified.locale = localLocaleInfo.locale;
-        console.error(`🚫 Intl locale "${locale}" lookup failed, using "${verified.locale}"."`);
+        console.error(`🚫 Intl changed locale (using best fit) "${locale}" to "${verified.locale}"`);
       }
       
       return addFormatOptions(verified);
@@ -98,7 +97,7 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
     whenError: function(error) {
       switch(true) {
         case /incorrect locale/i.test(error.message):
-          console.error(`🚫 Intl locale "${locale}" lookup failed, using "${localLocaleInfo.locale}"`);
+          console.error(`🚫 Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
           return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
         case /invalid time zone/i.test(error.message):
           console.error(`🚫 timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
