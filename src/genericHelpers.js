@@ -138,8 +138,11 @@ function retrieveDateValueFromInput(input) {
 function tryMe({trial, whenError = () => undefined} = {}) {
     if (trial?.constructor !== Function) { return undefined; }
     
-    try { return trial();
-    } catch (error) { return whenError?.constructor === Function ? whenError(error) : undefined; }
+    try {
+      return trial();
+    } catch (error) {
+      return whenError?.constructor === Function ? whenError(error) : undefined;
+    }
 }
 
 function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
