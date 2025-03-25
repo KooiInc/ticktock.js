@@ -95,7 +95,7 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
       
       return addFormatOptions(verified);
     },
-    whenError: function(error) {
+    onError: function(error) {
       switch(true) {
         case /incorrect locale/i.test(error.message):
           console.error(`${errSymbol}  Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
@@ -135,13 +135,13 @@ function retrieveDateValueFromInput(input) {
   }
 }
 
-function tryMe({trial, whenError = () => undefined} = {}) {
+function tryMe({trial, onError = () => undefined} = {}) {
     if (trial?.constructor !== Function) { return undefined; }
     
     try {
       return trial();
     } catch (error) {
-      return whenError?.constructor === Function ? whenError(error) : undefined;
+      return onError?.constructor === Function ? onError(error) : undefined;
     }
 }
 
