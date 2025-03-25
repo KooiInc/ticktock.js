@@ -75,6 +75,10 @@ describe(`Basics $D`, () => {
   it(`$D([2000]) (single value) should return a TickTock instance with value new Date(2000, 0, 1)`, () => {
     assert.strictEqual($D([2000]).ISO, new Date(2000, 0, 1).toISOString());
   });
+  it(`$D([TickTock instance]]) delivers clone`, () => {
+    const instance = $D.now;
+    assert.strictEqual($D(instance).ISO, instance.ISO);
+  });
 });
 
 describe(`Constructor ($D) static methods/getters`, () => {
