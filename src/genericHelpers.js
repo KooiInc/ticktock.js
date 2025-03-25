@@ -84,20 +84,30 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
     return localLocaleInfo;
   }
   
-  try {
-    return addFormatOptions(Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions());
-  } catch (error) {
-    switch(true) {
-      case /incorrect locale/i.test(error.message):
-        console.error(`🚫 locale "${locale}" can not be determined, using "${localLocaleInfo.locale}"`);
-        return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
-      case /invalid time zone/i.test(error.message):
-        console.error(`🚫 timeZone "${timeZone}" unknown. Using "${localLocaleInfo.timeZone}"`);
-        return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
-      default:
-        return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+  return tryMe({
+    trial: function() {
+      const verified = Intl.DateTimeFormat(locale, {timeZone, localeMatcher: "lookup"}).resolvedOptions();
+      
+      if (locale && verified.locale !== locale) {
+        verified.locale = localLocaleInfo.locale;
+        console.error(`🚫 Intl locale "${locale}" lookup failed, using "${verified.locale}"."`);
+      }
+      
+      return addFormatOptions(verified);
+    },
+    whenError: function(error) {
+      switch(true) {
+        case /incorrect locale/i.test(error.message):
+          console.error(`🚫 Intl locale "${locale}" lookup failed, using "${localLocaleInfo.locale}"`);
+          return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
+        case /invalid time zone/i.test(error.message):
+          console.error(`🚫 timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
+          return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
+        default:
+          return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
+      }
     }
-  }
+  });
 }
 
 function setLocaleInfo({locale, timeZone, l, tz} = {}) {
@@ -123,6 +133,13 @@ function retrieveDateValueFromInput(input) {
       return valiDate(input);
     default: return now;
   }
+}
+
+function tryMe({trial, whenError = () => undefined} = {}) {
+    if (trial?.constructor !== Function) { return undefined; }
+    
+    try { return trial();
+    } catch (error) { return whenError?.constructor === Function ? whenError(error) : undefined; }
 }
 
 function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
