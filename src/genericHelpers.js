@@ -4,6 +4,7 @@ import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
 const dateSetterSynonyms = Object.getOwnPropertyNames(Date.prototype).filter(k => k.startsWith(`set`))
   .reduce((acc, k) => [...acc,  {native: k, syn: `change`+ k.slice(3) }], []);
+const errSymbol = "\u{1f6ab}";
 
 export {
   localeWeekdays, localeMonthnames, localeInfoValidator, setLocaleInfo, localLocaleInfo,
@@ -89,7 +90,7 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
       const verified = Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions();
       
       if (locale && verified.locale !== locale) {
-        console.error(`🚫 Intl changed locale (using best fit) "${locale}" to "${verified.locale}"`);
+        console.error(`${errSymbol} Intl changed locale (using best fit) "${locale}" to "${verified.locale}"`);
       }
       
       return addFormatOptions(verified);
@@ -97,10 +98,10 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
     whenError: function(error) {
       switch(true) {
         case /incorrect locale/i.test(error.message):
-          console.error(`🚫 Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
+          console.error(`${errSymbol}  Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
           return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
         case /invalid time zone/i.test(error.message):
-          console.error(`🚫 timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
+          console.error(`${errSymbol} timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
           return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
         default:
           return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
