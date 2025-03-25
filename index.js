@@ -9,6 +9,8 @@ const customMethods = {};
 export default createExtendedCTOR(customDateConstructor, customMethods);
 
 function customDateConstructor(input, localeInfo) {
+  if (input?.localeInfo) { return input.clone; }
+  
   const inputIsLocaleInfo = input?.locale || input?.timeZone || input?.tz || input?.l;
   
   return createInstance({
