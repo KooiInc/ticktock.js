@@ -90,8 +90,14 @@ print(
       toJSONString($D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"}))),
     
     toDetailsBlock(
-      `<code>$D.validateLocaleInformation({l:"de-CH", tz: "Bern"})</code> timeZone "Bern" not valid, so environment timeZone`,
-      toJSONString($D.validateLocaleInformation({l:"de-CH", tz: "Bern"}))),
+      `<code>$D.validateLocaleInformation({l:"de-CH", tz: "Bern"})</code> timeZone invalid`,
+      `timeZone "Bern" not valid, so environment timeZone (${$D.localeInformation.timeZone})<br>${
+        toJSONString($D.validateLocaleInformation({l:"de-CH", tz: "Bern"}))}`),
+    
+    toDetailsBlock(
+      `<code>$D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"})</code> locale invalid`,
+      `locale "ch" not valid, so environment locale (${$D.localeInformation.locale})<br>${
+        toJSONString($D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"}))}`),
     
     toDetailsBlock(
       `<code>now$.localeInfo</code>`,
