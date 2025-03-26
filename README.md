@@ -1,6 +1,6 @@
 <div align="center">
   <a target="_blank" href="https://bundlephobia.com/package/ticktock-es@latest"><img src="https://badgen.net/bundlephobia/min/ticktock-es"></a>
-  <a target="_blank" href="https://www.npmjs.com/package/ticktock-es"><img src="https://img.shields.io/npm/v/ticktock-es.svg"></a>
+  <a target="_blank" href="https://www.npmjs.com/package/ticktock-es"><img src="https://img.shields.io/npm/v/ticktock-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9&label=npm%20version"></a>
 </div>
 
 ## TICKTOCK.JS
