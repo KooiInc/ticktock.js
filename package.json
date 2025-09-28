@@ -1,12 +1,13 @@
 {
   "name": "ticktock-es",
-  "version": "1.7.7",
+  "version": "1.7.8",
   "description": "A Date utility library",
   "type": "module",
   "sideEffects": false,
   "main": "./Bundle/index.min.js",
   "scripts": {
-    "test": "node ./Tests/UnitTests.js"
+    "test": "node ./Tests/UnitTests.js",
+    "testWithCoverage": "node --test --experimental-test-coverage --test-coverage-include src/*.js --test-reporter tap Tests/UnitTests.js"
   },
   "keywords": [
     "DateTime",
