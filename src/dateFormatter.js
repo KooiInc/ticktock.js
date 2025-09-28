@@ -54,19 +54,13 @@ function dateFormatter(date, template, moreOptions = `l:default`) {
     : dtFormatted(...[date, extractFromTemplate(template || undefined), moreOptions]);
 }
 
-function extractFromTemplate(rawTemplateString = `dtf`, plainTextIndex = 0) {
-  let formatStr = ` ${rawTemplateString
-    .replace(/(?<=\{)(.+?)(?=})/g, _ => `[${plainTextIndex++}]`)
-    .replace(/[{}]/g, ``)
-    .trim()} `;
+function extractFromTemplate(rawTemplateString = `dtf`/*, plainTextIndex = 0*/) {
+  let formatStr = ` ${
+    rawTemplateString
+      .replace(/[{}]/g, ``)
+      .trim()} `;
   const texts = rawTemplateString.match(/(?<=\{)(.+?)(?=})/g) || [];
   return {
-    get texts() {
-      return texts;
-    },
-    formatString(v) {
-      formatStr = v;
-    },
     set formatStr(v) {
       formatStr = v;
     },

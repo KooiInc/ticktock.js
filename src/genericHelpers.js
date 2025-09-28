@@ -89,10 +89,11 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
     trial: function() {
       const verified = Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions();
       
+      /* node:coverage disable */
       if (locale && verified.locale !== locale) {
         console.error(`${errSymbol} Intl changed locale (using best fit) "${locale}" to "${verified.locale}"`);
       }
-      
+      /* node:coverage enable */
       return addFormatOptions(verified);
     },
     onError: function(error) {
@@ -103,9 +104,11 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
         case /invalid time zone/i.test(error.message):
           console.error(`${errSymbol} timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
           return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
+        /* node:coverage disable */
         default:
           return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
       }
+      /* node: coverage enable */
     }
   });
 }
@@ -274,7 +277,7 @@ function createExtendedCTOR(ctor, customMethods) {
           return new Date(leapYear ? 2000 : 2005, monthIndex, 0).getDate();
         }
         
-        return `${monthIndex} should be a Number (1 (january) - 12 (december))`;
+        return `${monthIndex} should be a Number between (1 (january) - 12 (december))`;
       },
     },
     yearCalendar: {
