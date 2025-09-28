@@ -190,13 +190,12 @@ describe(`Constructor ($D) static methods/getters`, () => {
     const now$ = $D.now;
     assert.strictEqual(now$.toArray().join(`,`), $D.values({date: now$}).join(`,`));
   });
-  it(`$D.values({date: $D.now, timeZone: "Asia/Chongqing", locale: "zh"})`, () => {
+  it(`$D.values(...) equivalent of $D(...).toArray`, () => {
     const specs = {timeZone: "Asia/Chongqing", locale: "zh"};
-    const now$Chongqing = $D(specs);
     // don't consider milliseconds here
-    assert.strictEqual(
-      now$Chongqing.toArray().slice(0, -1).join(`,`),
-      $D.values({...specs, date: $D.now}).slice(0, -1).join(`,`));
+    assert.deepStrictEqual(
+      $D(specs).toArray().slice(0, -1),
+      $D.values({...specs, date: $D.now}).slice(0, -1));
   });
   it(`$D.timeAcrossZones for ${timeZoneDate}, ${tzs.vancouver} vs ${tzs.amsterdam}`, () => {
     const vancouver = $D.timeAcrossZones({
