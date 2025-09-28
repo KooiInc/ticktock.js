@@ -530,11 +530,11 @@ describe(`$D instance extensions`, () => {
         aucklandSummer2Paris);
     });
     it(`.UTCOffset getter for Auckland summer time (-13)`, () => {
-      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+13:00'};
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-13:00'};
       assert.partialDeepStrictEqual($D(`2025/01/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
     it(`.UTCOffset getter for Auckland winter time (-12)`, () => {
-      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '+12:00'};
+      const shouldBe = {fromTZ: tzs.auckland, toTZ: 'UTC', offset: '-12:00'};
       assert.partialDeepStrictEqual($D(`2025/06/01`, {timeZone: tzs.auckland}).UTCOffset, shouldBe);
     });
   });
@@ -867,11 +867,11 @@ describe(`$D instance extensions`, () => {
       assert.notEqual(testDate.toString(), utcDate.toString());
       assert.strictEqual(utcDate.timeZone, `UTC`);
     });
-    it(`.UTCOffset for America/New_York is {..., offset: '-05:00'}`, () => {
+    it(`.UTCOffset for America/New_York is {..., offset: '+(04/05):00'}`, () => {
       const testDate = $D({timeZone: "America/New_York"});
       const dstActive = testDate.DSTActive;
-      const offsetValueShouldbe = dstActive ? `-04:00` : `-05:00`;
-      const offsetTextShouldBe = `UTC ${dstActive ? `4` : `5`} hours behind America/New_York`;
+      const offsetValueShouldbe = dstActive ? `+04:00` : `+05:00`;
+      const offsetTextShouldBe = `UTC ${dstActive ? `4` : `5`} hours ahead of America/New_York`;
       assert.deepStrictEqual( testDate.UTCOffset, {
         fromTZ: 'America/New_York',
         toTZ: 'UTC',

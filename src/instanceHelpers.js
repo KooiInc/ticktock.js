@@ -165,10 +165,6 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   return diff;
 }
 
-function flipSign(sign) {
-  return sign === `+` ? `-` : `+`;
-}
-
 function offsetFrom(instance, from) {
   const isUTC = String(from).toLowerCase() === `utc` || from.timeZone === `UTC`;
   from = isUTC
@@ -176,7 +172,7 @@ function offsetFrom(instance, from) {
     : xDate(instance.value, { timeZone: from.timeZone || localLocaleInfo.timeZone });
   
   const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
-  const sign = !isUTC ? diff.sign : flipSign(diff.sign);
+  const sign = diff.sign;
   const offset = `${sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
   
   return {
