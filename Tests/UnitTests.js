@@ -126,6 +126,9 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual($D.localWeekdaynames(`zh`).long[0], "星期日");
     assert.strictEqual($D.localWeekdaynames(`zh`).short[0], "周日");
   });
+  it(`$D.daysInMonth(13) should give error string`, () => {
+    assert.strictEqual($D.daysInMonth(13), `13 should be a Number between (1 (january) - 12 (december))`)
+  });
   it(`$D.daysInMonth(1) should be 31`, () => {
     assert.strictEqual($D.daysInMonth(1), 31)
   });
@@ -428,6 +431,12 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(then$.zoneDayname, now$.zoneNames.dayNames.long[dayNr]);
       
     });
+    it(`.previous([invalid]) works as expected`, () => {
+      const now$ = $D({locale: `en`});
+      const then$ = now$.clone.previous(`nextday-oh-no!`);
+      // nothing changed
+      assert.strictEqual(String(then$), String(now$));
+    });
   });
   
   describe(`.between`, () => {
@@ -486,7 +495,7 @@ describe(`$D instance extensions`, () => {
     const testAucklandToLA = {fromTZ: tzs.auckland, toTZ: tzs.losAngeles, offset: '-21:00'};
     
     it(`.offsetFrom Paris to Auckland (+12)`, () => {
-      const parisToAcukland = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00'};
+      const parisToAcukland = {fromTZ: tzs.paris, toTZ: tzs.auckland, offset: '+12:00', offsetText: 'Pacific/Auckland 12 hours ahead of Europe/Paris'};
       assert.partialDeepStrictEqual(
         now$.offsetFrom({timeZone: `Pacific/Auckland`}),
         parisToAcukland);
@@ -586,29 +595,35 @@ describe(`$D instance extensions`, () => {
     });
     it(`accurately calculates difference from Los Angeles - to Auckland time zone`, () => {
       const la = $D(new Date(`2025/01/23 22:00:00`), {locale: `en`, timeZone: 'America/Los_Angeles'});
-      const auckland = $D(new Date(`2025/01/23 22:00:00`), {locale: `en`, timeZone: 'Pacific/Auckland'});
+      const auckland = $D(new Date(`2025/01/23 22:10:00`), {locale: `en`, timeZone: 'Pacific/Auckland'});
       const diff = JSON.stringify(auckland.differenceTo(la));
       assert.deepStrictEqual(JSON.parse(diff), {
         timeZoneStart: "Pacific/Auckland",
         timeZoneEnd: "America/Los_Angeles",
-        fromUTC: "2025-01-24T09:00:00.000Z",
+        fromUTC: "2025-01-24T09:10:00.000Z",
         toUTC: "2025-01-23T12:00:00.000Z",
         sign: "-",
         years: 0,
         months: 0,
         days: 0,
         hours: 21,
-        minutes: 0,
+        minutes: 10,
         seconds: 0,
         milliseconds: 0,
         diffInDays: 0,
-        full: "0 years, 0 months, 0 days, 21 hours, 0 minutes and 0 seconds",
-        clean: "21 hours",
+        full: "0 years, 0 months, 0 days, 21 hours, 10 minutes and 0 seconds",
+        clean: "21 hours and 10 minutes",
         equalDates: false,
-        jsPeriod: "-PT21H",
-        ISOPeriod: "PT21H",
-        timeZonesOffsetDifference: "Pacific/Auckland is 21 hours behind America/Los_Angeles"
+        jsPeriod: "-PT21H10M",
+        ISOPeriod: "PT21H10M",
+        timeZonesOffsetDifference: "Pacific/Auckland is 21 hours ahead of America/Los_Angeles"
       });
+    });
+    it(`can show the (full) difference from Los Angeles - to Auckland time zone in words`, () => {
+        const la = $D(new Date(`2025/01/23 22:00:00`), {locale: `en`, timeZone: 'America/Los_Angeles'});
+        const auckland = $D(new Date(`2025/01/23 22:00:00`), {locale: `en`, timeZone: 'Pacific/Auckland'});
+        const diff = auckland.differenceTo(la).full;
+        assert.strictEqual(diff, `0 years, 0 months, 0 days, 21 hours, 0 minutes and 0 seconds`);
     });
   });
   
