@@ -325,6 +325,7 @@ function nextOrPrevious(instance, {day, next = false, preserveTodayWhenEqual = f
     console.error(`[TickTock instance].next/previous invalid day value ${day}`);
     return instance.clone;
   }
+  
   const addTerm = next ? 1 : -1 ;
   let cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
   cloned = !preserveTodayWhenEqual ? cloned.add(`${addTerm} days`) : cloned;
