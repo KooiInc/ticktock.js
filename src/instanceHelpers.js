@@ -15,6 +15,8 @@ import {
 const dateDiff = dateDiffFactory();
 const weekdays = weekdayFactory();
 const add2Date = dateAddFactory();
+const wdShort = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+const wdLong = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 export {
   add2Date, addParts2Date, cloneInstance, compareDates, daysInMonth, daysUntil,
@@ -316,23 +318,29 @@ function fullMonth(instance, forLocale) {
 }
 
 function nextOrPrevious(instance, {day, next = false} = {}) {
-  let dayNr = weekdays(day?.toLowerCase());
-  const cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
+  day = day?.toLowerCase() || `-`;
+  const dayNr = weekdays(day);
   
   if (dayNr < 0) {
     console.error(`[TickTock instance].next/previous invalid day value ${day}`);
-    return cloned;
+    return instance.clone;
   }
   
+  const cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
   let addTerm = next ? 1 : -1 ;
   
-  return findDayRecursive(cloned, dayNr, addTerm);
+  return dayNr === cloned.day ? cloned : findDayRecursive(cloned, dayNr, addTerm);
 }
 
-function findDayRecursive(cloned, dayNr, addTerm) {
-  return add2Date(cloned, `${addTerm} day`).getDay() < dayNr
-    ? findDayRecursive(cloned, dayNr, addTerm)
-    : cloned;
+function findDayRecursive(instance, dayNr, addTerm) {
+  function findIt(d) {
+    switch(true) {
+      case d.day === dayNr: return d;
+      default: return findIt(d.add(`${addTerm} days`));
+    }
+  }
+  
+  return findIt(instance);
 }
 
 function toLocalString(instance, {dateOnly = false, timeOnly = false} = {}) {
@@ -376,16 +384,18 @@ function cloneInstance(instance, date) {
   return xDate.from(...instance.dateTimeValues).relocate(instance.localeInfo);
 }
 
+
+
 function weekdayFactory() {
-  const dow = {
-    short: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
-    long: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
-  };
+  // const dow = {
+  //   short: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+  //   long: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+  // };
 
   return function(day) {
     day = `${day}`.toLowerCase();
-    let dayNr = dow.short.indexOf(day);
-    return dayNr < 0 ? dow.long.indexOf(day) : dayNr;
+    let dayNr = wdShort.indexOf(day);
+    return dayNr < 0 ? wdLong.indexOf(day) : dayNr;
   };
 }
 
