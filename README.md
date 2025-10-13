@@ -12,7 +12,7 @@ The module presents a wrapped *locale and time zone sensitive* JS `Date` 'constr
 Furthermore, the constructor offers the possibility to *create your own custom extensions (getters/methods)* 
 (see [wiki](https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions)).
 
-Download or link to the bundled library @https://unpkg.com/ticktock-es/Bundle/index.min.js
+Download or link to the bundled library @[unpkg](https://unpkg.com/ticktock-es/Bundle/index.min.js)
 
 ☑️ [Examples](https://kooiinc.github.io/ticktock.js/Demo/)
 <br>☑️ [Wiki pages](https://github.com/KooiInc/ticktock.js/wiki)
