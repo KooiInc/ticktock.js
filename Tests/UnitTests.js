@@ -437,7 +437,13 @@ describe(`$D instance extensions`, () => {
       // nothing changed
       assert.strictEqual(String(then$), String(now$));
     });
-    it(`.previous(..., preserveTodayWhenEqual) works as expected`, () => {
+    it(`.previous("monday") for a monday works as expected`, () => {
+      const now$ = $D(`2025/10/13`);
+      const then$ = now$.clone.previous(`monday`);
+      // nothing changed
+      assert.strictEqual(String(then$), String(now$.clone.add(`-7 days`)));
+    });
+    it(`.previous("monday", true) for a monday works as expected`, () => {
       const now$ = $D(`2025/10/13`);
       const then$ = now$.clone.previous(`monday`, true);
       // nothing changed
@@ -446,8 +452,12 @@ describe(`$D instance extensions`, () => {
     it(`.next("monday") for a monday works as expected`, () => {
       const now$ = $D(`2025/10/13`);
       const then$ = now$.clone.next(`monday`);
-      // nothing changed
-      assert.strictEqual(now$.add(`7 days`).local, then$.local);
+      assert.strictEqual(now$.clone.add(`7 days`).local, then$.local, String(then$));
+    });
+    it(`.next("monday", true) for a monday works as expected`, () => {
+      const now$ = $D(`2025/10/13`);
+      const then$ = now$.clone.next(`monday`, true);
+      assert.strictEqual(String(then$), String(now$));
     });
   });
   
