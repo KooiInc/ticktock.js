@@ -67,6 +67,9 @@ function calendarForMonth({year, monthNr, locale = `en-CA`} = {}) {
 
 function addFormatOptions(localeInfoResolved) {
   const value = retrieveFormattingFormats(localeInfoResolved.locale, localeInfoResolved.timeZone);
+  const iLocale = new Intl.Locale(localeInfoResolved.locale);
+  
+  localeInfoResolved.weekInfo = iLocale.getWeekInfo ? iLocale.getWeekInfo() : null;
   return Object.defineProperty( localeInfoResolved, `formatOptions`, { value, enumerable: false });
 }
 

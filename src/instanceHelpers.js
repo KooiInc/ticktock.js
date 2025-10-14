@@ -33,7 +33,12 @@ function addParts2Date(instance, ...parts2Add) {
   return instance;
 }
 
+function getLocaleFirstWeekday(instance) {
+  return instance.localeInfo.weekInfo?.firstDay === 7;
+}
+
 function weekFor(instance, sunday = false) {
+  sunday = sunday || getLocaleFirstWeekday(instance);
   const firstDOW = instance.clone.firstWeekday({sunday});
   const week = [firstDOW];
   return {
@@ -290,6 +295,7 @@ function getAggregatedInfo(instance) {
       offsetFromUser: timeDifferenceRemote2UserLocal.offset,
       string: instance.toString(),
     };
+    
     userData.offset.fromUserTime = timeDifferenceRemote2UserLocal.offsetText;
   }
   
@@ -322,8 +328,8 @@ function daysInMonth(instance) {
 }
 
 function fullMonth(instance, forLocale) {
-  forLocale = localeInfoValidator({locale: forLocale}).locale;
-  const firstDay = instance.clone.relocate({locale:forLocale});
+  forLocale = localeInfoValidator({locale: forLocale || instance.localeInfo.locale}).locale;
+  const firstDay = instance.clone.relocate({locale: forLocale});
   firstDay.date = { date: 1 };
   return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.clone.add(`${i+1} days`) ));
 }
