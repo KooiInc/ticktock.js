@@ -25,12 +25,23 @@ export {
   getTime, getTimeValues, getWeeksInYear, hasDST, localeInfoValidator, localeMonthnames,
   localeWeekdays, localLocaleInfo, nextOrPrevious, offset2Number, offsetFrom, pad0,
   relocate, removeTime, revalue, setDateParts, setLocaleInfo, setTimeParts,
-  timezoneAwareDifferenceTo,toJSDateString,toLocalString, dateFormat
+  timezoneAwareDifferenceTo,toJSDateString,toLocalString, dateFormat, weekFor
 };
 
 function addParts2Date(instance, ...parts2Add) {
   add2Date(instance, ...parts2Add);
   return instance;
+}
+
+function weekFor(instance, sunday = false) {
+  const firstDOW = instance.clone.firstWeekday({sunday});
+  const week = [firstDOW];
+  return {
+    weekStart: sunday ? `Sunday` : `Monday`,
+    inputDate: instance,
+    dates: week.concat([...Array(6)].map((_, i) =>
+      firstDOW.clone.addDays(i + 1)))
+  };
 }
 
 function compareDates(instance, {start, end, future, past, include = {start: false, end: false}} = {}) {
