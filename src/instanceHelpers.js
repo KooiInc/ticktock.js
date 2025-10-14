@@ -33,16 +33,11 @@ function addParts2Date(instance, ...parts2Add) {
   return instance;
 }
 
-function getLocaleFirstWeekday(instance) {
-  return instance.localeInfo.weekInfo?.firstDay === 7;
-}
-
 function weekFor(instance, sunday = false) {
-  sunday = sunday || getLocaleFirstWeekday(instance);
-  const firstDOW = instance.clone.firstWeekday({sunday});
+  const firstDOW = firstWeekday(instance.clone, {sunday});
   const week = [firstDOW];
   return {
-    weekStart: sunday ? `Sunday` : `Monday`,
+    weekStart: firstDOW.format(`WD`, `l:en-GB`),
     inputDate: instance,
     dates: week.concat([...Array(6)].map((_, i) =>
       firstDOW.clone.addDays(i + 1)))
@@ -144,8 +139,15 @@ function getDateValues(instance, inUserTimezone = true) {
   return values;
 }
 
+function getFirstDayFromLocale(instance) {
+  let firstDayFromLocale = instance.localeInfo.weekInfo?.firstDay;
+  firstDayFromLocale = firstDayFromLocale > 6 ? 0 : firstDayFromLocale;
+  return wdLong[firstDayFromLocale || 1];
+}
+
 function firstWeekday(instance, {sunday = false} = {}) {
-  return nextOrPrevious(instance, { day: sunday ? `sunday` : `monday`, preserveTodayWhenEqual: true});
+  const day = sunday ? `sunday` : getFirstDayFromLocale(instance);
+  return nextOrPrevious(instance, { day, preserveTodayWhenEqual: true});
 }
 
 function zoneDiff(d1, d2) {
