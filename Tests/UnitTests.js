@@ -443,7 +443,7 @@ describe(`$D instance extensions`, () => {
       // nothing changed
       assert.strictEqual(String(then$), String(now$.clone.add(`-7 days`)));
     });
-    it(`.previous("monday", true) for a monday works as expected`, () => {
+    it(`.previous("monday", true) for a monday with preserve works as expected`, () => {
       const now$ = $D(`2025/10/13`);
       const then$ = now$.clone.previous(`monday`, true);
       // nothing changed
@@ -454,7 +454,7 @@ describe(`$D instance extensions`, () => {
       const then$ = now$.clone.next(`monday`);
       assert.strictEqual(now$.clone.add(`7 days`).local, then$.local, String(then$));
     });
-    it(`.next("monday", true) for a monday works as expected`, () => {
+    it(`.next("monday", true) for a monday with preserve works as expected`, () => {
       const now$ = $D(`2025/10/13`);
       const then$ = now$.clone.next(`monday`, true);
       assert.strictEqual(String(then$), String(now$));
@@ -1185,6 +1185,15 @@ describe(`Setters, methods/getters`, () => {
       assert.strictEqual(weekForNow$.dates.length, 7);
       assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Monday`);
       assert.strictEqual(weekForNow$.dates[6].zoneDayname, `Sunday`);
+    });
+    describe(`fullWeek IRAN, starts on saturday`, () => {
+      const now$ = $D({locale: `fa-IR`});
+      const weekForNow$ = now$.fullWeek();
+      assert.strictEqual(weekForNow$.weekStart, `Saturday`);
+      assert.strictEqual(weekForNow$.inputDate.local, now$.local);
+      assert.strictEqual(weekForNow$.dates.length, 7);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `شنبه`);
+      assert.strictEqual(weekForNow$.dates[6].zoneDayname, `جمعه`);
     });
     describe(`fullmonth, february 2000 (leap year)`, () => {
       const month = $D("2000/02/12", {locale: `en-CA`}).fullMonth();
