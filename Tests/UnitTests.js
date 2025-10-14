@@ -969,7 +969,7 @@ describe(`$D instance extensions`, () => {
   });
 });
 
-describe(`Setters, mutating methods/getters`, () => {
+describe(`Setters, methods/getters`, () => {
   describe(`individual date/time parts setters`, () => {
     it(`.year setter sets the instance year to 2050`, () => {
       const now$ = $D.now;
@@ -1166,6 +1166,58 @@ describe(`Setters, mutating methods/getters`, () => {
     });
     it(`.previousMonth sets instance date to 2000/01/01`, () => {
       assert.strictEqual(initialDate.previousMonth.format(`yyyy/mm/dd`), `2000/01/01`);
+    });
+    // aggregates
+    describe(`fullWeek (first weekday sunday)`, () => {
+      const now$ = $D.now.relocate({locale: `en-GB`});
+      const weekForNow$ = now$.fullWeek(true);
+      assert.strictEqual(weekForNow$.weekStart, `Sunday`);
+      assert.strictEqual(weekForNow$.inputDate.local, now$.local);
+      assert.strictEqual(weekForNow$.dates.length, 7);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Sunday`);
+      assert.strictEqual(weekForNow$.dates[weekForNow$.dates.length - 1].zoneDayname, `Saturday`);
+    });
+    describe(`fullWeek (first weekday monday)`, () => {
+      const now$ = $D.now.relocate({locale: `en-GB`});
+      const weekForNow$ = now$.fullWeek();
+      assert.strictEqual(weekForNow$.weekStart, `Monday`);
+      assert.strictEqual(weekForNow$.inputDate.local, now$.local);
+      assert.strictEqual(weekForNow$.dates.length, 7);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Monday`);
+      assert.strictEqual(weekForNow$.dates[6].zoneDayname, `Sunday`);
+    });
+    describe(`fullmonth, february 2000 (leap year)`, () => {
+      const month = $D("2000/02/12", {locale: `en-CA`}).fullMonth();
+      assert.strictEqual(month.length, 29);
+      assert.strictEqual(month[0].zoneDayname, `Tuesday`);
+      assert.strictEqual(month[28].zoneDayname, `Tuesday`);
+    });
+    describe(`fullmonth, february 2001 (not leap year)`, () => {
+      const month = $D("2001/02/12").relocate({locale: `en-GB`}).fullMonth();
+      assert.strictEqual(month.length, 28);
+      assert.strictEqual(month[0].zoneDayname, `Thursday`);
+      assert.strictEqual(month[27].zoneDayname, `Wednesday`);
+    });
+    describe(`fullmonth, march 2025, *instance* locale de-DE`, () => {
+      const month = $D("2025/03/15", {locale: `de-DE`}).fullMonth();
+      assert.strictEqual(month.length, 31);
+      assert.strictEqual(month[0].zoneDayname, `Samstag`);
+      assert.strictEqual(month[30].zoneDayname, `Montag`);
+    });
+    describe(`fullmonth, march 2025, locale de-DE`, () => {
+      const month = $D("2025/03/15").fullMonth(`de-DE`);
+      assert.strictEqual(month.length, 31);
+      assert.strictEqual(month[0].zoneDayname, `Samstag`);
+      assert.strictEqual(month[30].zoneDayname, `Montag`);
+    });
+    describe(`fullmonth, march 2025, instance locale`, () => {
+      const forDate = $D("2025/03/15");
+      const month = $D("2025/03/15").fullMonth();
+      assert.strictEqual(month.length, 31);
+      // zoneDayname and dayName should be equal here
+      assert.strictEqual(month[0].dayName, month[0].zoneDayname);
+      assert.strictEqual(month[0].format(`WD`), month[0].dayName);
+      assert.strictEqual(month[30].format(`WD`), month[30].dayName);
     });
   });
   
