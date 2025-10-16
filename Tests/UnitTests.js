@@ -1177,6 +1177,15 @@ describe(`Setters, methods/getters`, () => {
       assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Sunday`);
       assert.strictEqual(weekForNow$.dates[weekForNow$.dates.length - 1].zoneDayname, `Saturday`);
     });
+    describe(`fullWeek pt-BR (first weekday sunday)`, () => {
+      const now$ = $D.now.relocate({locale: `pt-BR`});
+      const weekForNow$ = now$.fullWeek();
+      assert.strictEqual(weekForNow$.weekStart, `Sunday`);
+      assert.strictEqual(weekForNow$.inputDate.local, now$.local);
+      assert.strictEqual(weekForNow$.dates.length, 7);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `domingo`);
+      assert.strictEqual(weekForNow$.dates[weekForNow$.dates.length - 1].zoneDayname, `sábado`);
+    });
     describe(`fullWeek (first weekday monday)`, () => {
       const now$ = $D.now.relocate({locale: `en-GB`});
       const weekForNow$ = now$.fullWeek();
