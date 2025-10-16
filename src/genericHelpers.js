@@ -80,11 +80,34 @@ function retrieveFormattingFormats(locale, timeZone) {
     .filter(v => v).join(`,`);
 }
 
-function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
+function localeInfoValidator({locale, timeZone, l, tz} = {}) {
   timeZone = timeZone || tz;
   locale = locale || l;
   
-  if (!locale && ! timeZone) {
+  locale = tryMe({
+    trial: function() { return Intl.DateTimeFormat(locale, {timeZone: localLocaleInfo.timeZone}).resolvedOptions().locale; },
+    onError: function() {
+      console.warn(`Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
+      return localLocaleInfo.locale;
+    }
+  });
+  
+  timeZone = tryMe({
+    trial: function() { return Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions().timeZone; },
+    onError: function() {
+      console.warn(`timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
+      return localLocaleInfo.timeZone;
+    }
+  });
+  
+  return addFormatOptions(Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions());
+}
+
+function _localeInfoValidator({ locale, timeZone, l, tz } = {}) {
+  timeZone = timeZone || tz;
+  locale = locale || l;
+  
+  if (!locale && !timeZone) {
     return localLocaleInfo;
   }
   
@@ -101,7 +124,7 @@ function localeInfoValidator({ locale, timeZone, l, tz } = {}) {
     },
     onError: function(error) {
       switch(true) {
-        case /incorrect locale/i.test(error.message):
+        case /invalid (language|locale)/i.test(error.message):
           console.error(`${errSymbol}  Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
           return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
         case /invalid time zone/i.test(error.message):
