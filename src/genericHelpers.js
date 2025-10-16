@@ -103,42 +103,6 @@ function localeInfoValidator({locale, timeZone, l, tz} = {}) {
   return addFormatOptions(Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions());
 }
 
-function _localeInfoValidator({ locale, timeZone, l, tz } = {}) {
-  timeZone = timeZone || tz;
-  locale = locale || l;
-  
-  if (!locale && !timeZone) {
-    return localLocaleInfo;
-  }
-  
-  return tryMe({
-    trial: function() {
-      const verified = Intl.DateTimeFormat(locale, {timeZone}).resolvedOptions();
-      
-      /* node:coverage disable */
-      if (locale && verified.locale !== locale) {
-        console.error(`${errSymbol} Intl changed locale (using best fit) "${locale}" to "${verified.locale}"`);
-      }
-      /* node:coverage enable */
-      return addFormatOptions(verified);
-    },
-    onError: function(error) {
-      switch(true) {
-        case /invalid (language|locale)/i.test(error.message):
-          console.error(`${errSymbol}  Intl locale "${locale}" best fit impossible, using "${localLocaleInfo.locale}"`);
-          return localeInfoValidator({locale: localLocaleInfo.locale, timeZone});
-        case /invalid time zone/i.test(error.message):
-          console.error(`${errSymbol} timeZone "${timeZone}" not valid. Using "${localLocaleInfo.timeZone}"`);
-          return localeInfoValidator({locale, timeZone: localLocaleInfo.timeZone});
-        /* node:coverage disable */
-        default:
-          return localLocaleInfo || addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
-      }
-      /* node: coverage enable */
-    }
-  });
-}
-
 function setLocaleInfo({locale, timeZone, l, tz} = {}) {
   return localeInfoValidator({locale, timeZone, l, tz}, true);
 }
