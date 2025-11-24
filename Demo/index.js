@@ -1,6 +1,6 @@
 /* region import and initialize */
 import $D from "../index.js";
-import {$, logFactory} from "./Resource/DOMHelpers.js";
+import {$, logFactory} from "https://unpkg.com/dynamic-html-helpers@latest/Bundle/htmlhelpers.min.js";
 window.$D = $D; // use in console for testing
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
@@ -39,7 +39,7 @@ print(
 
 if (!debug) {
   const createClock = clockFactory();
-  const myClock = $.div({class: `clockLine`, id: `demoClock`})[Symbol.jql]
+  const myClock = $.div({class: `clockLine`, id: `demoClock`}).render;
   createClock({parent: myClock});
   const headerDims = $(`pre:first-child`).dimensions;
   const clockDims = myClock.dimensions;
@@ -945,7 +945,7 @@ function clockFactory() {
    */
   return function ({timeZone, parent} = {}) {
     timeZone = $D.validateLocaleInformation({timeZone}).timeZone;
-    const currentClockContainer = clockElem[Symbol.jqlvirtual]
+    const currentClockContainer = clockElem
       .duplicate(true, parent)
       .append($.div({class: `footer`},
         `${timeZone} ${$D.now.offsetFrom($D({timeZone})).offset}`));

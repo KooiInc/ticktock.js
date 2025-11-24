@@ -1,5 +1,5 @@
 import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat, DSTActive, hasDST} from "./instanceHelpers.js";
-import instanceCreator from "./extensions.js";
+import instanceCreator from "./createInstance.js";
 import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
 const dateSetterSynonyms = Object.getOwnPropertyNames(Date.prototype).filter(k => k.startsWith(`set`))
