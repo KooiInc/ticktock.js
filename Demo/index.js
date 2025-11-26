@@ -879,7 +879,7 @@ function initialize() {
 }
 
 function handlers() {
-  $.delegate(`click`, `#bttnOpenClose, details.chapter, button[data-close]`, evt => {
+  $.delegate(`click`, `#bttnOpenClose, details.chapter, button[data-close]`, ({evt}) => {
     const isLemmaBttn = evt.target.dataset.close;
     const mainBttn = evt.target.closest(`#bttnOpenClose`);
     const lemma = evt.target.closest(`details:not(.chapter)`);
