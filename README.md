@@ -19,4 +19,4 @@ Download or link to the bundled library @[unpkg](https://unpkg.com/ticktock-es/B
 
 Feel free to [discuss](https://github.com/KooiInc/ticktock.js/discussions) the code!
 
-<img src="https://sdn.nicon.nl/px0_ticktockMD.png" />
+![tja](https://sdn.nicon.nl/px0_ticktockMD.png)
