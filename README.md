@@ -1,7 +1,9 @@
-<div align="center">
-  <!-- bundePhobia is broken / fixed on 20250717 --> <a target="_blank" href="https://bundlephobia.com/package/ticktock-es@latest"><img src="https://badgen.net/bundlephobia/min/ticktock-es"></a>
-  <a target="_blank" href="https://www.npmjs.com/package/ticktock-es"><img src="https://img.shields.io/npm/v/ticktock-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9&label=npm%20version"></a>
-</div>
+<!--
+  Bundlephobia is a lost case
+  [![minsize](https://badgen.net/bundlephobia/min/ticktock-es?x=y)](https://bundlephobia.com/package/ticktock-es@latest)
+-->
+[<img src="https://img.shields.io/npm/v/jqx-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9">](https://www.npmjs.com/package/ticktock-es)
+[![dependencies](https://depx.co/api/badge/jqx-es)](https://depx.co/pkg/ticktock-es)
 
 ## TICKTOCK.JS
 A nifty ES20xx `Date` extension.
