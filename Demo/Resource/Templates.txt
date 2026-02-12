@@ -35,7 +35,7 @@ let perfEnd = performance.now() - perfStart;
 let seconds = perfEnd/1000;
 let perIterationMs = (perfEnd/1500) + ` milliseconds`;
 let perIterationS = (seconds/1500) + ` seconds`;
-results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
+results.push(`=> creation in ${seconds} seconds, ${
   perIterationS} &lt;i>per iteration&lt;/i>`);
 // ---------------------------------------------------------------------
 // create an array of 1500 native Date instances and measure performance
@@ -49,7 +49,7 @@ perfEnd = performance.now() - perfStart;
 seconds = perfEnd/1000;
 perIterationMs = (perfEnd/1500) + ` milliseconds`;
 perIterationS = (seconds/1500) + ` seconds`;
-results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
+results.push(`=> creation in ${seconds} seconds, ${
   perIterationS} &lt;i>per iteration&lt;i>`);
 // results are used for reporting ⬇⬇⬇
 </template>

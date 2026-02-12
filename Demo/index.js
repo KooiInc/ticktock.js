@@ -538,7 +538,7 @@ function perfRunner() {
   let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
   let perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
-  results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
+  results.push(`=> creation in ${seconds} seconds, ${
     perIterationS} <i>per iteration</i>`);
   // ---
   perfStart = performance.now();
@@ -551,8 +551,7 @@ function perfRunner() {
   perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
   perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
-  results.push(`=> creation in ${seconds} seconds, ${perIterationMs} / ${
-    perIterationS} <i>per iteration</i>`);
+  results.push(`=> creation in ${seconds} seconds, ${perIterationS} <i>per iteration</i>`);
   return results;
 }
 /* endregion performance */
