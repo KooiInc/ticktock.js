@@ -2,7 +2,8 @@
   Bundlephobia is a lost case
   [![minsize](https://badgen.net/bundlephobia/min/ticktock-es?x=y)](https://bundlephobia.com/package/ticktock-es@latest)
 -->
-[<img src="https://img.shields.io/npm/v/jqx-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9">](https://www.npmjs.com/package/ticktock-es)
+[![](https://deno.bundlejs.com/?q=ticktock-es@latest&badge)](https://bundlejs.com/?q=ticktock-es)
+[![](https://img.shields.io/npm/v/jqx-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9)](https://www.npmjs.com/package/ticktock-es)
 [![dependencies](https://depx.co/api/badge/jqx-es)](https://depx.co/pkg/ticktock-es)
 
 ## TICKTOCK.JS
