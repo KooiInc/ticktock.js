@@ -109,8 +109,7 @@ function setLocaleInfo({locale, timeZone, l, tz} = {}) {
 
 function valiDate(date) {
   return !Number.isNaN(+date) &&
-    date?.constructor === Date &&
-    !date?.toISOString?.().startsWith("1970-01-01T00:00:00")
+    date?.constructor === Date
     ?  date : new Date();
 }
 
