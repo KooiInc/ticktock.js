@@ -140,8 +140,12 @@ function getDateValues(instance, inUserTimezone = true) {
 }
 
 function maybeFirstWeekdayFromLocale(instance) {
-  let intlLocale = new Intl.Locale(instance.localeInfo.locale);
-  let firstDayFromLocale = intlLocale.getWeekInfo && intlLocale.getWeekInfo().firstDay || 1;
+  let intlLocale = new Intl.Locale(instance.locale);
+  let firstDayFromLocale = intlLocale.weekInfo
+    ? intlLocale.weekInfo.firstDay
+    : intlLocale.getWeekInfo
+      ? intlLocale.getWeekInfo().firstDay
+      : 1;
   firstDayFromLocale = firstDayFromLocale === 7 ? 0 : firstDayFromLocale;
   return wdLong[firstDayFromLocale];
 }

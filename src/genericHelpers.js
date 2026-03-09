@@ -118,7 +118,7 @@ function retrieveDateValueFromInput(input) {
   const now = new Date();
   
   switch(true) {
-    case input?.constructor === String:
+    case typeof input === `string` || typeof input === `number`:
       return valiDate(new Date(input));
     case Array.isArray(input) && input.map(Number).length === input.length:
       return input.length === 1 ? new Date(input[0], 0, 1) : new Date(...input);
