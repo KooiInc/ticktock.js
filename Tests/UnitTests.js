@@ -25,6 +25,9 @@ describe(`Basics $D`, () => {
   it(`$D([2000, 0, 1, 13, 0, 0]) should return instance with date 2000/01/01 and time 13:00:00`, () => {
     assert.strictEqual($D([2000, 0, 1, 13, 0, 0]).ISO, dateToTestAgainst);
   } );
+  it(`$D(946728000000) should return instance with date 2000/01/01 and time 13:00:00`, () => {
+    assert.strictEqual($D(946728000000).ISO, dateToTestAgainst);
+  });
   it(`$D([2020]) should return instance with date 2020/01/01`, () => {
     assert.strictEqual($D([2020]).ISO, new Date(2020,0,1).toISOString());
   } );
