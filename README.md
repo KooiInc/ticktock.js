@@ -1,4 +1,4 @@
-[![](https://deno.bundlejs.com/?q=ticktock-es&badge=minified)](https://bundlejs.com/?q=ticktock-es)
+[![](https://deno.bundlejs.com/?q=ticktock-es&badge)](https://bundlejs.com/?q=ticktock-es)
 [![](https://img.shields.io/npm/v/jqx-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9)](https://www.npmjs.com/package/ticktock-es)
 [![dependencies](https://depx.co/api/badge/jqx-es)](https://depx.co/pkg/ticktock-es)
 
