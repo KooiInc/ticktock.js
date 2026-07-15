@@ -16,5 +16,3 @@ Download or link to the bundled library @[unpkg](https://unpkg.com/ticktock-es/B
 ☑️ [Examples](https://kooiinc.github.io/ticktock.js/Demo/)
 <br>☑️ [Wiki pages](https://github.com/KooiInc/ticktock.js/wiki)
 <br>☑️ [Stackblitz demo](https://stackblitz.com/edit/js-qxo3pdxk?file=index.js) (forkable)
-
-Feel free to [discuss](https://github.com/KooiInc/ticktock.js/discussions) the code!
