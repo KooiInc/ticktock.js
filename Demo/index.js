@@ -535,7 +535,6 @@ function perfRunner() {
   [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
   perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
-  let perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
   let perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
   results.push(`=> creation in ${seconds} seconds, ${
@@ -548,7 +547,6 @@ function perfRunner() {
     });
   perfEnd = performance.now() - perfStart;
   seconds = perfEnd/1000;
-  perIterationMs = (perfEnd/1500).toLocaleString(browserLocale, opts1) + ` milliseconds`;
   perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
   results.push(`=> creation in ${seconds} seconds, ${perIterationS} <i>per iteration</i>`);
