@@ -623,7 +623,10 @@ function tellTime() {
 
 function initialize() {
   $.editCssRules(
-    `body { overflow-y: scroll; overflow-x: auto; }`,
+    `body {
+      overflow-y: scroll;
+      overflow-x: auto;
+      font-family: system-ui, verdana, arial; }`,
     `.container {
       inset: 0;
       position: absolute;
