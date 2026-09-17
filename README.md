@@ -1,4 +1,4 @@
-[![](//deno.bundlejs.com/?q=ticktock-es@latest&badge)](https://bundlejs.com/?q=ticktock-es)
+[![](https://deno.bundlejs.com/?q=ticktock-es&badge)](https://bundlejs.com/?q=ticktock-es)
 [![](https://img.shields.io/npm/v/jqx-es.svg?labelColor=cb3837&logo=npm&color=dcfdd9)](https://www.npmjs.com/package/ticktock-es)
 [![dependencies](https://depx.co/api/badge/jqx-es)](https://depx.co/pkg/ticktock-es)
 
@@ -16,5 +16,3 @@ Download or link to the bundled library @[unpkg](https://unpkg.com/ticktock-es/B
 ☑️ [Examples](https://kooiinc.github.io/ticktock.js/Demo/)
 <br>☑️ [Wiki pages](https://github.com/KooiInc/ticktock.js/wiki)
 <br>☑️ [Stackblitz demo](https://stackblitz.com/edit/js-qxo3pdxk?file=index.js) (forkable)
-
-Feel free to [discuss](https://github.com/KooiInc/ticktock.js/discussions) the code!
