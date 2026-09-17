@@ -1170,6 +1170,16 @@ describe(`Setters, methods/getters`, () => {
     it(`.previousMonth sets instance date to 2000/01/01`, () => {
       assert.strictEqual(initialDate.previousMonth.format(`yyyy/mm/dd`), `2000/01/01`);
     });
+    it(`[20000101].previousMonth sets instance date to 1999/12/01`, () => {
+      assert.strictEqual($D(`2000/01/01`).previousMonth.format(`yyyy/mm/dd`), `1999/12/01`);
+    });
+    it(`[20000131].nextMonth sets instance date to 2000/02/29`, () => {
+      assert.strictEqual($D(`2000/01/31`).nextMonth.format(`yyyy/mm/dd`), `2000/02/29`);
+    });
+    it(`[20010131].nextMonth sets instance date to 2001/02/28`, () => {
+      assert.strictEqual($D(`2001/01/31`).nextMonth.format(`yyyy/mm/dd`), `2001/02/28`);
+    });
+    
     // aggregates
     describe(`fullWeek (first weekday sunday)`, () => {
       const now$ = $D.now.relocate({locale: `en-GB`});

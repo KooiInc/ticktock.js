@@ -1,4 +1,4 @@
-import {add2Date, fullMonth, offset2Number, getWeeksInYear, dateFormat, DSTActive, hasDST} from "./instanceHelpers.js";
+import {add2Date, addMonth, fullMonth, offset2Number, getWeeksInYear, dateFormat, DSTActive, hasDST} from "./instanceHelpers.js";
 import instanceCreator from "./createInstance.js";
 import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
@@ -200,10 +200,10 @@ function retrieveAggregates(forInstance) {
       return add2Date(forInstance, `-1 year`);
     },
     get nextMonth() {
-      return add2Date(forInstance, `1 month`);
+      return addMonth(forInstance);
     },
     get previousMonth() {
-      return add2Date(forInstance, `-1 month`);
+      return addMonth(forInstance, true);
     },
     get tomorrow() {
       return add2Date(forInstance, `1 day`);

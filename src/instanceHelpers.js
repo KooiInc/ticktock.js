@@ -19,7 +19,7 @@ const wdShort = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const wdLong = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 export {
-  add2Date, addParts2Date, cloneInstance, compareDates, daysInMonth, daysUntil,
+  add2Date, addMonth, addParts2Date, cloneInstance, compareDates, daysInMonth, daysUntil,
   DSTActive, firstWeekday, format, fullMonth, getAggregatedInfo, getDateValues,
   getDowNumber, getDTValues, getFullDate, getISO8601Weeknr, getNames, getQuarter,
   getTime, getTimeValues, getWeeksInYear, hasDST, localeInfoValidator, localeMonthnames,
@@ -27,6 +27,26 @@ export {
   relocate, removeTime, revalue, setDateParts, setLocaleInfo, setTimeParts,
   timezoneAwareDifferenceTo,toJSDateString,toLocalString, dateFormat, weekFor
 };
+
+function addMonth(instance, negative = false) {
+  const nextMnth = instance.month + 1;
+  const initialMonth = instance.month;
+  instance.month += negative ? -1 : 1;
+  
+  if (!negative && instance.month >= nextMnth) {
+    while (instance.month > nextMnth) {
+     instance.dateNr -= 1;
+    }
+  }
+  
+  if (negative && instance.month === initialMonth) {
+    while (instance.month >= initialMonth) {
+      instance.dateNr -= 1;
+    }
+  }
+  
+  return instance;
+}
 
 function addParts2Date(instance, ...parts2Add) {
   add2Date(instance, ...parts2Add);
