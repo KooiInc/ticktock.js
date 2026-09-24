@@ -512,19 +512,20 @@ function customsExample() {
 /* region ex:performance */
 // don't interfere with the flow
 setTimeout( () => {
-  const perf = perfRunner();
-  print(toDetailChapter(`Performance`, false,
-      toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, true),
-      toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`, true),
-      toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`, true),
-      
-      `<div class="xtraTxt">
-      <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
-        using TickTock.js for processing a gazillion Dates &#128128;
-   </div>`
-    ),
-  );
-  Prism.highlightAll();
+  // TODO later /w popup
+  // const perf = perfRunner();
+  // print(toDetailChapter(`Performance`, false,
+  //     toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, true),
+  //     toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`, true),
+  //     toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`, true),
+  //
+  //     `<div class="xtraTxt">
+  //     <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
+  //       using TickTock.js for processing a gazillion Dates &#128128;
+  //  </div>`
+  //   ),
+  // );
+  hljs.highlightAll();
 });
 
 function perfRunner() {
@@ -574,7 +575,7 @@ function getCodeblocks() {
 }
 
 function toCodeBlock(str) {
-  return `<pre class="line-numbers language-javascript"><code class="line-numbers language-javascript">${
+  return `<pre class="language-javascript codeblock"><code>${
     str}</code></pre>`;
 }
 
@@ -643,6 +644,18 @@ function initialize() {
           box-shadow: 2px 2px 8px #AAA;
        }
     }`,
+    `pre.codeblock {
+      code.hljs {
+        position: relative;
+        font-weight: normal !important;
+        padding: 0.8em;
+        width: 100%;
+        border-radius: 6px !important;
+        line-height: 1.2;
+        max-height: inherit;
+        box-shadow: 2px 2px 8px #999;
+      }
+    }`,
     `#log2screen {
       margin: 0 auto;
       width: 900px;
@@ -669,9 +682,9 @@ function initialize() {
         font-weight: normal;
       }
     }`,
-    `code.language-javascript {
-      background-color: inherit;
-    }`,
+    // `code.language-javascript {
+    //   background-color: inherit;
+    // }`,
     `details {
        cursor: pointer;
        font-size: 1em;
