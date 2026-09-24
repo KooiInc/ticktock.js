@@ -578,7 +578,7 @@ function getCodeblocks() {
 
 function toCodeBlock(str) {
   return `<pre class="language-javascript codeblock"><code>${
-    str}</code></pre>`;
+    $.escHtml(str)}</code></pre>`;
 }
 
 function toJSONString(obj, detail = true, noFormat = false) {

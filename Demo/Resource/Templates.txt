@@ -1,153 +1,152 @@
 <div>
+  <template id="initial">
+  // imported TickTock.js as $D
+  // variables used:
+  const browserTZ = $D.localeInformation.timeZone;
+  const browserLocale = $D.localeInformation.locale;
+  const now$ = $D.now;
+  const chongqin = $D({l:"zh", tz: "Asia/Chongqing"});
+  //                                ↳ note: may be corrected by Intl validation
+  const auckland = $D({tz: "Pacific/Auckland", l:"en"});
+  const paris = $D({timeZone: "Europe/Paris"}).add("2 days, 3 hours, 22 minutes");
+  //                ↳ note: both 'timeZone' and 'tz' are valid
+  const berlin = $D({locale: "de-DE", tz: "Europe/Berlin"});
+  //                  ↳ note: both 'locale' and 'l' are valid
+  const vancouver = now$.clone.relocate({l: "en-CA", tz: "America/Vancouver"});
+  const la = $D({tz: "America/Los_Angeles"});
+  const taiohae = $D.from(2025, 0, 1, 7, 0, 0);
+  const utc = $D.fromUxTS(+now$/1000).UTC;
+  //             ↳ from unix epoch timestamp
+  taiohae.localeInfo = {tz: "Pacific/Marquesas"};
+  utc.hours += 3;
+  utc.minutes -= 15;
+  </template>
 
-<template id="initial">
-// imported TickTock.js as $D
-// variables used:
-const browserTZ = $D.localeInformation.timeZone;
-const browserLocale = $D.localeInformation.locale;
-const now$ = $D.now;
-const chongqin = $D({l:"zh", tz: "Asia/Chongqing"});
-//                                ↳ note: may be corrected by Intl validation
-const auckland = $D({tz: "Pacific/Auckland", l:"en"});
-const paris = $D({timeZone: "Europe/Paris"}).add("2 days, 3 hours, 22 minutes");
-//                ↳ note: both 'timeZone' and 'tz' are valid
-const berlin = $D({locale: "de-DE", tz: "Europe/Berlin"});
-//                  ↳ note: both 'locale' and 'l' are valid
-const vancouver = now$.clone.relocate({l: "en-CA", tz: "America/Vancouver"});
-const la = $D({tz: "America/Los_Angeles"});
-const taiohae = $D.from(2025, 0, 1, 7, 0, 0);
-const utc = $D.fromUxTS(+now$/1000).UTC;
-//             ↳ from unix epoch timestamp
-taiohae.localeInfo = {tz: "Pacific/Marquesas"};
-utc.hours += 3;
-utc.minutes -= 15;
-</template>
+  <template id="perf">
+  // ------------------------------------------------------------------
+  // create an array of 1500 TickTock instances and measure performance
+  // ------------------------------------------------------------------
+  const results = [];
+  let perfStart = performance.now();
+  const today = $D.now.dateNr;
+  const testValues = [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
+  let perfEnd = performance.now() - perfStart;
+  let seconds = perfEnd/1000;
+  let perIterationMs = (perfEnd/1500) + ` milliseconds`;
+  let perIterationS = (seconds/1500) + ` seconds`;
+  results.push(`=> creation in ${seconds} seconds, ${
+    perIterationS} &lt;i>per iteration&lt;/i>`);
+  // ---------------------------------------------------------------------
+  // create an array of 1500 native Date instances and measure performance
+  // ---------------------------------------------------------------------
+  perfStart = performance.now();
+  const plainDateTestValues = [...Array(1500)].map((_, i) => {
+    const now = new Date();
+    return new Date(now.setDate(i + 1));
+  });
+  perfEnd = performance.now() - perfStart;
+  seconds = perfEnd/1000;
+  perIterationMs = (perfEnd/1500) + ` milliseconds`;
+  perIterationS = (seconds/1500) + ` seconds`;
+  results.push(`=> creation in ${seconds} seconds, ${
+    perIterationS} &lt;i>per iteration&lt;i>`);
+  // results are used for reporting ⬇⬇⬇
+  </template>
 
-<template id="perf">
-// ------------------------------------------------------------------
-// create an array of 1500 TickTock instances and measure performance
-// ------------------------------------------------------------------
-const results = [];
-let perfStart = performance.now();
-const today = $D.now.dateNr;
-const testValues = [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
-let perfEnd = performance.now() - perfStart;
-let seconds = perfEnd/1000;
-let perIterationMs = (perfEnd/1500) + ` milliseconds`;
-let perIterationS = (seconds/1500) + ` seconds`;
-results.push(`=> creation in ${seconds} seconds, ${
-  perIterationS} &lt;i>per iteration&lt;/i>`);
-// ---------------------------------------------------------------------
-// create an array of 1500 native Date instances and measure performance
-// ---------------------------------------------------------------------
-perfStart = performance.now();
-const plainDateTestValues = [...Array(1500)].map((_, i) => {
-  const now = new Date();
-  return new Date(now.setDate(i + 1));
-});
-perfEnd = performance.now() - perfStart;
-seconds = perfEnd/1000;
-perIterationMs = (perfEnd/1500) + ` milliseconds`;
-perIterationS = (seconds/1500) + ` seconds`;
-results.push(`=> creation in ${seconds} seconds, ${
-  perIterationS} &lt;i>per iteration&lt;i>`);
-// results are used for reporting ⬇⬇⬇
-</template>
+  <template id="zoneFormatAucklandEx">
+  auckland.zoneFormat("{=>; in Auckland it's now} WD d MM yyyy, hh:mmi:ss dp");
+  </template>
 
-<template id="zoneFormatAucklandEx">
-auckland.zoneFormat("{=>; in Auckland it's now} WD d MM yyyy, hh:mmi:ss dp");
-</template>
+  <template id="formatAucklandEx">
+  const prefix = `=> formatted for (browser) locale '${
+    browserLocale}' and - timeZone '${browserTZ}&lt;br>`;
+  auckland.format(`{${prefix}}WD MM d yyyy, hh:mmi:ss dp`);
+  </template>
 
-<template id="formatAucklandEx">
-const prefix = `=> formatted for (browser) locale '${
-  browserLocale}' and - timeZone '${browserTZ}&lt;br>`;
-auckland.format(`{${prefix}}WD MM d yyyy, hh:mmi:ss dp`);
-</template>
+  <template id="formatNowEx">
+  now$.clone.relocate({l: "fr-FR"}).zoneFormat(
+     `{=> Il est}: {&lt;b class="red">}WD{&lt/b>} d {&lt;b class="red">}MM{&lt/b>}
+        yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)`);
+  </template>
 
-<template id="formatNowEx">
-now$.clone.relocate({l: "fr-FR"}).zoneFormat(
-   `{=> Il est}: {&lt;b class="red">}WD{&lt/b>} d {&lt;b class="red">}MM{&lt/b>}
-      yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)`);
-</template>
+  <template id="acrossZonesEx1">
+  const auckland = $D({tz: "Pacific/Auckland"});
+  $D.timeAcrossZones( {
+    timeZoneDate: auckland,
+    timeZoneID: auckland.timeZone
+  } );
+  </template>
 
-<template id="acrossZonesEx1">
-const auckland = $D({tz: "Pacific/Auckland"});
-$D.timeAcrossZones( {
-  timeZoneDate: auckland,
-  timeZoneID: auckland.timeZone
-} );
-</template>
+  <template id="acrossZonesEx2">
+  const auckland = $D({tz: "Pacific/Auckland"});
+  const la = $D({tz: "America/Los_Angeles"});
+  $D.timeAcrossZones( {
+    timeZoneDate: auckland,
+    timeZoneID: auckland.timeZone,
+    userTimeZoneID: la.timeZone
+  } );
+  </template>
 
-<template id="acrossZonesEx2">
-const auckland = $D({tz: "Pacific/Auckland"});
-const la = $D({tz: "America/Los_Angeles"});
-$D.timeAcrossZones( {
-  timeZoneDate: auckland,
-  timeZoneID: auckland.timeZone,
-  userTimeZoneID: la.timeZone
-} );
-</template>
+  <template id="fullMonth">
+  function monthExampleReducer(acc, v) {
+    if (v.dateNr < 3  || v.dateNr > 27 ) {
+      const formatted = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
+      const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
 
-<template id="fullMonth">
-function monthExampleReducer(acc, v) {
-  if (v.dateNr < 3  || v.dateNr > 27 ) {
-    const formatted = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
-    const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
+      return [...acc, ...value2Concat];
+    }
 
-    return [...acc, ...value2Concat];
+    return acc;
   }
 
-  return acc;
-}
+  // Create a few month arrays and reduce them to
+  // a few start/end values for example display.
+  // Also demonstrates the use of the .fullMonth locale parameter
+  const monthLocal = $D("2000/02/12")
+    .fullMonth() // ◀ no locale, so environment (browser) locale is used
+    .reduce(monthExampleReducer, []);
 
-// Create a few month arrays and reduce them to
-// a few start/end values for example display.
-// Also demonstrates the use of the .fullMonth locale parameter
-const monthLocal = $D("2000/02/12")
-  .fullMonth() // ◀ no locale, so environment (browser) locale is used
-  .reduce(monthExampleReducer, []);
+  const monthPT = $D("2000/02/12")
+    .fullMonth("pt")
+    .reduce(monthExampleReducer, []);
 
-const monthPT = $D("2000/02/12")
-  .fullMonth("pt")
-  .reduce(monthExampleReducer, []);
+  const monthTH = $D("2000/02/12")
+    .fullMonth("th") // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
+    .reduce(monthExampleReducer, []);
 
-const monthTH = $D("2000/02/12")
-  .fullMonth("th") // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
-  .reduce(monthExampleReducer, []);
+  const monthDeFromStatic = $D
+    .monthCalendar({year: 2000, monthNr: 2, locale: "de-DE"})
+    .reduce(monthExampleReducer, []);
+  </template>
 
-const monthDeFromStatic = $D
-  .monthCalendar({year: 2000, monthNr: 2, locale: "de-DE"})
-  .reduce(monthExampleReducer, []);
-</template>
+  <template id="yearCalendar">
+  const calendar = $D.yearCalendar({year: 2000, locale: "hu"}).calendar;
+  const months = Object.keys(calendar)
+  const calendarHU = `&lt;ul>${
+    Object.values(calendar)
+      .reduce((acc, month, i) =>
+        acc.concat(`&lt;li>&lt;b>${months[i]}&lt;/b>: [${
+          month.shift().zoneFormat("WD d MM yyyy")}, ..., ${
+          month.pop().zoneFormat("WD d MM yyyy")}]&lt;/li>`), "")}&lt;/ul>`;
+  </template>
 
-<template id="yearCalendar">
-const calendar = $D.yearCalendar({year: 2000, locale: "hu"}).calendar;
-const months = Object.keys(calendar)
-const calendarHU = `&lt;ul>${
-  Object.values(calendar)
-    .reduce((acc, month, i) =>
-      acc.concat(`&lt;li>&lt;b>${months[i]}&lt;/b>: [${
-        month.shift().zoneFormat("WD d MM yyyy")}, ..., ${
-        month.pop().zoneFormat("WD d MM yyyy")}]&lt;/li>`), "")}&lt;/ul>`;
-</template>
+  <template id="custom">
+  // a custom, non enumerable getter
+  $D.addCustom({
+    name: "addCentury",
+    method: instance => instance.clone.add("100 years"), isGetter: true}
+  );
 
-<template id="custom">
-// a custom, non enumerable getter
-$D.addCustom({
-  name: "addCentury",
-  method: instance => instance.clone.add("100 years"), isGetter: true}
-);
+  // a custom, enumerable method
+  $D.addCustom( {
+    name: "quarterString",
+    method: qToCustomString,
+    enumerable: true }
+  );
 
-// a custom, enumerable method
-$D.addCustom( {
-  name: "quarterString",
-  method: qToCustomString,
-  enumerable: true }
-);
-
-function qToCustomString(instance, showDate = true) {
-  return ` Results for the ${instance.quarter.toLowerCase()} quarter ${
-      (showDate ? `(${instance.local})` : "")}`;
-}
+  function qToCustomString(instance, showDate = true) {
+    return ` Results for the ${instance.quarter.toLowerCase()} quarter ${
+        (showDate ? `(${instance.local})` : "")}`;
+  }
 </template>
 </div>
