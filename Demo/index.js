@@ -34,7 +34,10 @@ print(
   `<h2 data-topline>TickTock.js Examples (work in progress) <span id="tellTime"></span></h2>`,
   `${initialCode}`,
   
-  `<button id="bttnOpenClose" data-allopen="0">all chapters</button>`
+  $.div(
+    $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
+    `&nbsp;`,
+    $.button({id: `bttnPerformance`}, `Performance`)),
 );
 
 if (!debug) {
@@ -431,11 +434,13 @@ function getFullMonth() {
   return [monthPT, monthTH, monthLocal, monthDeFromStatic];
 }
 
+/* endregion ex:fullMonth */
+
 /* region ex:fullYear */
 
 /* endregion ex:fullYear */
 
-/* endregion ex:daysInMonth */
+/* endregion All examples */
 
 /* region ex:yearCalendar */
 const cal = yearCalendarEx();
@@ -514,35 +519,45 @@ hljs.highlightAll();
 /* endregion finish */
 
 /* region ex:performance */
-// don't interfere with the flow
-//setTimeout( () => {
-  // TODO later /w popup
-  // const perf = perfRunner();
-  // print(toDetailChapter(`Performance`, false,
-  //     toDetailsBlock(`<b class="blue">Code</b>`, performanceCode, true),
-  //     toDetailsBlock("<code>testValues</code>", `<div style="font-size: 1em;">${perf[0]}</div>`, true),
-  //     toDetailsBlock("<code>plainDateTestValues </code>", `<div style="font-size: 1em;">${perf[1]}</div>`, true),
-  //
-  //     `<div class="xtraTxt">
-  //     <b class="warn">Note</b>: consider <b><i class="warn">not</i></b> (or selectively)
-  //       using TickTock.js for processing a gazillion Dates &#128128;
-  //  </div>`
-  //   ),
-  // );
-  //hljs.highlightAll();
-//});
+function createPerformancePopup() {
+  const perf = perfRunner();
+  $.editCssRules(
+     `#jqxPopupContent {
+      code {
+        max-width: 97%;
+      }
+     }`
+  );
+  $.Popup.show({
+    content: $.div(
+       `<b class="blue">Code</b>`,
+        performanceCode,
+        `<code>testValues</code>`, $.span(` => ${perf[0]}`),
+        $.div(`<code>plainDateTestValues </code>`, $.span(` => ${perf[1]}`)),
+        $.div({class: `xtraTxt`},  $.b({class: `note`}),
+          `consider `, $.b($.i({class: `red`}, `not`)), ` (or selectively)
+            using TickTock.js for processing a gazillion Dates &#128128;`)
+      )
+    }
+  );
+  hljs.highlightElement($.node(`#jqxPopupContent .codeblock code`));
+}
+
 
 function perfRunner() {
   const results = [];
   const opts1 = {minimumFractionDigits: 3, maximumFractionDigits: 3};
   const opts2 = {minimumFractionDigits: 6, maximumFractionDigits: 6};
   let perfStart = performance.now(), perfEnd;
-  [...Array(1500)].map((_, i) => $D.now.changeDate(i + 1));
+  [...Array(1500)].map((_, i) => {
+    const now = $D.now;
+    now.date = i + 1;
+  });
   perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
   let perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
-  results.push(`=> creation in ${seconds} seconds, ${
+  results.push(`creation in ${seconds} seconds, ${
     perIterationS} <i>per iteration</i>`);
   // ---
   perfStart = performance.now();
@@ -554,11 +569,11 @@ function perfRunner() {
   seconds = perfEnd/1000;
   perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
   seconds = seconds.toLocaleString(browserLocale, opts1);
-  results.push(`=> creation in ${seconds} seconds, ${perIterationS} <i>per iteration</i>`);
+  results.push(`creation in ${seconds} seconds, ${perIterationS} <i>per iteration</i>`);
   return results;
 }
 /* endregion performance */
-/* endregion Examples */
+
 
 /* region helpers */
 function getCodeblocks() {
@@ -684,9 +699,6 @@ function initialize() {
         font-weight: normal;
       }
     }`,
-    // `code.language-javascript {
-    //   background-color: inherit;
-    // }`,
     `details {
        cursor: pointer;
        font-size: 1em;
@@ -894,11 +906,12 @@ function initialize() {
 }
 
 function handlers() {
-  $.delegate(`click`, `#bttnOpenClose, details.chapter, button[data-close]`, ({evt}) => {
+  $.delegate(`click`, `#bttnOpenClose, #bttnPerformance, details.chapter, button[data-close]`, ({evt}) => {
     const isLemmaBttn = evt.target.dataset.close;
     const mainBttn = evt.target.closest(`#bttnOpenClose`);
     const lemma = evt.target.closest(`details:not(.chapter)`);
     const chapter = evt.target.closest(`.chapter`);
+    const perf = evt.target.closest(`#bttnPerformance`);
     
     if (mainBttn) {
       const allOpen = mainBttn.dataset?.allopen === '1' ?? false;
@@ -933,6 +946,10 @@ function handlers() {
         const theBttn = $.node(`#bttnOpenClose`);
         theBttn.dataset.allopen = theDetailsElements.length ? `1` : `0`;
       });
+    }
+    
+    if (perf) {
+      return setTimeout(createPerformancePopup);
     }
     return true;
   });
