@@ -1,6 +1,6 @@
 /* region import and initialize */
 import $D from "../index.js";
-import {$, logFactory} from "https://unpkg.com/dynamic-html-helpers@latest/Bundle/htmlhelpers.min.js";
+import {$, logFactory} from "./Resource/htmlhelpers.min.js";
 window.$D = $D; // use in console for testing
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
@@ -509,9 +509,13 @@ function customsExample() {
 }
 /* endregion ex:customs */
 
+/* region finish */
+hljs.highlightAll();
+/* endregion finish */
+
 /* region ex:performance */
 // don't interfere with the flow
-setTimeout( () => {
+//setTimeout( () => {
   // TODO later /w popup
   // const perf = perfRunner();
   // print(toDetailChapter(`Performance`, false,
@@ -525,8 +529,8 @@ setTimeout( () => {
   //  </div>`
   //   ),
   // );
-  hljs.highlightAll();
-});
+  //hljs.highlightAll();
+//});
 
 function perfRunner() {
   const results = [];
@@ -557,8 +561,6 @@ function perfRunner() {
 /* endregion Examples */
 
 /* region helpers */
-Prism.highlightAll();
-
 function getCodeblocks() {
   const initialCode = toCodeBlock(templates.find$(`#initial`).HTML.get().trim());
   const performanceCode = toCodeBlock(templates.find$(`#perf`).HTML.get().trim());
