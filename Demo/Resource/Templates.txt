@@ -56,7 +56,16 @@ return results;
 </template>
 
 <template id="zoneFormatAucklandEx">
-auckland.zoneFormat("{=>; in Auckland it's now} WD d MM yyyy, hh:mmi:ss dp");
+auckland.zoneFormat("{in Auckland it's now} WD d MM yyyy, hh:mmi:ss dp");
+</template>
+
+<template id="customSyntax">
+$D /*[imported TickTock constructor]*/ .addCustom({
+  name:string,
+  method:function
+  enumerable:boolean,
+  isGetter:boolean
+});
 </template>
 
 <template id="formatAucklandEx">
@@ -136,7 +145,8 @@ const calendarHU = `&lt;ul>${
 // a custom, non enumerable getter
 $D.addCustom({
   name: "addCentury",
-  method: instance => instance.clone.add("100 years"), isGetter: true}
+  method: function(instance) { return instance.clone.add("100 years");},
+  isGetter: true }
 );
 
 // a custom, enumerable method
