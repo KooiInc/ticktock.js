@@ -1,17 +1,19 @@
 /* region import and initialize */
 import $D from "../index.js";
+import styleIt from "./Resource/StyleDocument.js";
 import {$, logFactory} from "./Resource/htmlhelpers.min.js";
+styleIt($);
+const loader = $.div({class: "spin"}, `Loading...`).render;
 window.$D = $D; // use in console for testing
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
-const debug = false;
-initialize();
-
+const debug = /localhost/.test(location.host);
 /* endregion import and initialize */
 
 /* region initialVariables */
+const start = performance.now();
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs } = getCodeblocks();
+  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -26,386 +28,102 @@ const utc = $D.fromUxTS(+now$.value/1000).UTC;
 taiohae.localeInfo = {tz: "Pacific/Marquesas"};
 utc.hours += 3;
 utc.minutes -= 15;
+const detailBlocks = allBlocks();
+initialize();
 /* endregion initialVariables */
 
 /* region header */
-print('<p><a target="_top" href="https://github.com/KooiInc/ticktock.js"> Github Repository</a></p>');
-print(
-  `<h2 data-topline>TickTock.js Examples (work in progress) <span id="tellTime"></span></h2>`,
-  `${initialCode}`,
+function printHeader() {
+  print(...detailBlocks.headerElements());
   
-  $.div(
-    $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
-    `&nbsp;`,
-    $.button({id: `bttnPerformance`}, `Performance`)),
-);
-
-if (!debug) {
-  const createClock = clockFactory();
-  const myClock = $.div({class: `clockLine`, id: `demoClock`}).render;
-  createClock({parent: myClock});
-  const headerDims = $(`pre:first-child`).dimensions;
-  const clockDims = myClock.dimensions;
-  myClock.style({
-    left: (headerDims.left + headerDims.width - clockDims.width - 14) + `px`,
-    top: (headerDims.top) + 12 + `px`,
-  });
+  if (!debug) {
+    const createClock = clockFactory();
+    const myClock = $.div({class: `clockLine`, id: `demoClock`}).render;
+    createClock({parent: myClock});
+    const headerDims = $(`pre:first-child`).dimensions;
+    const clockDims = myClock.dimensions;
+    myClock.style({
+      left: (headerDims.left + headerDims.width - clockDims.width - 14) + `px`,
+      top: (headerDims.top) + 12 + `px`,
+    });
+  }
 }
-
 /* endregion header */
 
 /* region All examples */
 /* region instantiation */
 print(
   toDetailChapter(`Instantiation`, `inst`,
-    `<div class="xtraTxt">
-        There are several ways to create a TickTock date instance. Here are a few examples.
-        <br><b class="note"></b> Instances are displayed using the TickTock library <code>.toString</code> method.
-     </div>`,
-     toDetailsBlock(`<code>$D("2000/01/01 22:00")</code> (browser time zone)`, $D("2000/01/01 22:00").toString()),
-     toDetailsBlock(`<code>$D([2000,0,1,22])</code> (browser time zone)`, $D([2000,0,1,22]).toString()),
-     toDetailsBlock(`<code>$D.from(2000,0,1,22)</code> (browser time zone)`, $D.from(2000,0,1,22).toString()),
-     toDetailsBlock(`<code>$D()</code> (now, browser time zone)`, $D().toString()),
-     toDetailsBlock(`<code>$D.now</code> (now, browser time zone)`, $D.now.toString()),
-     toDetailsBlock(`<code>$D({timeZone: "America/New_York"})</code> (now New York time zone)`,
-       $D({timeZone: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D("2000/01/01 22:00", {tz: "America/New_York"})</code> (New York time zone)`,
-       $D("2000/01/01 22:00", {tz: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})</code> (New York time zone)`,
-       $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
-     toDetailsBlock(`<code>$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)</code> (New York time zone)`,
-       $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
-      toDetailsBlock(`<code>$D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030)</code> (from unix timestamp)`,
-        $D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030).toString()),
+    $.div(
+      {class: `xtraTxt`},
+      `There are several ways to create a TickTock date instance. Here are a few examples.`,
+      $.div($.b({class: "note"}),
+      `Instances are displayed using the by TickTock module `, $.code(`toString`), ` method.`
+      )
+    ),
   )
 );
+$(`#inst`).data.set({detailBlockId: `instantiationBlocks`});
 /* endregion instantiation */
 
 /* region ex:locale/timeZone */
-print(
-  toDetailChapter(`locale/timeZone`, `ltz`,
-    toDetailsBlock(
-      `<code>$D.localeInformation</code>: environment (here: browser) locale- and timeZone information`,
-      toJSONString($D.localeInformation, true)),
-    
-    toDetailsBlock(
-      `<code>$D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"})</code> Valid`,
-      toJSONString($D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"}))),
-    
-    toDetailsBlock(
-      `<code>$D.validateLocaleInformation({l:"de-CH", tz: "Bern"})</code> timeZone invalid`,
-      `timeZone "Bern" not valid, so environment timeZone (${$D.localeInformation.timeZone})<br>${
-        toJSONString($D.validateLocaleInformation({l:"de-CH", tz: "Bern"}))}`),
-    
-    toDetailsBlock(
-      `<code>$D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"})</code> locale invalid`,
-      `locale "ch" not valid, so environment locale (${$D.localeInformation.locale})<br>${
-        toJSONString($D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"}))}`),
-    
-    toDetailsBlock(
-      `<code>now$.localeInfo</code>`,
-      toJSONString(now$.localeInfo, true)),
-    
-    toDetailsBlock(
-      `<code>chongqin.localeInfo</code> (chinese locale, Chongqing timeZone)`,
-      toJSONString(chongqin.localeInfo, true)) ),
-);
+print( toDetailChapter(`locale/timeZone`, `ltz`,) );
+$(`#ltz`).data.set({detailBlockId: `localeTZBlock`});
 /* endregion locale/timeZone */
 
 /* region ex:toString */
-print(
-  toDetailChapter(`toString`, ``,
-    toDetailsBlock(
-      `<code>chongqin.toString()</code> (Chongqing timeZone)`,
-      chongqin.toString(), true),
-    
-    toDetailsBlock(
-      `<code>chongqin.<span class="red">value</span>.toString()</code> (<i>your</i> timeZone)`,
-      chongqin.value.toString(), true),
-    
-    toDetailsBlock(
-      `<code>chongqin.toString({<span class="red">local: true</span>})</code> (<i>your</i> timeZone)`,
-      chongqin.toString({local: true}), true),
-    
-    toDetailsBlock(
-      `<code>chongqin.toString({template: "WD d MM yyyy"})</code> (see Format)`,
-      chongqin.toString({template: "WD d M yyyy"}), true),
-  )
-);
+print( toDetailChapter(`toString`, `tstr`) );
+$(`#tstr`).data.set({detailBlockId: `toStringBlock`});
 /* endregion toString */
 
 /* region ex:Names */
-print(
-  toDetailChapter(`Names`, `names`,
-    toDetailsBlock(
-      `<code>$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")</code>`,
-      $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
-      
-    toDetailsBlock(
-      `<code>berlin.dayName</code>/<code>berlin.zoneDayname</code>`,
-      `${berlin.dayName}/${berlin.zoneDayname}`),
-    
-    toDetailsBlock(
-      `<code>berlin.monthName</code>/<code>berlin.zoneMonthname</code>`,
-      `${berlin.monthName}/${berlin.zoneMonthname}`),
-    
-    toDetailsBlock(
-      `<code>chongqin.monthName</code>/<code>chongqin.zoneMonthname</code>`,
-      `${chongqin.monthName}/${chongqin.zoneMonthname}`),
-    
-    toDetailsBlock(
-      `<code>chongqin.names</code>`,
-      toJSONString(chongqin.names)),
-    
-    toDetailsBlock(
-      `<code>chongqin.<span class="red">zone</span>Names.monthNames.long</code>`,
-      toJSONString(chongqin.zoneNames.monthNames.long)),
-    
-    toDetailsBlock(
-      `<code>paris.relocate({l:"fr"}).zoneNames.dayNames.long</code>`,
-      toJSONString(paris.relocate({l: "fr"}).zoneNames.dayNames.long)),
-    
-    toDetailsBlock(
-      `<code>paris.clone.relocate({l:"ar-DZ"}).zoneNames.monthNames.long</code>`,
-      toJSONString(paris.clone.relocate({l: "ar-DZ"}).zoneNames.monthNames.long)),
-    
-    toDetailsBlock(
-      `<code>$D.localMonthnames("fr")</code>`,
-      toJSONString($D.localMonthnames("fr")) ),
-  )
-);
+print( toDetailChapter(`Names`, `names`) );
+$(`#names`).data.set({detailBlockId: `namesBlock`});
 /* endregion Names */
 
 /* region ex:Difference */
-print(
-  toDetailChapter(`Difference`, `difference`,
-    toDetailsBlock(`<code>chongqin.differenceTo(auckland)</code>`,
-      toJSONString(chongqin.differenceTo(auckland), true)),
-    
-    toDetailsBlock(`<code>vancouver.differenceTo(now$)</code>`,
-      toJSONString(vancouver.differenceTo(now$), true)),
-    
-    toDetailsBlock(`<code>la.differenceTo(auckland)</code>`,
-      toJSONString(la.differenceTo(auckland), true)),
-    
-    toDetailsBlock(`<code>now$.differenceTo(utc)</code>`,
-      toJSONString(now$.differenceTo(utc), true)),
-    
-    toDetailsBlock(`<code>paris.differenceTo(taiohae)</code>`,
-      toJSONString(taiohae.differenceTo(paris), true)),
-    
-    toDetailsBlock(`<code>paris.differenceTo(berlin)</code>`,
-      toJSONString(paris.differenceTo(berlin), true))
-  )
-);
+print( toDetailChapter( `Difference`, `difference` ) );
+$(`#difference`).data.set({detailBlockId: `differenceBlock`});
 /* endregion Difference */
 
 /* region ex:Date/time values */
-print(
-  toDetailChapter(`Date/time values`, `dtvalues`,
-    toDetailsBlock("<code>auckland.date</code>", toJSONString(auckland.date)),
-    
-    toDetailsBlock("<code>auckland.time</code>", toJSONString(auckland.time)),
-    
-    toDetailsBlock("<code>auckland.dateTime</code>", toJSONString(auckland.dateTime)),
-    
-    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Date</code>", toJSONString(auckland.zoneDate)),
-    
-    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Time</code>", toJSONString(auckland.zoneTime)),
-    
-    toDetailsBlock("<code>auckland.<span class='red'>zone</span>DateTime</code>", toJSONString(auckland.zoneDateTime)),
-    
-    toDetailsBlock("<code>taiohae.zoneDateTime</code> (<b>note</b>: UTC offset -9:30)",
-      toJSONString(taiohae.zoneDateTime)),
-    
-    `<div class="xtraTxt">
-        Date and time values as <code>Object&lt;string, number|string></code>
-          from <code>[instance].values</code> method</div>`,
-    
-    toDetailsBlock("<code>auckland.values(<span class='comment'>/*local=*/</span>false)</code>",
-      toJSONString(auckland.values(false))),
-    
-    toDetailsBlock("<code>auckland.values(true)</code>",
-      toJSONString(auckland.values(true))),
-    
-    `<div class="xtraTxt">
-      Date and time values as <code>Array&lt;Number></code>:
-        <code>[instance].toArray</code> method</div>`,
-    
-    toDetailsBlock("<code>taiohae.toArray(<span class='comment'>/*local=*/</span>false)</code>",
-      toJSONString(taiohae.toArray(false), true, true)),
-    
-    toDetailsBlock("<code>taiohae.toArray(true)</code>",
-      toJSONString(taiohae.toArray(true), true, true)),
-  )
-);
+print( toDetailChapter(`Date/time values`, `dtvalues`) );
+$(`#dtvalues`).data.set({detailBlockId: `DTValuesBlock`});
 /* endregion Date/time values */
 
 /* region ex:Offset */
-print(
-  toDetailChapter(`Offset (from)`, `offset`,
-    toDetailsBlock( "<code>taiohae.offsetFrom(now$)</code>", toJSONString(taiohae.offsetFrom(now$)) ),
-    toDetailsBlock( "<code>la.offsetFrom(auckland)</code>", toJSONString(la.offsetFrom(auckland)) ),
-    toDetailsBlock( "<code>auckland.offsetFrom(la)</code>", toJSONString(auckland.offsetFrom(la)) ),
-    toDetailsBlock( "<code>utc.offsetFrom(la)</code>", toJSONString(utc.offsetFrom(la)) ),
-    `<div class="xtraTxt">UTC offset can also be retrieved using the <code>[instance].UTCOffset</code> getter</div>`,
-    toDetailsBlock( "<code>la.UTCOffset</code>", toJSONString(la.UTCOffset) ),
-  )
-);
+print( toDetailChapter(`Offset (from)`, `offset` ) );
+$(`#offset`).data.set({detailBlockId: `offsetBlock`});
 /* endregion Offset */
 
 /* region ex:Info */
-print(
-  toDetailChapter(`Info`, `info`,
-    toDetailsBlock("<code>taiohae.info</code>", toJSONString(taiohae.info), ),
-    toDetailsBlock("<code>chongqin.info</code>", toJSONString(chongqin.info), ),
-    toDetailsBlock("<code>now$.info</code>", toJSONString(now$.info), )
-  )
-);
+print( toDetailChapter(`Info`, `info`) );
+$(`#info`).data.set({detailBlockId: `infoBlock`});
 /* endregion Info */
 
 /* region ex:Format */
-print(
-  toDetailChapter(`Format`, `format`,
-    `<div class="xtraTxt">
-        See <a target="_blank" href="https://github.com/KooiInc/dateformat">[GitHub]dateformat</a> for syntax
-     </div>`,
-    
-    toDetailsBlock("<code>auckland.<span class='red'>zone</span>Format(...)</code> formats to instance embedded locale/timeZone",
-      `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}</div>`),
-    
-    toDetailsBlock(`<code>auckland.format(...)</code> formats to <i>browser</i> locale/timeZone`,
-      `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
-        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
-    
-    toDetailsBlock("<code>now$.clone.relocate({l:\"fr-FR\"}).<span class='red'>zone</span>Format(...)</code> " +
-      "formats to browser timeZone, France locale",
-      `${now$FormatEx}<div>${
-        now$.clone.relocate({l:`fr-FR`}).zoneFormat(
-          `{=> Il est}: {<b class="red">}WD{</b>} d {<b class="red">}MM{</b>} yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)}</div>`,),
-  )
-);
+print( toDetailChapter(`Format`, `format`) );
+$(`#format`).data.set({detailBlockId: `formatBlock`});
 /* endregion Format */
 
 /* region ex:timeAcrossZones */
-print(
-  toDetailChapter(`Time across timezones`, `taz`,
-    toDetailsBlock(
-      "<code>$D.timeAcrossZones(...)</code> Auckland time vs browser time",
-      `${toCodeBlock(acrossZonesEx1)}
-      ${toJSONString($D.timeAcrossZones({timeZoneDate: auckland.value, timeZoneID: auckland.timeZone}))}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.timeAcrossZones(...)</code> Auckland time vs Los Angeles time",
-      `${toCodeBlock(acrossZonesEx2)}
-       ${toJSONString($D.timeAcrossZones({timeZoneDate: auckland.value, timeZoneID: auckland.timeZone, userTimeZoneID: la.timeZone}))}`
-    ),
-  )
-);
+print( toDetailChapter(`Time across timezones`, `taz`) );
+$(`#taz`).data.set({detailBlockId: `acrossTZSBlock`});
 /* endregion ex:timeAcrossZones */
 
 /* region ex:daysInMonth */
-print(
-  toDetailChapter(`Days in month`, `dim`,
-    `<div class="xtraTxt">Static constructor method
-    (<b class="note"></b> month number is <b class="red"><i>not</i></b> zero based)</div>`,
-    toDetailsBlock(
-      "<code>$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)</code>",
-      `=> ${$D.daysInMonth(4)}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.daysInMonth($D.now.month + 1)</code>",
-      `=> ${$D.daysInMonth($D.now.month + 1)}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.daysInMonth(2)</code> not leap year",
-      `=> ${$D.daysInMonth(2)}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.daysInMonth(2, <span class=\"comment\">/*leapYear=*/</span>true)</code> leap year",
-      `=> ${$D.daysInMonth(2, true)}`
-    ),
-    
-    `<div class="xtraTxt"><i>Instance getter</i></div>`,
-    toDetailsBlock(
-      "<code>$D(`2000/02/01`).daysThisMonth</code>",
-      `=> ${$D(`2000/02/01`).daysThisMonth}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.now.daysThisMonth</code>",
-      `=> ${$D.now.daysThisMonth}`
-    ),
-  )
-);
+print( toDetailChapter(`Days in month`, `dim`,) );
+$(`#dim`).data.set({detailBlockId: `daysInMonthBlock`});
 /* endregion ex:daysInMonth */
 
 /* region ex:weeksInYear */
-print(
-  toDetailChapter(`Weeks in year`, `wiy`,
-    `<div class="xtraTxt">Static constructor method</div>`,
-    
-    toDetailsBlock(
-      "<code>$D.weeksInYear(2020)</code>",
-      `=> ${$D.weeksInYear(2020)}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D.weeksInYear($D(\"2025/01/01\").year)</code>",
-      `=> ${$D.weeksInYear($D("2025/01/01").year)}`
-    ),
-    
-    `<div class="xtraTxt"><i>Instance getter</i></div>`,
-    toDetailsBlock(
-      "<code>$D.from(2020).weeksInYear</code>",
-      `=> ${$D(`2020/02/01`).weeksInYear}`
-    ),
-    
-    toDetailsBlock(
-      "<code>$D([2021]).weeksInYear</code>",
-      `=> ${$D([2021]).weeksInYear}`
-    ),
-  )
-);
+print( toDetailChapter(`Weeks in year`, `wiy`,) )
+$(`#wiy`).data.set({detailBlockId: `weeksInYearBlock`});
 /* endregion ex:daysInMonth */
 
 /* region ex:fullMonth */
-const [pt, th, local, deStatic] = getFullMonth();
-print(
-  toDetailChapter(`Full month localized calendar`, `fm`,
-    `<div class="xtraTxt">The instance method <code>.fullMonth([forLocale])</code> delivers
-        an Array of TickTock instances for each day of the
-        month of the instance month value, from which one
-        can for example build a calender.
-    </div>`,
-    
-    toDetailsBlock(`<b class="blue">Code</b>`, fullMonth, true),
-    
-    toDetailsBlock(
-      `<code>monthLocal.join("&lt;br>")</code> (browser locale: ${$D.localeInformation.locale}) =>`,
-      `${local.join(`<br>`)}`),
-    
-    toDetailsBlock(
-      `<code>monthPT.join("&lt;br>")</code> (Portugese) =>`,
-      `${pt.join(`<br>`)}`),
-    
-    toDetailsBlock(
-      `<code>monthTH.join("&lt;br>")</code> (Thai, buddhist year) =>`,
-      `${th.join(`<br>`)}`),
-    
-    `<div class="xtraTxt">Also available as static constructor method <code>$D.monthCalendar</code>
-      <br>(<b class="note"></b> month number is <b class="red"><i>not</i></b> zero based)</div>`,
-    
-    toDetailsBlock(
-      `<code>monthDeFromStatic.join("&lt;br>")</code> (German) =>`,
-      `${deStatic.join(`<br>`)}`),
-  )
-);
-
+print( toDetailChapter(`Full month localized calendar`, `fm` ) );
+$(`#fm`).data.set({detailBlockId: `fullMonthBlock`});
 function monthExampleReducer(acc, v) {
   if (v.dateNr < 3  || v.dateNr > 27 ) {
     const formatted  = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
@@ -416,7 +134,6 @@ function monthExampleReducer(acc, v) {
   
   return acc;
 }
-
 function getFullMonth() {
   const monthLocal = $D(`2000/02/12`)
     .fullMonth()
@@ -433,27 +150,11 @@ function getFullMonth() {
   
   return [monthPT, monthTH, monthLocal, monthDeFromStatic];
 }
-
 /* endregion ex:fullMonth */
 
-/* region ex:fullYear */
-
-/* endregion ex:fullYear */
-
-/* endregion All examples */
-
 /* region ex:yearCalendar */
-const cal = yearCalendarEx();
-print(
-  toDetailChapter(`Full year localized calendar`, `yc`,
-    `<div class="xtraTxt">
-      The constructor method <code>.yearCalendar({year, locale})</code> delivers
-        an Array of TickTock instances for each month of the
-        <code>year</code>, if applicable localized for <code>locale</code>.
-    </div>`,
-    toDetailsBlock(`<b class="blue">Code</b>`, yearCalendar, true),
-    toDetailsBlock(`<code>calendarHU</code> (year 2000, Hungarian locale) =>`, cal))
-);
+print( toDetailChapter(`Full year localized calendar`, `yc`));
+$(`#yc`).data.set({detailBlockId: `yearCalendarBlock`});
 
 function yearCalendarEx() {
   const calendar = $D.yearCalendar({year: 2000, locale: `hu`}).calendar;
@@ -466,37 +167,8 @@ function yearCalendarEx() {
 
 /* region ex:customs */
 customsExample();
-print(
-  toDetailChapter(`Create custom methods/getters`, `yc`,
-   `<div class="xtraTxt">
-      Use <code>$D.addCustom({name:string, method:function, enumerable:boolean, isGetter:boolean})</code>
-      to create custom getters or methods for the TickTock.js 'constructor'
-      (see <a
-        target="_blank"
-        href="https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions"
-        >Wiki</a>).
-   </div>`,
-   
-  toDetailsBlock(`<b class="blue">Code</b>`, customs, true),
-  
-  toDetailsBlock(
-      `<code>$D.now.<span class="red">addCentury</span>.toString({template: "{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss"})</code>`,
-      `=> ${$D.now.addCentury.toString({template: `<b class="red">yyyy</b>/mm/dd hh:mmi:ss`})}`
-    ),
-    
-    toDetailsBlock(
-      `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).<span class="red">quarterString</span>()</code>`,
-      `=> ${$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()}`),
-    
-    toDetailsBlock(
-      `<code>$D("2022/08/01 12:00").<span class="red">quarterString</span>(false)</code>`,
-      `=> ${$D("2022/08/01 12:00").quarterString(false)}`),
-    
-    toDetailsBlock(
-      `<code>$D.keys.filter(k => /addCentury|quarterString/.test(k))</code>`,
-      ` => [${$D.keys.filter(k => /addCentury|quarterString/.test(k))}]`,)
-  )
-);
+print( toDetailChapter(`Create custom methods/getters`, `custms`,) );
+$(`#custms`).data.set({detailBlockId: `customsBlock`});
 
 function customsExample() {
 // a custom, non enumerable getter
@@ -514,33 +186,47 @@ function customsExample() {
 }
 /* endregion ex:customs */
 
-/* region finish */
-hljs.highlightAll();
-/* endregion finish */
+/* endregion All examples */
 
-/* region ex:performance */
+/* region finishIt */
+hljs.highlightAll();
+$(`#bttnPerformance`).closest(`li`).append(
+  $.div(
+    {class: `xtraTxt`},
+    `page load time: `, (performance.now() - start).toFixed(1), `ms, `,
+    $.span(` $D instances loaded: `, $.span({data: {instanceCounter: 1}}, `${$D.now.iCounts}`))
+  )
+);
+$(`.spin`).remove();
+/* endregion finishIt */
+
+/* region performance */
 function createPerformancePopup() {
   const perf = perfRunner();
   $.editCssRules(
-     `#jqxPopupContent {
+    `#jqxPopupContent {
       code {
         max-width: 97%;
       }
      }`
   );
   $.Popup.show({
-    content: $.div(
-       `<b class="blue">Code</b>`,
-        performanceCode,
-        `<code>testValues</code>`, $.span(` => ${perf[0]}`),
-        $.div(`<code>plainDateTestValues </code>`, $.span(` => ${perf[1]}`)),
-        $.div({class: `xtraTxt`},  $.b({class: `note`}),
-          `consider `, $.b($.i({class: `red`}, `not`)), ` (or selectively)
-            using TickTock.js for processing a gazillion Dates &#128128;`)
+      content: $.div({class: `perf`},
+        $.div(`TickTock is not really fast ...`),
+        $.ul(
+          $.li({class: `head`}, `Created 1500 <code>TickTock</code> - and 1500 <code>Date</code> instances,
+                  and changed every instance Date value using <code>setDate</code>`),
+          $.li(`<code>TickTock</code> instances`, $.span(` => ${perf[0]}`)),
+          $.li(`<code>Date</code> instances`,
+            $.span(` => ${perf[1]}`)),
+        ),
+        $.div({class: `xtraTxt`},  $.b({class: `red`}, `Conclusion`),
+          `: consider `, $.b($.i({class: `red`}, `not`)), ` (or selectively)
+            using TickTock. In other words, TickTock is especially useful for
+            its extensions, not for bulk processing JS Date Objects.`)
       )
     }
   );
-  hljs.highlightElement($.node(`#jqxPopupContent .codeblock code`));
 }
 
 
@@ -549,10 +235,9 @@ function perfRunner() {
   const opts1 = {minimumFractionDigits: 3, maximumFractionDigits: 3};
   const opts2 = {minimumFractionDigits: 6, maximumFractionDigits: 6};
   let perfStart = performance.now(), perfEnd;
-  [...Array(1500)].map((_, i) => {
-    const now = $D.now;
-    now.date = i + 1;
-  });
+  for (let i = 0; i < 1500; i += 1) {
+    $D.now.setDate(i + 1);
+  }
   perfEnd = performance.now() - perfStart;
   let seconds = perfEnd/1000;
   let perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
@@ -561,10 +246,9 @@ function perfRunner() {
     perIterationS} <i>per iteration</i>`);
   // ---
   perfStart = performance.now();
-  [...Array(1500)].map((_, i) => {
-      const now = new Date();
-      return new Date(now.setDate(i + 1));
-    });
+  for (let i = 0; i < 1500; i += 1) {
+    new Date(new Date().setDate(i + 1));
+  }
   perfEnd = performance.now() - perfStart;
   seconds = perfEnd/1000;
   perIterationS = (seconds/1500).toLocaleString(browserLocale, opts2) + ` seconds`;
@@ -573,7 +257,6 @@ function perfRunner() {
   return results;
 }
 /* endregion performance */
-
 
 /* region helpers */
 function getCodeblocks() {
@@ -587,8 +270,9 @@ function getCodeblocks() {
   const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim());
   const yearCalendar = toCodeBlock(templates.find$(`#yearCalendar`).HTML.get().trim());
   const customs = toCodeBlock(templates.find$(`#custom`).HTML.get().trim());
+  const customSyntax = toCodeBlock(templates.find$(`#customSyntax`).HTML.get().trim());
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-          acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs };
+    acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax };
 }
 
 function toCodeBlock(str) {
@@ -601,25 +285,21 @@ function toJSONString(obj, detail = true, noFormat = false) {
 }
 
 function toDetailChapter(summary, id, ...lemmas) {
-  const elId = id.length ? `id="${id}"` : "";
-  return `
-    <details class="chapter" ${elId}>
-      <summary>
-        <span>
-          <b>${summary}</b>
-          ${id ? `<button data-close="0">all below</button>` : ``}
-        </span>
-      </summary>
-      ${lemmas.join(``)}
-    </details>`;
+  const bttnSpan = id ? $.span({class: `button`, data: {close: 0}}, `all below`) : ``;
+  return $.details(
+    {class: `chapter`, id: id ?? ``},
+      $.summary(
+        $.span( $.b(summary), ` `, bttnSpan) ),
+      $.div(...lemmas)
+    );
 }
 
-function toDetailsBlock(summary, str, open = false) {
-  return `
-    <details${open ? ` open` : ``}${open ? ` data-keep-open="1"` : ``}>
-      <summary>${summary}</summary>
-      ${str}
-    </details>`;
+function toDetailsBlock(summary, str, open) {
+  open = !!open;
+  return $.details(
+    {open: !!open, data: {keepOpen: +(open)}},
+    $.summary(summary),
+    str);
 }
 
 function firstUp(string) {
@@ -638,276 +318,13 @@ function tellTime() {
 }
 
 function initialize() {
-  $.editCssRules(
-    `body {
-      overflow-y: scroll;
-      overflow-x: auto;
-      font-family: system-ui, verdana, arial; }`,
-    `.container {
-      inset: 0;
-      position: absolute;
-      padding: 1rem 2rem;
-    }`,
-    `h2 {
-       line-height: 1.5em;
-       span#tellTime {
-          display: inline-block;
-          font-size: 14px;
-          line-height: inherit;
-          background-color: #6196cc;
-          color: floralwhite;
-          padding: 0 12px;
-          border-radius: 5px;
-          box-shadow: 2px 2px 8px #AAA;
-       }
-    }`,
-    `pre.codeblock {
-      code.hljs {
-        position: relative;
-        font-weight: normal !important;
-        padding: 0.8em;
-        width: 100%;
-        border-radius: 6px !important;
-        line-height: 1.2;
-        max-height: inherit;
-        box-shadow: 2px 2px 8px #999;
-      }
-    }`,
-    `#log2screen {
-      margin: 0 auto;
-      width: 900px;
-      @media screen and (width < 900px) {
-        max-width: 720px;
-      }
-    }`,
-    `code:not(.language-javascript) {
-      background-color: rgb(227, 230, 232);
-      color: rgb(12, 13, 14);
-      padding: 2px 4px;
-      display: inline-block;
-      border-radius: 4px;
-      margin: 1px 0;
-    }`,
-    `b.note {
-      color: red;
-      &:before {
-        content: 'Note'
-      }
-      &:after {
-        color: initial;
-        content: ': ';
-        font-weight: normal;
-      }
-    }`,
-    `details {
-       cursor: pointer;
-       font-size: 1em;
-       
-       button {
-         &[data-close="0"]:before {
-            content: "Open ";
-         }
-         
-         &[data-close="1"]:before {
-            content: "Close ";
-         }
-      }
-       
-       &.chapter {
-          &:open {
-            summary {
-              button { display: inline-block; }
-              color: green;
-              list-style: inside disclosure-open;
-              span:not(.red, .comment) {
-                padding: 4px 5px;
-                background-color: #6196cc;
-                color: floralwhite;
-                border-radius: 3px;
-                display: inline-block;
-              }
-            }
-          }
-          summary {
-            button { display: none; }
-            font-family: monospace;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: black;
-            margin-bottom: 0.5rem;
-            padding: 0;
-            span:not(.red,.comment) {
-              padding: 2px 4px;
-              &:hover {
-                background-color: #6196cc;
-                color: floralwhite;
-                border-radius: 3px;
-              }
-            }
-          }
-          
-          div {
-            font-weight: normal;
-            color: darkolivegreen;
-          }
-          
-          details:not(.chapter) {
-            margin-left: 2rem;
-            
-            summary {
-              font-size: 1rem;
-              color: green;
-              list-style: outside disclosure-closed;
-              text-decoration: none;
-              color: black;
-              font-weight: normal;
-              margin-bottom: 0.2rem;
-            }
-            &:open {
-              position: relative;
-              summary { list-style: outside disclosure-open; }
-            }
-          }
-        }
-     }`,
-    `button {
-      &[data-allopen="1"]:before {
-        content: "Close ";
-      }
-      &[data-allopen="0"]:before {
-        content: "Open ";
-      }
-    }`,
-    `pre.detail { margin: 0.2em 0; position: relative; }`,
-    `a code:hover { text-decoration: underline; }`,
-    `sup.inline {
-      margin-top: -4px;
-      display: inline-block;
-    }`,
-    `#log2screen li {
-      list-style: none;
-      margin: 0.7rem 0px 0px -1.2rem;
-      padding-left: 0;
-      
-      .content pre { max-width: 90%; }
-      
-      ul {
-        margin-left: -1.2rem;
-        color: #777;
-        li {
-          list-style: "✓";
-          margin: revert;
-          padding-left: 0.2rem;
-        }
-      }
-    }`,
-    `.red { color: red; font-weight: bold; }`,
-    `.blue { color: blue; }`,
-    `#log2screen li div {
-      font-weight: normal;
-      color: darkolivegreen;
-      max-width: 100%;
-      h3 { color: black; margin: 0; margin-top: 0.2rem !important; }
-      div.xtraTxt {
-        color: #555;
-        padding: 0.2rem 5rem 0.2rem 2.2rem;
-        
-        &:before {
-          content: '☑️ ';
-          margin-left: -1.6rem;
-        }
-      }
-      div {
-        margin: 0.4rem 0;
-        
-        code.block {
-          display: block;
-          padding: 0.5rem;
-          margin: 0.4rem 0;
-          white-space: pre;
-        }
-      }
-    }`,
-    `.comment { color: #888; font-weight: normal;}`,
-    `.warn {
-      color: red;
-      code { color: inherit; }
-    }`,
-    `#demoClock {
-      max-width: 200px;
-      position: fixed;
-      /*top: 1rem;*/
-      /*right: 2em;*/
-      background-color: white;
-      opacity: 0.7;
-      border-radius: 5%;
-    }`,
-    `.clockLine {
-      float: none;
-      clear: both;
-      margin: 0 auto;
-      font-size: 0.9em;
-
-      .clockContainer {
-        height: auto;
-        padding: 3px 0.2rem;
-        text-align: center;
-
-        .footer {
-          display: block;
-          text-wrap: nowrap;
-         }
-         
-        .clock {
-          position: relative;
-          height: 100px;
-          width: 100px;
-          margin: 0 auto;
-          background: ${getClockFace()} no-repeat;
-          background-size: contain;
-          
-          .hour, .minute, .second {
-            position: absolute;
-            border-radius: 10px;
-            transform-origin: bottom;
-            background-color: black;
-          }
-         
-          .hour {
-            width: 1.8%;
-            height: 25%;
-            top: 25%;
-            left: 48.85%;
-            opacity: 0.8;
-         }
-        
-          .minute {
-            width: 1.5%;
-            height: 30%;
-            top: 19%;
-            left: 48.9%;
-            opacity: 0.8;
-            background-color: #555;
-          }
-        
-          .second {
-            width: 0.8%;
-            height: 40%;
-            top: 9%;
-            left: 49.25%;
-            opacity: 0.8;
-            background-color: red;
-          }
-        }
-      }
-    }`
-  );
+  printHeader();
   handlers();
 }
 
 function handlers() {
   $.delegate(`click`, `#bttnOpenClose, #bttnPerformance, details.chapter, button[data-close]`, ({evt}) => {
-    const isLemmaBttn = evt.target.dataset.close;
+    const isLemmaBttn = evt.target.closest(`.button`)?.dataset.close;
     const mainBttn = evt.target.closest(`#bttnOpenClose`);
     const lemma = evt.target.closest(`details:not(.chapter)`);
     const chapter = evt.target.closest(`.chapter`);
@@ -921,7 +338,6 @@ function handlers() {
           $(el).find(`details`).forEach(dt => dt.open = !!dt.dataset?.keepOpen);
         }
       });
-      
       return mainBttn.dataset.allopen = allOpen ? `0` : `1`;
     }
     
@@ -929,18 +345,37 @@ function handlers() {
       evt.preventDefault();
       const open = isLemmaBttn === `0`;
       const chapter = $(evt.target.closest(`.chapter`));
-      chapter.find$(`details`).each(dt => dt.open = dt.dataset?.keepOpen ? true : open);
+      chapter.find$(`details`).each(dt => { dt.open = dt.dataset?.keepOpen === `1` ? true : open; });
       evt.target.dataset.close = `${+(!!open)}`;
       return true;
     }
     
     if (lemma) {
       return setTimeout( () => {
-        $.node(`button`, evt.target.closest(`.chapter`)).dataset.close = `${+(!!lemma.open)}`;
+        $.node(`.button`, evt.target.closest(`.chapter`)).dataset.close = `${+(!!lemma.open)}`;
       });
     }
     
     if (chapter) {
+      const detailBlock = chapter.dataset.detailBlockId;
+      
+      // lazy load
+      if (!!detailBlock && !chapter.querySelectorAll(`details`).length) {
+        const thisBlock = detailBlocks[detailBlock]();
+        $(chapter).append(...thisBlock);
+        $(`[data-instance-counter]`).text(`${$D.now.iCounts}`);
+        const codeBlocks = chapter.querySelectorAll(`.codeblock`);
+        
+        if (codeBlocks.length) {
+          for (const cblock of codeBlocks) {
+            const codeElement = cblock.querySelector(`code`);
+            if (!codeElement.dataset?.highligthed) {
+              hljs.highlightElement(codeElement);
+            }
+          }
+        }
+      }
+      
       return setTimeout(() => {
         const theDetailsElements = $.nodes(`details.chapter`).filter(el => el.open);
         const theBttn = $.node(`#bttnOpenClose`);
@@ -1015,8 +450,416 @@ function clockFactory() {
   }
 }
 
-function getClockFace() {
-  return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' width='200' height='200'%3E%3ClinearGradient id='a' x1='.7495' x2='198.2495' y1='1.252' y2='197.752' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23666'/%3E%3Cstop offset='1' stop-color='%23b2b2b2'/%3E%3C/linearGradient%3E%3Ccircle cx='100' cy='100' r='97.5' fill='url(%23a)'/%3E%3ClinearGradient id='b' x1='21.7056' x2='177.7056' y1='16.687' y2='182.687' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%23e5e5e5'/%3E%3Cstop offset='1' stop-color='%23fff'/%3E%3C/linearGradient%3E%3Ccircle cx='100' cy='100' r='93.5' fill='url(%23b)'/%3E%3CradialGradient id='c' cx='59.1675' cy='35.834' r='252.8037' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='.1057' stop-color='%23fff'/%3E%3Cstop offset='1' stop-color='%23e5e5e5'/%3E%3C/radialGradient%3E%3Ccircle cx='100' cy='100' r='88.5' fill='url(%23c)'/%3E%3Cpath d='M96.695 14.852V26.5h-3.219v-7.633c-.521.396-1.025.716-1.512.961-.487.245-1.098.479-1.832.703v-2.609c1.083-.349 1.924-.768 2.523-1.258.599-.489 1.067-1.094 1.406-1.813h2.634zM109.469 26.5h-9.547c.109-.942.441-1.829.996-2.66.555-.831 1.595-1.811 3.121-2.941.932-.692 1.528-1.219 1.789-1.578.26-.359.391-.7.391-1.023 0-.349-.129-.647-.387-.895-.258-.247-.582-.371-.973-.371-.406 0-.738.128-.996.383s-.432.706-.52 1.352l-3.188-.258c.125-.896.354-1.595.688-2.098.333-.502.803-.888 1.41-1.156.606-.268 1.446-.402 2.52-.402 1.119 0 1.99.128 2.613.383.622.255 1.111.647 1.469 1.176.356.529.535 1.121.535 1.777 0 .698-.205 1.365-.613 2-.409.636-1.152 1.333-2.23 2.094-.641.443-1.069.753-1.285.93-.217.177-.471.409-.762.695h4.969V26.5zm68.437 69.27-3.008-.539c.25-.958.73-1.692 1.441-2.203.711-.51 1.717-.766 3.02-.766 1.494 0 2.575.279 3.242.836.666.558 1 1.258 1 2.102 0 .495-.136.943-.406 1.344-.271.401-.68.753-1.227 1.055.442.109.781.237 1.016.383.38.234.676.543.887.926s.316.84.316 1.371c0 .667-.175 1.307-.523 1.918-.35.612-.852 1.084-1.508 1.414s-1.519.496-2.586.496c-1.042 0-1.863-.123-2.465-.367s-1.097-.603-1.484-1.074c-.389-.471-.687-1.063-.895-1.777l3.18-.422c.125.641.318 1.085.582 1.332.263.248.598.371 1.004.371.427 0 .782-.156 1.066-.469.283-.313.426-.729.426-1.25 0-.531-.137-.942-.41-1.234-.273-.292-.645-.438-1.113-.438-.25 0-.594.063-1.031.188l.164-2.273c.177.026.314.039.414.039.416 0 .764-.133 1.043-.398.278-.266.418-.581.418-.945 0-.349-.104-.627-.313-.836-.209-.208-.495-.313-.859-.313-.375 0-.68.113-.914.34s-.394.621-.477 1.189zm-160.945 5.57 3.164-.398c.083.443.224.756.422.938.198.183.44.273.727.273.51 0 .909-.258 1.195-.773.208-.38.364-1.185.469-2.414-.38.391-.771.677-1.172.859-.401.183-.865.273-1.391.273-1.026 0-1.892-.364-2.598-1.094-.706-.729-1.059-1.651-1.059-2.766 0-.76.18-1.453.539-2.078s.854-1.098 1.484-1.418c.63-.32 1.422-.48 2.375-.48 1.146 0 2.065.197 2.758.59.692.394 1.246 1.019 1.66 1.875.414.857.621 1.988.621 3.395 0 2.068-.435 3.582-1.305 4.543-.87.961-2.076 1.441-3.617 1.441-.912 0-1.63-.105-2.156-.316-.526-.211-.964-.52-1.313-.926-.347-.407-.616-.915-.803-1.524zm5.859-5.11c0-.62-.156-1.105-.469-1.457s-.693-.527-1.141-.527c-.422 0-.772.159-1.051.477-.279.318-.418.794-.418 1.43 0 .641.145 1.13.434 1.469.289.339.649.508 1.082.508.448 0 .82-.164 1.117-.492s.446-.798.446-1.408zm81.211 79.895-3.164.391c-.084-.442-.223-.755-.418-.938-.195-.182-.437-.273-.723-.273-.516 0-.917.261-1.203.781-.208.375-.362 1.178-.461 2.406.38-.385.771-.67 1.172-.855.401-.185.864-.277 1.391-.277 1.021 0 1.884.365 2.59 1.094.705.729 1.059 1.654 1.059 2.773 0 .756-.179 1.445-.535 2.07-.357.625-.852 1.098-1.484 1.418s-1.426.48-2.379.48c-1.146 0-2.065-.195-2.758-.586-.693-.391-1.246-1.014-1.66-1.871-.414-.856-.621-1.99-.621-3.402 0-2.067.435-3.582 1.305-4.543.87-.961 2.075-1.441 3.617-1.441.911 0 1.631.105 2.16.316.528.211.967.52 1.316.926.348.406.614.917.796 1.531zm-5.859 5.102c0 .62.156 1.105.469 1.457s.695.527 1.148.527c.417 0 .766-.158 1.047-.477.281-.317.422-.791.422-1.422 0-.646-.146-1.138-.438-1.477-.292-.338-.654-.508-1.086-.508-.443 0-.814.164-1.113.492-.3.329-.449.798-.449 1.408zM143.73 26.383l-2.963-1.711-3.1 5.369c1 .551 1.991 1.115 2.965 1.708l3.098-5.366zM55.268 172.761l2.962 1.711 3.163-5.478c-1-.55-1.992-1.114-2.966-1.705l-3.159 5.472zm85.5 1.711 2.963-1.711-3.159-5.472c-.974.592-1.965 1.156-2.966 1.706l3.162 5.477zM58.23 24.671l-2.962 1.711 3.098 5.366c.973-.592 1.965-1.157 2.965-1.708l-3.101-5.369zm114.458 119.133 1.712-2.962-5.455-3.149c-.551 1-1.116 1.991-1.708 2.964l5.451 3.147zM26.311 55.341 24.6 58.303l5.393 3.114c.549-1.001 1.114-1.992 1.705-2.966l-5.387-3.11zm-2.139 85.927 1.709 2.962 5.965-3.443c-.594-.972-1.161-1.961-1.714-2.96l-5.96 3.441zm149.8-82.537-1.711-2.962-4.88 2.818c.589.975 1.157 1.963 1.705 2.965l4.886-2.821z'/%3E%3CradialGradient id='d' cx='99.5' cy='99.5' r='7' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='.0088' stop-color='%234d4d4d'/%3E%3Cstop offset='1'/%3E%3C/radialGradient%3E%3Ccircle cx='99.5' cy='99.5' r='7' fill='url(%23d)'/%3E%3Ccircle cx='99.5' cy='99.5' r='3'/%3E%3C/svg%3E")`;
+function allBlocks() {
+  function retrieveYearCalendarBlock() {
+    const cal = yearCalendarEx();
+    return [
+      $.div({class: "xtraTxt"},
+        `The constructor method <code>.yearCalendar({year, locale})</code> delivers
+            an Array of TickTock instances for each month of the
+            <code>year</code>, if applicable localized for <code>locale</code>.`),
+      toDetailsBlock($.b({class: "blue"}, `Code used`), yearCalendar),
+      toDetailsBlock($.div($.code(`calendarHU <span class="comment">/* See 'Code used' */`), ` (year 2000, Hungarian locale) =>`), cal)
+    ];
+  }
+  function retrieveFullMonthBlock() {
+    const [pt, th, local, deStatic] = getFullMonth();
+    return [
+      $.div(
+        {class: "xtraTxt"},
+        `The instance method `,
+        $.code(`.fullMonth([forLocale])`), `delivers
+            an Array of TickTock instances for each day of the
+            month of the instance month value, from which one
+            can for example build a calender.`
+      ),
+      
+      toDetailsBlock($.b({class:"blue"}, `Code used`), fullMonth),
+      
+      toDetailsBlock(
+        $.div($.code(`monthLocal.join("&lt;br>")`), ` (browser locale: ${$D.localeInformation.locale})`),
+        `${local.join(`<br>`)}`),
+      
+      toDetailsBlock(
+        $.div($.code(`monthPT.join("&lt;br>")`), ` (Portugese)`),
+        `${pt.join(`<br>`)}`),
+      
+      toDetailsBlock(
+        $.div($.code(`monthTH.join("&lt;br>")`), ` (Thai, buddhist year)`),
+        `${th.join(`<br>`)}`),
+      
+      $.div(
+        {class: "xtraTxt"},
+        `Also available as static constructor method `,
+        $.code(`$D.monthCalendar`),
+        $.div($.b({class: "note"}),
+          `month number is `,
+          $.b({class: "red"}, $.i(`not`)),
+          ` zero based`),
+      ),
+      
+      toDetailsBlock(
+        $.div($.code(`monthDeFromStatic.join("&lt;br>")`, ` (German) =>`)),
+        `${deStatic.join(`<br>`)}`)
+    ];
+  }
+  return {
+    headerElements() {
+      return [
+          $.h3($.a({target: "_top", href: "https://github.com/KooiInc/ticktock.js"}, `Github Repository`)),
+          $.h2({data: {topline: 1}}, `TickTock.js Examples (work in progress) `, $.span({id: "tellTime"})),
+          initialCode,
+          $.div(
+            $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
+            `&nbsp;`,
+            $.button({id: `bttnPerformance`}, `About performance`)),
+        ];
+    },
+    instantiationBlocks() {
+      return [
+        toDetailsBlock($.div($.code(`$D("2000/01/01 22:00")`), ` (browser time zone)`), $D("2000/01/01 22:00").toString()),
+        toDetailsBlock($.div($.code(`$D([2000,0,1,22])`), ` (browser time zone)`), $D([2000,0,1,22]).toString()),
+        toDetailsBlock($.div($.code(`$D.from(2000,0,1,22)`), ` (browser time zone)`), $D.from(2000,0,1,22).toString()),
+        toDetailsBlock($.div($.code(`$D()`), ` (now, browser time zone)`), $D().toString()),
+        toDetailsBlock($.div($.code(`$D.now`), ` (now, browser time zone)`), $D.now.toString()),
+        toDetailsBlock($.div($.code(`$D({timeZone: "America/New_York"})`), ` (now New York time zone)`),
+          $D({timeZone: "America/New_York"}).toString()),
+        toDetailsBlock($.div($.code(`$D("2000/01/01 22:00", {tz: "America/New_York"})`), ` (New York time zone)`),
+          $D("2000/01/01 22:00", {tz: "America/New_York"}).toString()),
+        toDetailsBlock($.div($.code(`$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})`), ` (New York time zone)`),
+          $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
+        toDetailsBlock($.div($.code(`$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)`),
+          ` (New York time zone)`), $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
+        toDetailsBlock($.div($.code(`$D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030)`), ` (from unix timestamp)`),
+          $D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030).toString()),
+      ];
+    },
+    localeTZBlock() {
+      return [
+        toDetailsBlock(
+          $.div($.code(`$D.localeInformation`), `: environment (here: browser) locale- and timeZone information`),
+          toJSONString($D.localeInformation, true)),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"})`), ` Valid`),
+          toJSONString($D.validateLocaleInformation({locale: "cs-CZ", tz: "Europe/Prague"}))),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.validateLocaleInformation({l:"de-CH", tz: "Bern"})`), ` timeZone invalid`),
+          `timeZone "Bern" not valid, so environment timeZone (${$D.localeInformation.timeZone})<br>${
+            toJSONString($D.validateLocaleInformation({l:"de-CH", tz: "Bern"}))}`),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"})`), ` locale invalid`),
+          `locale "ch" not valid, so environment locale (${$D.localeInformation.locale})<br>${
+            toJSONString($D.validateLocaleInformation({l:"ch", tz: "Europe/Zurich"}))}`),
+        
+        toDetailsBlock(
+          $.div($.code(`now$.localeInfo`)),
+          toJSONString(now$.localeInfo, true)),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.localeInfo`), ` (chinese locale, Chongqing timeZone)`),
+          toJSONString(chongqin.localeInfo, true)),
+      ];
+    },
+    toStringBlock() {
+      return [
+        toDetailsBlock(
+          $.div($.code(`chongqin.toString()`), ` (Chongqing timeZone)`),
+          chongqin.toString(), true),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.<span class="red">value</span>.toString()`), ` (<i>your</i> timeZone)`),
+          chongqin.value.toString(), true),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.toString({<span class="red">local: true</span>})`), ` (<i>your</i> timeZone)`),
+          chongqin.toString({local: true}), true),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.toString({template: "WD d MM yyyy"})`), ` (see Format)`),
+          chongqin.toString({template: "WD d M yyyy"}), true)
+      ];
+    },
+    namesBlock() {
+      return [
+        toDetailsBlock(
+          $.div($.code(`$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")`)),
+          $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")`)),
+          $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
+        
+        toDetailsBlock(
+          $.div($.code(`berlin.dayName`),` / `, $.code(`berlin.zoneDayname`)),
+          `${berlin.dayName} / ${berlin.zoneDayname}`),
+        
+        toDetailsBlock(
+          $.div($.code(`berlin.monthName`), ` / `, $.code(`berlin.zoneMonthname`)),
+          `${berlin.monthName} / ${berlin.zoneMonthname}`),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.monthName`), ` / `, $.code(`chongqin.zoneMonthname`)),
+          `${chongqin.monthName} / ${chongqin.zoneMonthname}`),
+        
+        toDetailsBlock( $.div($.code(`chongqin.names`)), toJSONString(chongqin.names)),
+        
+        toDetailsBlock(
+          $.div($.code(`chongqin.<span class="red">zone</span>Names.monthNames.long`)),
+          toJSONString(chongqin.zoneNames.monthNames.long)),
+        
+        toDetailsBlock(
+          $.div($.code(`paris.relocate({l:"fr"}).zoneNames.dayNames.long`)),
+          toJSONString(paris.relocate({l: "fr"}).zoneNames.dayNames.long)),
+        
+        toDetailsBlock(
+          $.div($.code(`paris.clone.relocate({l:"ar-DZ"}).zoneNames.monthNames.long`)),
+          toJSONString(paris.clone.relocate({l: "ar-DZ"}).zoneNames.monthNames.long)),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.localMonthnames("fr")`)),
+          toJSONString($D.localMonthnames("fr")) ),
+      ];
+    },
+    differenceBlock() {
+      return [
+          toDetailsBlock(
+            $.div($.code(`chongqin.differenceTo(auckland)`)),
+            toJSONString(chongqin.differenceTo(auckland), true)),
+          
+          toDetailsBlock($.div($.code(`vancouver.differenceTo(now$)`)),
+            toJSONString(vancouver.differenceTo(now$), true)),
+          
+          toDetailsBlock($.div($.code(`la.differenceTo(auckland)`)),
+            toJSONString(la.differenceTo(auckland), true)),
+          
+          toDetailsBlock($.div($.code(`now$.differenceTo(utc)`)),
+            toJSONString(now$.differenceTo(utc), true)),
+          
+          toDetailsBlock($.div($.code(`paris.differenceTo(taiohae)`)),
+            toJSONString(taiohae.differenceTo(paris), true)),
+          
+          toDetailsBlock($.div($.code(`paris.differenceTo(berlin)`)),
+            toJSONString(paris.differenceTo(berlin), true))
+      ];
+    },
+    formatBlock() {
+      return [
+        $.div(
+          {class:"xtraTxt"},
+          `See `,
+          $.a({target:"_blank", href:"https://github.com/KooiInc/dateformat"}, `[GitHub]dateformat`),
+          ` for syntax`
+        ),
+        toDetailsBlock(
+          $.div($.code(`auckland.<span class='red'>zone</span>Format(...)`), ` formats to instance embedded locale/timeZone`),
+          `${aucklandZoneFormatEx}<div>${auckland.zoneFormat('{=> in Auckland it\'s now} WD MM d yyyy, hh:mmi:ss dp')}`),
+        
+        toDetailsBlock($.div($.code(`auckland.format(...)`), ` formats to <i>browser</i> locale/timeZone`),
+          `${aucklandFormatEx}<div>${auckland.format(`{=> formatted for (browser) locale '${browserLocale}'
+        and - timeZone '${browserTZ}}'<br>WD MM d yyyy, hh:mmi:ss dp`)}</div>`),
+        
+        toDetailsBlock(
+          $.div($.code(`now$.clone.relocate({l:\"fr-FR\"}).<span class='red'>zone</span>Format(...)`),
+          `formats to browser timeZone, France locale`),
+          `${now$FormatEx}<div>${
+            now$.clone.relocate({l:`fr-FR`}).zoneFormat(
+              `{=> Il est}: {<b class="red">}WD{</b>} d {<b class="red">}MM{</b>} yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)}</div>`,),
+      ]
+    },
+    DTValuesBlock() {
+      return [
+        toDetailsBlock($.div($.code(`auckland.date`)), toJSONString(auckland.date)),
+        
+        toDetailsBlock($.div($.code(`auckland.time`)), toJSONString(auckland.time)),
+        
+        toDetailsBlock($.div($.code(`auckland.dateTime`)), toJSONString(auckland.dateTime)),
+        
+        toDetailsBlock($.div($.code(`auckland.<span class='red'>zone</span>Date`)), toJSONString(auckland.zoneDate)),
+        
+        toDetailsBlock($.div($.code(`auckland.<span class='red'>zone</span>Time`)), toJSONString(auckland.zoneTime)),
+        
+        toDetailsBlock($.div($.code(`auckland.<span class='red'>zone</span>DateTime`)), toJSONString(auckland.zoneDateTime)),
+        
+        toDetailsBlock($.div($.code(`taiohae.zoneDateTime`),` (<b>note</b>: UTC offset -9:30)`),
+          toJSONString(taiohae.zoneDateTime)),
+        
+        $.div(
+          {class: "xtraTxt"},
+          ` Date and time values as <code>Object&lt;string, number|string></code>
+              from <code>[instance].values</code> method`),
+        
+        toDetailsBlock($.div($.code(`auckland.values(<span class='comment'>/*local=*/</span>false)`)),
+          toJSONString(auckland.values(false))),
+        
+        toDetailsBlock($.div($.code(`auckland.values(true)`)),
+          toJSONString(auckland.values(true))),
+        
+        $.div(
+          {class: "xtraTxt"},
+          `Date and time values as <code>Array&lt;Number></code>:
+           <code>[instance].toArray</code> method`),
+        
+        toDetailsBlock($.div($.code(`taiohae.toArray(<span class='comment'>/*local=*/</span>false)`)),
+          toJSONString(taiohae.toArray(false), true, true)),
+        
+        toDetailsBlock($.div($.code(`taiohae.toArray(true)`)),
+          toJSONString(taiohae.toArray(true), true, true)),
+      ];
+    },
+    offsetBlock() {
+      return [
+        toDetailsBlock( $.div($.code(`taiohae.offsetFrom(now$)`)), toJSONString(taiohae.offsetFrom(now$)) ),
+        toDetailsBlock( $.div($.code(`la.offsetFrom(auckland)`)), toJSONString(la.offsetFrom(auckland)) ),
+        toDetailsBlock( $.div($.code(`auckland.offsetFrom(la)`)), toJSONString(auckland.offsetFrom(la)) ),
+        toDetailsBlock( $.div($.code(`utc.offsetFrom(la)`)), toJSONString(utc.offsetFrom(la)) ),
+        $.div(
+          {class: "xtraTxt"},
+          `UTC offset can also be retrieved using the <code>[instance].UTCOffset</code> getter`
+        ),
+        toDetailsBlock( $.div($.code(`la.UTCOffset`)), toJSONString(la.UTCOffset) ),
+      ]
+    },
+    infoBlock() {
+      return [
+        toDetailsBlock($.div($.code(`taiohae.info`)), toJSONString(taiohae.info), ),
+        toDetailsBlock($.div($.code(`chongqin.info`)), toJSONString(chongqin.info), ),
+        toDetailsBlock($.div($.code(`now$.info`)), toJSONString(now$.info), )
+      ]
+    },
+    acrossTZSBlock() {
+      return [
+        toDetailsBlock(
+          $.div($.code(`$D.timeAcrossZones(...)`), ` Auckland time vs browser time`),
+          `${acrossZonesEx1}
+              ${toJSONString($D.timeAcrossZones( {
+                timeZoneDate: auckland.value,
+                timeZoneID: auckland.timeZone})
+              )}`
+          ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.timeAcrossZones(...)`), `Auckland time vs Los Angeles time`),
+          `${acrossZonesEx2}
+              ${toJSONString($D.timeAcrossZones( {
+                timeZoneDate: auckland.value,
+                timeZoneID: auckland.timeZone,
+                userTimeZoneID: la.timeZone} ))}`
+          ),
+      ]
+    },
+    daysInMonthBlock() {
+      return [
+        $.div(
+          {class: "xtraTxt"},
+          `Static constructor method `,
+          $.b({class: "note"}),
+          `month number is <b class="red"><i>not</i></b> zero based)`
+        ),
+        toDetailsBlock(
+          $.div($.code(`$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)`)),
+          `=> ${$D.daysInMonth(4)}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.daysInMonth($D.now.month + 1)`)),
+          `=> ${$D.daysInMonth($D.now.month + 1)}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.daysInMonth(2)`), ` not leap year`),
+          `=> ${$D.daysInMonth(2)}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.daysInMonth(2, <span class=\"comment\">/*leapYear=*/</span>true)`), ` leap year`),
+          `=> ${$D.daysInMonth(2, true)}`
+        ),
+        
+        $.div( {class: "xtraTxt"}, $.i(`Instance getter`) ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D("2000/02/01").daysThisMonth`)),
+          `=> ${$D(`2000/02/01`).daysThisMonth}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.now.daysThisMonth`)),
+          `=> ${$D.now.daysThisMonth}`
+        ),
+      ]
+    },
+    weeksInYearBlock() {
+      return [
+        $.div({class: "xtraTxt"}, `Static constructor method`),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.weeksInYear(2020)`)),
+          `=> ${$D.weeksInYear(2020)}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D.weeksInYear($D(\"2025/01/01\").year)`)),
+          `=> ${$D.weeksInYear($D("2025/01/01").year)}`
+        ),
+        
+        $.div({class: "xtraTxt"}, $.i(`Instance getter`)),
+        toDetailsBlock(
+          $.div($.code(`$D.from(2020).weeksInYear`)),
+          `=> ${$D(`2020/02/01`).weeksInYear}`
+        ),
+        
+        toDetailsBlock(
+          $.div($.code(`$D([2021]).weeksInYear`)),
+          `=> ${$D([2021]).weeksInYear}`
+        ),
+      ]
+    },
+    fullMonthBlock() { return retrieveFullMonthBlock(); },
+    yearCalendarBlock() { return retrieveYearCalendarBlock(); },
+    customsBlock() {
+      return [
+        $.div(
+          {class:"xtraTxt"},
+          `Use `, customSyntax,
+          // $.code(`[imported TickTock constructor`, $.span({class: `comment`}, `/* here $D */`),
+          //   `]`, $.br(),`&nbsp;&nbsp;.addCustom({`,
+          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;name:string,`,
+          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;method:function`,
+          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;enumerable:boolean,`,
+          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;isGetter:boolean})`),
+          $.div(` to create custom getters or methods for the TickTock 'constructor'.`,
+          ` See also`,
+          $.a( {
+              target: "_blank",
+              href:"https://github.com/KooiInc/ticktock.js/wiki/The-TickTock-%27constructor%27-and-its-static-extensions#customExtensions"},
+            `Wiki`))
+        ),
+        
+        toDetailsBlock($.b({class: "blue"}, `Code used`), customs),
+        
+        toDetailsBlock(
+          `<code>$D.now.<span class="red">addCentury</span>.toString({template: "{&lt;b class='red'>}yyyy{&lt;/b>}/mm/dd hh:mmi:ss"})</code>`,
+          `=> ${$D.now.addCentury.toString({template: `<b class="red">yyyy</b>/mm/dd hh:mmi:ss`})}`
+        ),
+        
+        toDetailsBlock(
+          `<code>$D("2022/04/01 12:00", {locale: "en-CA"}).<span class="red">quarterString</span>()</code>`,
+          `=> ${$D("2022/04/01 12:00", {locale: "en-CA"}).quarterString()}`),
+        
+        toDetailsBlock(
+          `<code>$D("2022/08/01 12:00").<span class="red">quarterString</span>(false)</code>`,
+          `=> ${$D("2022/08/01 12:00").quarterString(false)}`),
+        
+        toDetailsBlock(
+          `<code>$D.keys.filter(k => /addCentury|quarterString/.test(k))</code>`,
+          ` => [${$D.keys.filter(k => /addCentury|quarterString/.test(k))}]`,)
+      ]
+    }
+  };
+  
 }
 
 async function fetchTemplates() {
