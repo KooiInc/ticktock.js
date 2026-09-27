@@ -52,20 +52,12 @@ function printHeader() {
 /* endregion header */
 
 /* region All examples */
-/* region instantiation */
+/* region ex:instantiation */
 print(
-  toDetailChapter(`Instantiation`, `inst`,
-    $.div(
-      {class: `xtraTxt`},
-      `There are several ways to create a TickTock date instance. Here are a few examples.`,
-      $.div($.b({class: "note"}),
-      `Instances are displayed using the by TickTock module `, $.code(`toString`), ` method.`
-      )
-    ),
-  )
+  toDetailChapter(`Instantiation`).data.set({detailBlockId: `instantiationBlocks`})
 );
-$(`#inst`).data.set({detailBlockId: `instantiationBlocks`});
-/* endregion instantiation */
+//$(`#inst`).data.set({detailBlockId: `instantiationBlock`});
+/* endregion ex:instantiation */
 
 /* region ex:locale/timeZone */
 print( toDetailChapter(`locale/timeZone`, `ltz`,) );
@@ -73,8 +65,10 @@ $(`#ltz`).data.set({detailBlockId: `localeTZBlock`});
 /* endregion locale/timeZone */
 
 /* region ex:toString */
-print( toDetailChapter(`toString`, `tstr`) );
-$(`#tstr`).data.set({detailBlockId: `toStringBlock`});
+print(
+  toDetailChapter(`toString`).attr({id: `tstr`}).data.set({detailBlockId: `toStringBlock`})
+);
+
 /* endregion toString */
 
 /* region ex:Names */
@@ -200,7 +194,7 @@ $(`.codeblock`).first$().closest(`li`).append(
       $.span(
         $.span(`page load time: `, $.b(((performance.now() - start)/1000).toFixed(3)), ` seconds, `),
         $.span(
-          ` $D instances used: `,
+          ` $D instances: `,
           $.span({data: {instanceCounter: 1}, style: `font-weight: bold;`}, `${$D.iCount.value}`)
         )
       ) || ``,
@@ -223,21 +217,24 @@ function createPerformancePopup() {
       content: $.div({class: `perf`},
         $.div(`TickTock is not really fast ...`),
         $.ul(
-          $.li({class: `head`}, `Created 1500 <code>TickTock</code> - and 1500 <code>Date</code> instances,
-                  and changed every instance Date value using <code>setDate</code>`),
+          $.li(
+            {class: `head`},
+            `Created 1500 <code>TickTock</code> - and 1500 <code>Date</code> instances,
+             and changed every (instance) Date subsequently using <code>setDate</code>`),
           $.li(`<code>TickTock</code> instances`, $.span(` => ${perf[0]}`)),
           $.li(`<code>Date</code> instances`,
             $.span(` => ${perf[1]}`)),
         ),
         $.div({class: `xtraTxt`},  $.b({class: `red`}, `Conclusion`),
           `: consider `, $.b($.i({class: `red`}, `not`)), ` (or selectively)
-            using TickTock. In other words, TickTock is especially useful for
-            its extensions, not for bulk processing JS Date Objects.`)
+            using TickTock when the number of Dates to process is huge.
+            In other words, TickTock may be specifically useful for
+            its extensions and international date processing,
+            not for bulk processing ES Date Objects.`)
       )
     }
   );
 }
-
 
 function perfRunner() {
   const results = [];
@@ -530,21 +527,33 @@ function allBlocks() {
     },
     instantiationBlocks() {
       return [
-        toDetailsBlock($.div($.code(`$D("2000/01/01 22:00")`), ` (browser time zone)`), $D("2000/01/01 22:00").toString()),
-        toDetailsBlock($.div($.code(`$D([2000,0,1,22])`), ` (browser time zone)`), $D([2000,0,1,22]).toString()),
-        toDetailsBlock($.div($.code(`$D.from(2000,0,1,22)`), ` (browser time zone)`), $D.from(2000,0,1,22).toString()),
-        toDetailsBlock($.div($.code(`$D()`), ` (now, browser time zone)`), $D().toString()),
-        toDetailsBlock($.div($.code(`$D.now`), ` (now, browser time zone)`), $D.now.toString()),
+        $.div(
+          {class: `xtraTxt`},
+          `There are several ways to create a TickTock date instance. Here are a few examples.`,
+          $.div($.b({class: "note"}),
+            `Instances are displayed using the by TickTock module `, $.code(`toString`), ` method.`
+          )
+        ),
+        toDetailsBlock($.div($.code(`$D("2000/01/01 22:00")`), ` (browser time zone)`), $D("2000/01/01 22:00").toString(), true),
+        toDetailsBlock($.div($.code(`$D([2000,0,1,22])`), ` (browser time zone)`), $D([2000,0,1,22]).toString(), true),
+        toDetailsBlock($.div($.code(`$D.from(2000,0,1,22)`), ` (browser time zone)`), $D.from(2000,0,1,22).toString(), true),
+        toDetailsBlock($.div($.code(`$D()`), ` (now, browser time zone)`), $D().toString(), true),
+        toDetailsBlock($.div($.code(`$D.now`), ` (now, browser time zone)`), $D.now.toString(), true),
         toDetailsBlock($.div($.code(`$D({timeZone: "America/New_York"})`), ` (now New York time zone)`),
-          $D({timeZone: "America/New_York"}).toString()),
+          $D({timeZone: "America/New_York"}).toString(), true),
         toDetailsBlock($.div($.code(`$D("2000/01/01 22:00", {tz: "America/New_York"})`), ` (New York time zone)`),
-          $D("2000/01/01 22:00", {tz: "America/New_York"}).toString()),
+          $D("2000/01/01 22:00", {tz: "America/New_York"}).toString(), true),
         toDetailsBlock($.div($.code(`$D.from(2020,0,1,22).relocate({timeZone: "America/New_York"})`), ` (New York time zone)`),
-          $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString()),
-        toDetailsBlock($.div($.code(`$D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22)`),
-          ` (New York time zone)`), $D({tz: "America/New_York"}).changeFullYear(2020).changeHours(22).toString()),
-        toDetailsBlock($.div($.code(`$D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030)`), ` (from unix timestamp)`),
-          $D.fromUxTS($D.now.unixEpochTimestamp).changeFullYear(2030).toString()),
+          $D.from(2020,0,1,22).relocate({timeZone: "America/New_York"}).toString(), true),
+        $.div(
+          {class: `xtraTxt`},
+          $.b({class: "note"}),
+          `Calling native ES Date methods return the instance, so they are chainable`,
+        ),
+        toDetailsBlock($.div($.code(`$D({tz: "America/New_York"}).setFullYear(2020).setHours(1)`),
+          ` (New York time zone)`), $D({tz: "America/New_York"}).setFullYear(2020).setHours(1).toString(), true),
+        toDetailsBlock($.div($.code(`$D.fromUxTS($D.now.unixEpochTimestamp).setFullYear(2030).setMonth(0)`), ` (from unix timestamp)`),
+          $D.fromUxTS($D.now.unixEpochTimestamp).setFullYear(2030).setMonth(0).toString(), true),
       ];
     },
     localeTZBlock() {
@@ -591,8 +600,8 @@ function allBlocks() {
           chongqin.toString({local: true}), true),
         
         toDetailsBlock(
-          $.div($.code(`chongqin.toString({template: "WD d MM yyyy"})`), ` (see Format)`),
-          chongqin.toString({template: "WD d M yyyy"}), true)
+          $.div($.code(`chongqin.toString({template: "WD d MM yyyy", formatOptions: "l:zh"},)`), ` (chinese locale)`),
+          chongqin.toString({template: "WD d M yyyy", formatOptions: "l:zh"}), true)
       ];
     },
     namesBlock() {
