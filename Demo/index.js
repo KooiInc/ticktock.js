@@ -548,7 +548,7 @@ function allBlocks() {
         $.div(
           {class: `xtraTxt`},
           $.b({class: "note"}),
-          `Calling native ES Date methods return the instance, so they are chainable`,
+          `Calling a native ES Date method returns the instance, so that's chainable.`,
         ),
         toDetailsBlock($.div($.code(`$D({tz: "America/New_York"}).setFullYear(2020).setHours(1)`),
           ` (New York time zone)`), $D({tz: "America/New_York"}).setFullYear(2020).setHours(1).toString(), true),
