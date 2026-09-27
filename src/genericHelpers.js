@@ -138,8 +138,9 @@ function tryMe({trial, onError = () => undefined} = {}) {
 }
 
 function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
-  const localTZ = {timeZone: localeInfoValidator({timeZone: timeZoneID}).timeZone};
-  const remoteTZ = {timeZone: localeInfoValidator({timeZone: userTimeZoneID || ""}).timeZone};
+  const localTZ = {timeZone: localeInfoValidator({timeZone: userTimeZoneID}).timeZone};
+  const remoteTZ = {timeZone: localeInfoValidator({timeZone: timeZoneID || ""}).timeZone};
+  timeZoneDate = timeZoneDate || new Date();
   const localDate = xDate(timeZoneDate, localTZ);
   const remoteDate = xDate(timeZoneDate, remoteTZ);
   const diff = remoteDate.differenceTo(localDate);
@@ -151,10 +152,11 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
     ? `No difference`
     : `Time offset ${offset}: ${remoteTZ.timeZone} is ${diff.clean} ${
         hours < 0 ? `behind` : `ahead of`} ${localTZ.timeZone}`;
-
+  const localTZDST =  localDate.DSTActive;
+  const remoteTZDST = remoteDate.DSTActive;
   return {
-    remoteTimezone: localTZ.timeZone,
-    userTimezone: remoteTZ.timeZone,
+    remoteTimezone: `${remoteTZ.timeZone} ${localTZDST ? `(DST active)` : ``}`,
+    userTimezone: `${localTZ.timeZone} ${remoteTZDST ? `(DST active)` : ``}`,
     timeDifference: timeDiffInWords,
     result: {
       [localTZ.timeZone.replace(/\//, `_`)]: xDate(timeZoneDate).toString({template: `yyyy/mm/dd hh:mmi:ss`, formatOptions: `hrc:23`}),

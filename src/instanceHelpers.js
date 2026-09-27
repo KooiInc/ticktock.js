@@ -185,9 +185,7 @@ function zoneDiff(d1, d2) {
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
   /* node:coverage disable */
-  if (!end) {
-    end = start.clone;
-  }
+  end = !end ? start.clone : end;
   /* node:coverage enable */
   
   if (!end?.clone) {
