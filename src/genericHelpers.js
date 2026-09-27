@@ -175,7 +175,7 @@ function aggregateDateAdder(value, instance, aggregatePart) {
 }
 
 function retrieveAggregates(forInstance) {
-  const addSubtractAggregates = {
+  const aggregates = {
     addYears(amount = 1) {
       return aggregateDateAdder(amount, forInstance, `years`);
     },
@@ -216,13 +216,13 @@ function retrieveAggregates(forInstance) {
   };
   
   for(const synonym of dateSetterSynonyms) {
-    addSubtractAggregates[synonym.syn] = function(...args) {
+    aggregates[synonym.syn] = function(...args) {
       forInstance[synonym.native](...args);
       return forInstance;
     };
   }
   
-  return addSubtractAggregates;
+  return aggregates;
 }
 
 function getAggregates(instance, customExtras) {

@@ -5,7 +5,7 @@ import {
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
   getQuarter, hasDST, getWeeksInYear, removeTime, DSTActive,
   cloneInstance, timezoneAwareDifferenceTo, offsetFrom,
-  getAggregatedInfo, toJSDateString, getDowNumber, fullMonth,
+  getAggregatedInfo, toDateString, getDowNumber, fullMonth,
   localLocaleInfo, getISO8601Weeknr, weekFor
 } from "./instanceHelpers.js";
 
@@ -15,6 +15,7 @@ export default instanceCreator;
 
 function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
   let instance;
+  
   const customDateExtensions = {
     add(...args) { return addParts2Date(instance, ...args); },
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
@@ -28,9 +29,11 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     fullWeek(sunday = false) { return weekFor(instance, !!sunday); },
     isFuture(date) { return compareDates(instance, {start: instance, end: date, future: true}); },
     isPast(date) { return compareDates(instance, {start: instance, end: date, past: true}); },
-    next(day, preserveTodayWhenEqual) { return nextOrPrevious(instance, {day, next: true, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
+    next(day, preserveTodayWhenEqual) { return
+      nextOrPrevious(instance, {day, next: true, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
     offsetFrom(date) { return offsetFrom(instance, date); },
-    previous(day, preserveTodayWhenEqual) { return nextOrPrevious(instance, {day, next: false, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
+    previous(day, preserveTodayWhenEqual) {
+      return nextOrPrevious(instance, {day, next: false, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
     relocate({locale, timeZone, l, tz} = {}) { return relocate(instance, {locale, timeZone, l, tz}); },
     revalue(date) { instance = revalue(instance, date); return instance; },
     setDateValues({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },
@@ -39,7 +42,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toArray(local = false) { return getDTValues(instance, local); },
     toString({template, formatOptions, local} = {}) {
-      return toJSDateString(instance, {withFormat: template, withFormatOptions: formatOptions, local}); },
+      return toDateString(instance, {withFormat: template, withFormatOptions: formatOptions, local}); },
     values(local = false) { return local ? instance.dateTime : instance.zoneDateTime; },
     zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     
@@ -116,26 +119,22 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     get zoneValues() { return instance.zoneDateTime; },
     get zoneArray() { return getDTValues(instance, false); },
   };
-  
-  if (!localeInfo && !dateValue) { return customDateExtensions; }
-  
   customDateExtensions.localeInfo = localeInfo || setLocaleInfo();
   instance = new Proxy(dateValue, getTraps(customDateExtensions));
-  
   Object.entries(Object.getOwnPropertyDescriptors(getAggregates(instance, customMethods)))
     .forEach( ([key, descriptor]) => Object.defineProperty(customDateExtensions, key, descriptor) );
   
   return Object.freeze(instance);
-}
-
-function getTraps(extensions) {
-  return {
-    get( target, key ) {
-      return key !== `toString` && key in target
-        ? target[key].bind(target) : Reflect.get(extensions, key);
-    },
-    set( target, key, value ) {
-      return key in extensions && Reflect.set(extensions, key, value);
-    },
-  };
+  
+  function getTraps() {
+    return {
+      get( target, key ) {
+        return key !== `toString` && key in target
+          ? target[key].bind(target) : Reflect.get(customDateExtensions, key);
+      },
+      set( target, key, value ) {
+        return key in customDateExtensions && Reflect.set(customDateExtensions, key, value);
+      },
+    };
+  }
 }

@@ -25,7 +25,7 @@ export {
   getTime, getTimeValues, getWeeksInYear, hasDST, localeInfoValidator, localeMonthnames,
   localeWeekdays, localLocaleInfo, nextOrPrevious, offset2Number, offsetFrom, pad0,
   relocate, removeTime, revalue, setDateParts, setLocaleInfo, setTimeParts,
-  timezoneAwareDifferenceTo,toJSDateString,toLocalString, dateFormat, weekFor
+  timezoneAwareDifferenceTo,toDateString,toLocalString, dateFormat, weekFor
 };
 
 function addMonth(instance, negative = false) {
@@ -65,7 +65,7 @@ function weekFor(instance, sunday = false) {
 }
 
 function compareDates(instance, {start, end, future, past, include = {start: false, end: false}} = {}) {
-  const instnc = instance.clone.UTC;
+  const instnc = instance.UTC;
   start = start?.value || start?.constructor === Date ? xDate(start?.value || start).UTC : xDate.now.UTC;
   end = end && end?.value || end?.constructor === Date ? xDate(end?.value || end).UTC : xDate.now.UTC;
   instnc.milliseconds = 0;
@@ -82,7 +82,7 @@ function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
     : localLocaleInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '');
   
   if (!zoneTime) {
-    return formatLocal(instance, formatStr, moreOptions);
+    return formatLocal(instance, formatStr, `l:${instance.locale}`);
   }
   /* node:coverage disable */
   if (!instance.localeInfo) {
@@ -94,12 +94,12 @@ function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
 }
 
 function formatLocal(instance, formatStr, options) {
-  const localized = instance.clone.relocate(localLocaleInfo);
+  //const localized = instance.clone.relocate(localLocaleInfo);
   
   options = (options || ``).startsWith(`+`)
-    ? `${localized.localeInfo.formatOptions},${options.slice(1)}`
-    : options || localized.localeInfo.formatOptions;
-  return dateFormat(localized, formatStr, options);
+    ? `${instance.localeInfo.formatOptions},${options.slice(1)}`
+    : options || instance.localeInfo.formatOptions;
+  return dateFormat(instance.value, formatStr, options);
 }
 
 function daysUntil(instance, nextDate) {
@@ -248,21 +248,22 @@ function timeDiffenceInWords(diffInfo) {
 }
 
 function toFormattedJSDateString(instance, formatString, formatOptions) {
-  return instance.clone.format(formatString, formatOptions || instance.localeInfo.formatOptions);
+  return instance.format(formatString, formatOptions || instance.localeInfo.formatOptions);
 }
 
-function toJSDateString(instance, {withFormat, withFormatOptions, local=false} = {}) {
+function toDateString(instance, {withFormat, withFormatOptions, local=false} = {}) {
   if (withFormat) {
     return local
-      ? toFormattedJSDateString(instance, withFormat, $D.localeInformation.formatOptions)
-      : toFormattedJSDateString(instance, withFormat, withFormatOptions);
+      ? dateFormat(instance.value, withFormat, $D.localeInformation.formatOptions)
+      : dateFormat(instance.value, withFormat, withFormatOptions);
   }
   
-  const instanceEN = instance.clone.relocate({locale: `en`});
-  const fmtOpts = local ? localLocaleInfo.formatOptions : instanceEN.localeInfo.formatOptions;
-  const gmtString = instanceEN.format(`tz`, fmtOpts + `,tzn:longOffset`).replace(`:`, ``);
+  const fmtOpts = local
+    ? localLocaleInfo.formatOptions
+    : localeInfoValidator({l:`en-EN`, tz: instance.timeZone}).formatOptions;
+  const gmtString = dateFormat(instance.value, `tz`, (fmtOpts + `,tzn:longOffset`).replace(`:`, ``));
   const formatString = `wd M dd yyyy hh:mmi:ss ${gmtString} (tz)`;
-  return instanceEN.format(formatString, fmtOpts + `,tzn:long, hrc:23`);
+  return dateFormat(instance.value, formatString, fmtOpts);
 }
 
 function getDowNumber(instance, remote = false) {

@@ -105,6 +105,6 @@ function DateFormatFactory() {
   }
   
   return (date, template, moreOptions = `l:default`) => (/ds:|ts:/.test(moreOptions))
-    ? dtNoParts(...[date, extractFromTemplate(undefined), moreOptions])
+    ? dtNoParts(...[date, extractFromTemplate(), moreOptions])
     : dtFormatted(...[date, extractFromTemplate(template || undefined), moreOptions]);
 }
