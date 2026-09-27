@@ -80,6 +80,13 @@ now$.clone.relocate({l: "fr-FR"}).zoneFormat(
       yyyy, hh:mmi:ss.ms dp {dans votre fuseau horaire (${browserTZ})}`)`);
 </template>
 
+<template id="acrossZonesEx0">
+$D.timeAcrossZones( {
+  timeZoneDate: new Date,
+  timeZoneID: "America/Los_Angeles"
+} );
+</template>
+
 <template id="acrossZonesEx1">
 const auckland = $D({tz: "Pacific/Auckland"});
 $D.timeAcrossZones( {
@@ -100,7 +107,7 @@ $D.timeAcrossZones( {
 
 <template id="fullMonth">
 function monthExampleReducer(acc, v) {
-  if (v.dateNr < 3  || v.dateNr > 27 ) {
+  if (v.dateNr > 3  || v.dateNr < 27 ) {
     const formatted = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
     const value2Concat = v.dateNr === 28 ? [`...`, formatted] : [formatted];
 

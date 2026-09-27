@@ -26,6 +26,9 @@ function documentStyling($) {
           }
        }`,
     `body {
+        button {
+          margin-right: 0.7em;
+        }
         overflow-y: scroll;
         overflow-x: auto;
         font-family: system-ui, verdana, arial; }`,

@@ -2,18 +2,19 @@
 import $D from "../index.js";
 import styleIt from "./Resource/StyleDocument.js";
 import {$, logFactory} from "./Resource/htmlhelpers.min.js";
+const start = performance.now();
 styleIt($);
 const loader = $.div({class: "spin"}, `Loading...`).render;
 window.$D = $D; // use in console for testing
 const templates = await fetchTemplates();
 const {log: print} = logFactory();
-const debug = /localhost/.test(location.host);
+const debug =  /localhost/.test(location.host);
 /* endregion import and initialize */
 
 /* region initialVariables */
-const start = performance.now();
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax } = getCodeblocks();
+  acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs,
+  customSyntax } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
 const now$ = $D.now;
@@ -190,11 +191,19 @@ function customsExample() {
 
 /* region finishIt */
 hljs.highlightAll();
-$(`#bttnPerformance`).closest(`li`).append(
+$(`.codeblock`).first$().closest(`li`).append(
   $.div(
-    {class: `xtraTxt`},
-    `page load time: `, (performance.now() - start).toFixed(1), `ms, `,
-    $.span(` $D instances loaded: `, $.span({data: {instanceCounter: 1}}, `${$D.now.iCounts}`))
+      $.span({style: `display: inline-block;`},
+      $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
+      $.button({id: `bttnPerformance`}, `About performance`)
+    ), debug &&
+      $.span(
+        $.span(`page load time: `, $.b(((performance.now() - start)/1000).toFixed(3)), ` seconds, `),
+        $.span(
+          ` $D instances used: `,
+          $.span({data: {instanceCounter: 1}, style: `font-weight: bold;`}, `${$D.now.iCounts}`)
+        )
+      ) || ``,
   )
 );
 $(`.spin`).remove();
@@ -265,6 +274,7 @@ function getCodeblocks() {
   const aucklandFormatEx = toCodeBlock(templates.find$(`#formatAucklandEx`).HTML.get().trim());
   const now$FormatEx = toCodeBlock(templates.find$(`#formatNowEx`).HTML.get().trim());
   const aucklandZoneFormatEx = toCodeBlock(templates.find$(`#zoneFormatAucklandEx`).HTML.get().trim());
+  const acrossZonesEx0 = toCodeBlock(templates.find$(`#acrossZonesEx0`).HTML.get().trim());
   const acrossZonesEx1 = toCodeBlock(templates.find$(`#acrossZonesEx1`).HTML.get().trim());
   const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
   const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim());
@@ -272,12 +282,11 @@ function getCodeblocks() {
   const customs = toCodeBlock(templates.find$(`#custom`).HTML.get().trim());
   const customSyntax = toCodeBlock(templates.find$(`#customSyntax`).HTML.get().trim());
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-    acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax };
+    acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax };
 }
 
 function toCodeBlock(str) {
-  return `<pre class="language-javascript codeblock"><code>${
-    $.escHtml(str)}</code></pre>`;
+  return `<pre class="language-javascript codeblock"><code>${str}</code></pre>`;
 }
 
 function toJSONString(obj, detail = true, noFormat = false) {
@@ -331,14 +340,15 @@ function handlers() {
     const perf = evt.target.closest(`#bttnPerformance`);
     
     if (mainBttn) {
-      const allOpen = mainBttn.dataset?.allopen === '1' ?? false;
+      const allOpen = mainBttn.dataset.allopen === '1';
+      
       $(`.chapter`).each(el => {
         el.open = !allOpen;
-        if (!el.open) {
-          $(el).find(`details`).forEach(dt => dt.open = !!dt.dataset?.keepOpen);
-        }
+        setTimeout(() => $(el).trigger(`click`));
       });
+      
       return mainBttn.dataset.allopen = allOpen ? `0` : `1`;
+      
     }
     
     if (isLemmaBttn) {
@@ -359,11 +369,10 @@ function handlers() {
     if (chapter) {
       const detailBlock = chapter.dataset.detailBlockId;
       
-      // lazy load
       if (!!detailBlock && !chapter.querySelectorAll(`details`).length) {
         const thisBlock = detailBlocks[detailBlock]();
         $(chapter).append(...thisBlock);
-        $(`[data-instance-counter]`).text(`${$D.now.iCounts}`);
+        debug && $(`[data-instance-counter]`).text(`${$D.now.iCounts}`) || void(0);
         const codeBlocks = chapter.querySelectorAll(`.codeblock`);
         
         if (codeBlocks.length) {
@@ -503,16 +512,20 @@ function allBlocks() {
         `${deStatic.join(`<br>`)}`)
     ];
   }
+  
+  function retrieveInfoBlock() {
+    return [
+      toDetailsBlock($.div($.code(`taiohae.info`)), toJSONString(taiohae.info), ),
+      toDetailsBlock($.div($.code(`chongqin.info`)), toJSONString(chongqin.info), ),
+      toDetailsBlock($.div($.code(`now$.info`)), toJSONString(now$.info), )
+    ];
+  }
   return {
     headerElements() {
       return [
           $.h3($.a({target: "_top", href: "https://github.com/KooiInc/ticktock.js"}, `Github Repository`)),
           $.h2({data: {topline: 1}}, `TickTock.js Examples (work in progress) `, $.span({id: "tellTime"})),
           initialCode,
-          $.div(
-            $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
-            `&nbsp;`,
-            $.button({id: `bttnPerformance`}, `About performance`)),
         ];
     },
     instantiationBlocks() {
@@ -722,15 +735,17 @@ function allBlocks() {
         toDetailsBlock( $.div($.code(`la.UTCOffset`)), toJSONString(la.UTCOffset) ),
       ]
     },
-    infoBlock() {
-      return [
-        toDetailsBlock($.div($.code(`taiohae.info`)), toJSONString(taiohae.info), ),
-        toDetailsBlock($.div($.code(`chongqin.info`)), toJSONString(chongqin.info), ),
-        toDetailsBlock($.div($.code(`now$.info`)), toJSONString(now$.info), )
-      ]
-    },
+    infoBlock() { return retrieveInfoBlock(); },
     acrossTZSBlock() {
       return [
+        toDetailsBlock(
+          $.div($.code(`$D.timeAcrossZones(...)`), ` browser time vs Los Angeles (US) time`),
+          `${acrossZonesEx0}
+            ${toJSONString($D.timeAcrossZones( {
+            timeZoneDate: $(),
+            timeZoneID: "America/Los_Angeles"})
+          )}`
+        ),
         toDetailsBlock(
           $.div($.code(`$D.timeAcrossZones(...)`), ` Auckland time vs browser time`),
           `${acrossZonesEx1}
@@ -738,7 +753,7 @@ function allBlocks() {
                 timeZoneDate: auckland.value,
                 timeZoneID: auckland.timeZone})
               )}`
-          ),
+        ),
         
         toDetailsBlock(
           $.div($.code(`$D.timeAcrossZones(...)`), `Auckland time vs Los Angeles time`),
@@ -747,7 +762,7 @@ function allBlocks() {
                 timeZoneDate: auckland.value,
                 timeZoneID: auckland.timeZone,
                 userTimeZoneID: la.timeZone} ))}`
-          ),
+        ),
       ]
     },
     daysInMonthBlock() {
