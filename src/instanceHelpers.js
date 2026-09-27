@@ -196,7 +196,7 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   end = xDate(DTInTimezone(end, end.timeZone), {timeZone: end.timeZone});
   const diff = dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
   const diffZones = zoneDiff(end, start);
-  const aheadBehind = diff.sign.startsWith(`-`) ? `ahead of` : `behind`;
+  const aheadBehind = diffZones[0] > 0 ? `ahead of` : `behind`;
   const [hr, mi] = diffZones.map(v => Math.abs(v));
   const [hours, minutes] = [
     `${hr} ${maybePlural(hr, `hour`)}`,

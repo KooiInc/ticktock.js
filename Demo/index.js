@@ -201,7 +201,7 @@ $(`.codeblock`).first$().closest(`li`).append(
         $.span(`page load time: `, $.b(((performance.now() - start)/1000).toFixed(3)), ` seconds, `),
         $.span(
           ` $D instances used: `,
-          $.span({data: {instanceCounter: 1}, style: `font-weight: bold;`}, `${$D.now.iCounts}`)
+          $.span({data: {instanceCounter: 1}, style: `font-weight: bold;`}, `${$D.iCount.value}`)
         )
       ) || ``,
   )
@@ -372,7 +372,7 @@ function handlers() {
       if (!!detailBlock && !chapter.querySelectorAll(`details`).length) {
         const thisBlock = detailBlocks[detailBlock]();
         $(chapter).append(...thisBlock);
-        debug && $(`[data-instance-counter]`).text(`${$D.now.iCounts}`) || void(0);
+        debug && $(`[data-instance-counter]`).text(`${$D.iCount.value}`) || void(0);
         const codeBlocks = chapter.querySelectorAll(`.codeblock`);
         
         if (codeBlocks.length) {

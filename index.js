@@ -6,11 +6,12 @@ import {
 } from "./src/genericHelpers.js";
 
 const customMethods = {};
-export default createExtendedCTOR(customDateConstructor, customMethods);
+const ctor = createExtendedCTOR(customDateConstructor, customMethods);
+export default ctor;
 
 function customDateConstructor(input, localeInfo) {
-  if (input?.localeInfo) { return input.clone; }
-  
+  ctor.iCount.increment();
+  input = input?.value?.getMilliseconds ? input.value : input;
   const inputIsLocaleInfo = input?.locale || input?.timeZone || input?.tz || input?.l;
   
   return createInstance({

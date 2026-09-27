@@ -13,9 +13,7 @@ import {getAggregates} from "./genericHelpers.js";
 
 export default instanceCreator;
 
-let cntr = 0;
 function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
-  cntr += 1;
   let instance;
   const customDateExtensions = {
     add(...args) { return addParts2Date(instance, ...args); },
@@ -56,7 +54,6 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     set time({hours, minutes, seconds, milliseconds}) { setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     set year(n) { setDateParts(instance, {year: n}); },
     
-    /* debug */ get iCounts() { return cntr; },
     get age() { return instance.differenceTo(new Date()).years; },
     get ageFull() { return instance.differenceTo(new Date()).clean; },
     get clone() { return cloneInstance(instance); },

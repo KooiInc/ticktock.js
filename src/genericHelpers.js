@@ -241,7 +241,14 @@ function getAggregates(instance, customExtras) {
 }
 
 function createExtendedCTOR(ctor, customMethods) {
+  let instanceCount = 0;
   Object.defineProperties(ctor, {
+    iCount: {
+      value: {
+        get value() { return instanceCount },
+        increment() { instanceCount += 1 },
+      }
+    },
     now: {
       get() {
         return ctor(new Date());
