@@ -14,8 +14,8 @@ import {getAggregates} from "./genericHelpers.js";
 export default instanceCreator;
 
 function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
+  dateValue = dateValue || new Date();
   let instance;
-  
   const customDateExtensions = {
     add(...args) { return addParts2Date(instance, ...args); },
     between({start, end, include} = {}) { return compareDates(instance, {start, end, include}); },
@@ -134,9 +134,8 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
             return String(key).startsWith(`set`)
               ? (...args) => instance.revalue(target[key](...args))
               : target[key].bind(target);
-          case customDateExtensions.hasOwnProperty(key):
-            return Reflect.get(customDateExtensions, key)
-          default: return true;
+          default:
+            return Reflect.get(customDateExtensions, key);
         }
       },
       set( target, key, value ) {
