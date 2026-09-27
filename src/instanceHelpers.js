@@ -25,7 +25,7 @@ export {
   getTime, getTimeValues, getWeeksInYear, hasDST, localeInfoValidator, localeMonthnames,
   localeWeekdays, localLocaleInfo, nextOrPrevious, offset2Number, offsetFrom, pad0,
   relocate, removeTime, revalue, setDateParts, setLocaleInfo, setTimeParts,
-  timezoneAwareDifferenceTo,toDateString,toLocalString, dateFormat, weekFor
+  timezoneAwareDifferenceTo,toStringOverride,toLocalString, dateFormat, weekFor
 };
 
 function addMonth(instance, negative = false) {
@@ -247,11 +247,7 @@ function timeDiffenceInWords(diffInfo) {
     : `${hours} ${hoursTxt} ${later ? `ahead of`: `behind`}`;
 }
 
-function toFormattedJSDateString(instance, formatString, formatOptions) {
-  return instance.format(formatString, formatOptions || instance.localeInfo.formatOptions);
-}
-
-function toDateString(instance, {withFormat, withFormatOptions, local=false} = {}) {
+function toStringOverride(instance, {withFormat, withFormatOptions, local=false} = {}) {
   if (withFormat) {
     return local
       ? dateFormat(instance.value, withFormat, $D.localeInformation.formatOptions)

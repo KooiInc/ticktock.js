@@ -215,13 +215,6 @@ function retrieveAggregates(forInstance) {
     },
   };
   
-  for(const synonym of dateSetterSynonyms) {
-    aggregates[synonym.syn] = function(...args) {
-      forInstance[synonym.native](...args);
-      return forInstance;
-    };
-  }
-  
   return aggregates;
 }
 

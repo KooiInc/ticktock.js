@@ -5,7 +5,7 @@ import {
   revalue, relocate, addParts2Date, compareDates, setLocaleInfo,
   getQuarter, hasDST, getWeeksInYear, removeTime, DSTActive,
   cloneInstance, timezoneAwareDifferenceTo, offsetFrom,
-  getAggregatedInfo, toDateString, getDowNumber, fullMonth,
+  getAggregatedInfo, toStringOverride, getDowNumber, fullMonth,
   localLocaleInfo, getISO8601Weeknr, weekFor
 } from "./instanceHelpers.js";
 
@@ -42,7 +42,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     subtract(...args) { return addParts2Date(instance, `subtract,` + args.join(`,`)); },
     toArray(local = false) { return getDTValues(instance, local); },
     toString({template, formatOptions, local} = {}) {
-      return toDateString(instance, {withFormat: template, withFormatOptions: formatOptions, local}); },
+      return toStringOverride(instance, {withFormat: template, withFormatOptions: formatOptions, local}); },
     values(local = false) { return local ? instance.dateTime : instance.zoneDateTime; },
     zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
     
@@ -131,8 +131,8 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
       get( target, key ) {
         switch(true) {
           case key !== `toString` && key in target:
-            return String(key).startsWith(`set`) ? (...args) =>
-              instance.revalue(new Date(target[key].bind(target)(...args)))
+            return String(key).startsWith(`set`)
+              ? (...args) => instance.revalue(target[key](...args))
               : target[key].bind(target);
           case customDateExtensions.hasOwnProperty(key):
             return Reflect.get(customDateExtensions, key)
