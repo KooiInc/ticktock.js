@@ -49,7 +49,7 @@ function addMonth(instance, negative = false) {
 }
 
 function addParts2Date(instance, ...parts2Add) {
-  add2Date(instance, ...parts2Add);
+  add2Date(instance.value, ...parts2Add);
   return instance;
 }
 

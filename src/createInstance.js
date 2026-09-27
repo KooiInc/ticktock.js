@@ -129,8 +129,15 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
   function getTraps() {
     return {
       get( target, key ) {
-        return key !== `toString` && key in target
-          ? target[key].bind(target) : Reflect.get(customDateExtensions, key);
+        switch(true) {
+          case key !== `toString` && key in target:
+            return String(key).startsWith(`set`) ? (...args) =>
+              instance.revalue(new Date(target[key].bind(target)(...args)))
+              : target[key].bind(target);
+          case customDateExtensions.hasOwnProperty(key):
+            return Reflect.get(customDateExtensions, key)
+          default: return true;
+        }
       },
       set( target, key, value ) {
         return key in customDateExtensions && Reflect.set(customDateExtensions, key, value);
