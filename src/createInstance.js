@@ -29,8 +29,8 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     fullWeek(sunday = false) { return weekFor(instance, !!sunday); },
     isFuture(date) { return compareDates(instance, {start: instance, end: date, future: true}); },
     isPast(date) { return compareDates(instance, {start: instance, end: date, past: true}); },
-    next(day, preserveTodayWhenEqual) { return
-      nextOrPrevious(instance, {day, next: true, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
+    next(day, preserveTodayWhenEqual) {
+      return nextOrPrevious(instance, {day, next: true, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
     offsetFrom(date) { return offsetFrom(instance, date); },
     previous(day, preserveTodayWhenEqual) {
       return nextOrPrevious(instance, {day, next: false, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },

@@ -175,7 +175,7 @@ function aggregateDateAdder(value, instance, aggregatePart) {
 }
 
 function retrieveAggregates(forInstance) {
-  const aggregates = {
+  return {
     addYears(amount = 1) {
       return aggregateDateAdder(amount, forInstance, `years`);
     },
@@ -214,8 +214,6 @@ function retrieveAggregates(forInstance) {
       return add2Date(forInstance, `-1 day`);
     },
   };
-  
-  return aggregates;
 }
 
 function getAggregates(instance, customExtras) {
