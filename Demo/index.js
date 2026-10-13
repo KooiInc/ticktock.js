@@ -1,7 +1,7 @@
 /* region import and initialize */
 import $D from "../index.js";
-import styleIt from "./Resource/StyleDocument.js";
 import {$, logFactory} from "./Resource/htmlhelpers.min.js";
+import styleIt from "./Resource/StyleDocument.js";
 const start = performance.now();
 styleIt($);
 const loader = $.div({class: "spin"}, `Loading...`).render;
@@ -187,6 +187,7 @@ function customsExample() {
 hljs.highlightAll();
 $(`.codeblock`).first$().closest(`li`).append(
   $.div(
+      {class: `bttnLine`},
       $.span({style: `display: inline-block;`},
       $.button({id: "bttnOpenClose", data: {allopen: 0}}, `all chapters`),
       $.button({id: `bttnPerformance`}, `About performance`)
@@ -215,7 +216,7 @@ function createPerformancePopup() {
   );
   $.Popup.show({
       content: $.div({class: `perf`},
-        $.div(`TickTock is not really fast ...`),
+        $.div(`TickTock is `, $.i(`not`), ` really fast ...`),
         $.ul(
           $.li(
             {class: `head`},
@@ -226,7 +227,7 @@ function createPerformancePopup() {
             $.span(` => ${perf[1]}`)),
         ),
         $.div({class: `xtraTxt`},  $.b({class: `red`}, `Conclusion`),
-          `: consider `, $.b($.i({class: `red`}, `not`)), ` (or selectively)
+          `: consider `, $.i(`not`), ` (or selectively)
             using TickTock when the number of Dates to process is huge.
             In other words, TickTock may be specifically useful for
             its extensions and international date processing,
@@ -521,7 +522,8 @@ function allBlocks() {
     headerElements() {
       return [
           $.h3($.a({target: "_top", href: "https://github.com/KooiInc/ticktock.js"}, `Github Repository`)),
-          $.h2({data: {topline: 1}}, `TickTock.js Examples (work in progress) `, $.span({id: "tellTime"})),
+          $.h3($.a({target: "_top", href: "./WorldClocks"}, `A world clock implementation`)),
+          $.h2({data: {topline: 1}}, `TickTock Examples `, $.span({id: "tellTime"})),
           initialCode,
         ];
     },
@@ -848,12 +850,6 @@ function allBlocks() {
         $.div(
           {class:"xtraTxt"},
           `Use `, customSyntax,
-          // $.code(`[imported TickTock constructor`, $.span({class: `comment`}, `/* here $D */`),
-          //   `]`, $.br(),`&nbsp;&nbsp;.addCustom({`,
-          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;name:string,`,
-          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;method:function`,
-          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;enumerable:boolean,`,
-          //   $.br(),`&nbsp;&nbsp;&nbsp;&nbsp;isGetter:boolean})`),
           $.div(` to create custom getters or methods for the TickTock 'constructor'.`,
           ` See also`,
           $.a( {
