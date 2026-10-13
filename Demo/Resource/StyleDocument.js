@@ -105,11 +105,26 @@ function documentStyling($) {
         }
       }`,
     `details {
-         cursor: pointer;
-         font-size: 1em;
+       cursor: pointer;
+       font-size: 1em;
+       interpolate-size: allow-keywords;
+       
+       &::details-content {
+          transition:
+          block-size 0.5s,
+          content-visibility 1s allow-discrete;
+          overflow: hidden;
+          block-size: 0;
+        }
+    
+        &[open] {
+          &::details-content {
+            block-size: auto;
+          }
+        }
          
          &.chapter {
-            &:open {
+            &[open] {
               summary {
                 color: green;
                 list-style: inside disclosure-open;
