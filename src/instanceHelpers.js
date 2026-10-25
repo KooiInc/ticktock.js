@@ -367,6 +367,7 @@ function nextOrPrevious(instance, {day, next = false, preserveTodayWhenEqual = f
   
   const addTerm = next ? 1 : -1 ;
   let cloned = xDate(new Date(...instance.dateTimeValues), instance.localeInfo);
+  
   return preserveTodayWhenEqual && dayNr === cloned.day
     ? cloned
     : findDayRecursive(cloned.addDays(next ? 1 : -1), dayNr, addTerm);
@@ -376,7 +377,7 @@ function findDayRecursive(instance, dayNr, addTerm) {
   function findIt(d) {
     switch(true) {
       case d.day === dayNr: return d;
-      default: return findIt(d.add(`${addTerm} days`));
+      default: return findIt(d.addDays(addTerm));
     }
   }
   
