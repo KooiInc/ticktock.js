@@ -9,7 +9,7 @@ function dateAddFactory() {
       ({...acc, [key]: value, [`${key}s`]: value}), {} );
   let subtract = false;
   
-  const aggregateArguments = function(...argsRaw) {
+  function aggregateArguments(...argsRaw) {
     const singleArgument = argsRaw.length === 1;
     subtract = argsRaw[0].trim().startsWith(`subtract,`);
 
@@ -43,8 +43,9 @@ function dateAddFactory() {
     
     if (aggregated.length) {
       aggregated.forEach( ([n, part]) => {
-          part = part;
+          //part = part;
           part = parts[part];
+          
           if (n && part) {
             date[`set${part}`](date[`get${part}`]() + n);
           }

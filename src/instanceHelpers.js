@@ -49,7 +49,7 @@ function addMonth(instance, negative = false) {
 }
 
 function addParts2Date(instance, ...parts2Add) {
-  add2Date(instance.value, ...parts2Add);
+  const nwDate = add2Date(instance, ...parts2Add);
   return instance;
 }
 
@@ -353,7 +353,7 @@ function fullMonth(instance, forLocale) {
   forLocale = localeInfoValidator({locale: forLocale || instance.localeInfo.locale}).locale;
   const firstDay = instance.clone.relocate({locale: forLocale});
   firstDay.date = { date: 1 };
-  return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.clone.add(`${i+1} days`) ));
+  return [firstDay].concat([...Array(daysInMonth(firstDay)-1)].map( (v, i) => firstDay.clone.addDays(i+1) ));
 }
 
 function nextOrPrevious(instance, {day, next = false, preserveTodayWhenEqual = false} = {}) {
