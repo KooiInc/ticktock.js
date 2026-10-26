@@ -81,7 +81,7 @@ function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
     ? instance.localeInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '')
     : localLocaleInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '');
   
-  if (!zoneTime) {
+  if (!!zoneTime) {
     return formatLocal(instance, formatStr, `l:${instance.locale}`);
   }
   /* node:coverage disable */
@@ -89,7 +89,7 @@ function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
     instance.localeInfo = localLocaleInfo;
   }
   /* node:coverage enable */
-  
+  console.log(moreOptions, `godverdomme`);
   return dateFormat(instance, formatStr, moreOptions);
 }
 
@@ -110,6 +110,7 @@ function daysUntil(instance, nextDate) {
 function getNames(instance, forLocale = false) {
   const { locale, timeZone, } = forLocale ? instance.localeInfo : localLocaleInfo;
   const formatOptions = retrieveFormattingFormats(locale, timeZone);
+  console.log(formatOptions);
   const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
   return {

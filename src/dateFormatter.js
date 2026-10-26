@@ -104,7 +104,10 @@ function DateFormatFactory() {
     return xTemplate.finalize(...[undefined, dtf.dayPeriod, dtf.era, dtf.yearName]);
   }
   
-  return (date, template, moreOptions = `l:default`) => (/ds:|ts:/.test(moreOptions))
-    ? dtNoParts(...[date, extractFromTemplate(), moreOptions])
-    : dtFormatted(...[date, extractFromTemplate(template || undefined), moreOptions]);
+  return (date, template, moreOptions = `l:default`) => {
+    console.log(moreOptions);
+    return (/ds:|ts:/.test(moreOptions))
+      ? dtNoParts(...[date, extractFromTemplate(), moreOptions])
+      : dtFormatted(...[date, extractFromTemplate(template || undefined), moreOptions]);
+  }
 }
