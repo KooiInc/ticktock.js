@@ -57,7 +57,7 @@ function weekFor(instance, sunday = false) {
   const firstDOW = firstWeekday(instance.clone, {sunday});
   const week = [firstDOW];
   return {
-    weekStart: firstDOW.format(`WD`, `l:en-GB`),
+    weekStart: firstDOW.zoneFormat(`WD`, `l:en-GB`),
     inputDate: instance,
     dates: week.concat([...Array(6)].map((_, i) =>
       firstDOW.clone.addDays(i + 1)))
@@ -65,23 +65,24 @@ function weekFor(instance, sunday = false) {
 }
 
 function compareDates(instance, {start, end, future, past, include = {start: false, end: false}} = {}) {
-  const instnc = instance.UTC;
+  const instnc = instance.clone.UTC;
   start = start?.value || start?.constructor === Date ? xDate(start?.value || start).UTC : xDate.now.UTC;
   end = end && end?.value || end?.constructor === Date ? xDate(end?.value || end).UTC : xDate.now.UTC;
-  instnc.milliseconds = 0;
-  start.milliseconds = 0;
-  end.milliseconds = 0;
+  instnc.setMilliseconds(0);
+  start.setMilliseconds(0);
+  end.setMilliseconds(0);
+  const startBeforeInstance = !!include.start ? +instnc >= +start : +instnc > +start;
+  const instanceBeforeEnd = !!include.end ? +instnc <= +end : +instnc < +end;
   
-  return future ? start > end : past ? start < end :
-    (include.start ? +instnc >= +start : +instnc > +start) && (include.end ? +instnc <= +end : +instnc < +end);
+  return future ? start > end : past ? start < end : (startBeforeInstance && instanceBeforeEnd);
 }
 
-function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
-  moreOptions = zoneTime
+function format(instance, {zoneFormat = false, formatStr, moreOptions} = {}) {
+  moreOptions = zoneFormat
     ? instance.localeInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '')
     : localLocaleInfo.formatOptions + (moreOptions ? `,${moreOptions}` : '');
   
-  if (!!zoneTime) {
+  if (!!!zoneFormat) {
     return formatLocal(instance, formatStr, `l:${instance.locale}`);
   }
   /* node:coverage disable */
@@ -89,16 +90,14 @@ function format(instance, {zoneTime = false, formatStr, moreOptions} = {}) {
     instance.localeInfo = localLocaleInfo;
   }
   /* node:coverage enable */
-  console.log(moreOptions, `godverdomme`);
   return dateFormat(instance, formatStr, moreOptions);
 }
 
 function formatLocal(instance, formatStr, options) {
-  //const localized = instance.clone.relocate(localLocaleInfo);
-  
   options = (options || ``).startsWith(`+`)
     ? `${instance.localeInfo.formatOptions},${options.slice(1)}`
     : options || instance.localeInfo.formatOptions;
+  
   return dateFormat(instance.value, formatStr, options);
 }
 
@@ -110,7 +109,6 @@ function daysUntil(instance, nextDate) {
 function getNames(instance, forLocale = false) {
   const { locale, timeZone, } = forLocale ? instance.localeInfo : localLocaleInfo;
   const formatOptions = retrieveFormattingFormats(locale, timeZone);
-  console.log(formatOptions);
   const monthAndDay = instance.format(`MM|WD`, formatOptions).split(`|`);
 
   return {
@@ -134,16 +132,16 @@ function getTime(instance, inUserTimezone = false) {
 function getTimeValues(instance, inUserTimeZone = false) {
   const tzOpt = !inUserTimeZone ? `tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
   const opts = `l:en-CA,${tzOpt},hrc:23,ts:medium`;
-  
-  return instance.format("", opts)
-    .split(/:/)
-    .map(Number)
-    .concat(instance.getMilliseconds());
+  const formatter = !inUserTimeZone ? `zoneFormat` : `format`;
+  return instance[formatter]("h:mi:s", opts).split(/[:]/g).map(Number).concat(instance.getMilliseconds());
 }
 
 function getFullDate(instance, inUserTimeZone) {
-  const tzOpt = !inUserTimeZone ? `,tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
-  let [year, month, date] = instance.format(`yyyy-mm-dd`, tzOpt).split(/-/) .map(Number);
+  const tzOpt = !!!inUserTimeZone ? `,tz:${instance.timeZone}` : `tz:${localLocaleInfo.timeZone}`;
+  const format = inUserTimeZone ? `format` : `zoneFormat`;
+  let [year, month, date] = instance[format](`yyyy-mm-dd`, instance.localeInfo.formatOptions).split(/-/)
+    .map(Number);
+  
   month -= 1;
   const values4Timezone = !inUserTimeZone ? instance.timeZone : localLocaleInfo.timeZone;
   
@@ -176,12 +174,17 @@ function firstWeekday(instance, {sunday = false} = {}) {
   return nextOrPrevious(instance, { day, preserveTodayWhenEqual: true});
 }
 
-function zoneDiff(d1, d2) {
-  let gmt1 = d1.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
-  let gmt2 = d2.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
+function zoneDiff(start, end) {
+  let gmt1 = start.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
+  let gmt2 = end.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
   gmt1 = offset2Number(gmt1.slice(0, 3) + `:` + gmt1.slice(-2), true);
   gmt2 = offset2Number(gmt2.slice(0, 3) + `:` + gmt2.slice(-2), true);
-  return [-gmt1[0] + gmt2[0], -gmt1[1] + gmt2[1]].map(v => gmt1[0] < 0 ? -v : v);
+  const startSign = gmt1[0] > 0 ? `+` : `-`;
+  return {
+    uren: -gmt1[0] + gmt2[0],
+    minuten: -gmt1[1] + gmt2[1],
+    teken: startSign
+  };
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
@@ -196,9 +199,10 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   start = xDate(DTInTimezone(start, start.timeZone), {timeZone: start.timeZone});
   end = xDate(DTInTimezone(end, end.timeZone), {timeZone: end.timeZone});
   const diff = dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
-  const diffZones = zoneDiff(end, start);
-  const aheadBehind = diffZones[0] > 0 ? `ahead of` : `behind`;
-  const [hr, mi] = diffZones.map(v => Math.abs(v));
+  const diffZones = zoneDiff(start, end);
+  const aheadBehind = diffZones.teken === `+` ? `ahead of` : `behind`;
+  
+  const [hr, mi] = Object.values(diffZones).filter(v => Number.isInteger(v)).map(v => Math.abs(v));
   const [hours, minutes] = [
     `${hr} ${maybePlural(hr, `hour`)}`,
     `${mi} ${maybePlural(mi, `minute`)}` ];
@@ -257,9 +261,10 @@ function toStringOverride(instance, {withFormat, withFormatOptions, local=false}
   
   const fmtOpts = local
     ? localLocaleInfo.formatOptions
-    : localeInfoValidator({l:`en-EN`, tz: instance.timeZone}).formatOptions;
-  const gmtString = dateFormat(instance.value, `tz`, (fmtOpts + `,tzn:longOffset`).replace(`:`, ``));
-  const formatString = `wd M dd yyyy hh:mmi:ss ${gmtString} (tz)`;
+    : localeInfoValidator({l:`en-CA`, tz: instance.timeZone}).formatOptions+`,hrc:23`;
+  const gmtString = dateFormat(instance.value, `tz`, (fmtOpts + `,tzn:longOffset`)).replace(/:/, ``);
+  const longTZN = dateFormat(instance.value, `tz`, (fmtOpts + `,tzn:long`));
+  const formatString = `wd M dd yyyy hh:mmi:ss ${gmtString} (${longTZN})`;
   return dateFormat(instance.value, formatString, fmtOpts);
 }
 
@@ -276,12 +281,12 @@ function getAggregatedInfo(instance) {
   const userZone = localLocaleInfo;
   const remoteZone = instance.localeInfo;
   const localInstance = instance.clone.relocate({locale: userZone.locale, timeZone: userZone.timeZone});
+  const pmRemote = instance.zoneFormat(`hh:mmi:ss dp`, `hrc:12`);
+  const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12`);
   const timeDifferenceUserLocal2Remote = instance.offsetFrom(localInstance);
   const timeDifferenceRemote2UserLocal = localInstance.offsetFrom(instance);
   const local = userZone;
   const remote = remoteZone;
-  const pmRemote = instance.format(`hh:mmi:ss dp`, `hrc:12,tz:${instance.timeZone}`);
-  const pmLocal = localInstance.format(`hh:mmi:ss dp`, `hrc:12,tz:${localInstance.timeZone}`);
   const userData = {
     note: "'user' are values for your locale/timeZone, 'remote' (if applicable) idem for the instance",
     locales: {
@@ -325,8 +330,8 @@ function getAggregatedInfo(instance) {
   return userData;
 }
 
-function getDTValues(instance, local = true) {
-  if (local) {
+function getDTValues(instance, local) {
+  if (!!local) {
     return [
       instance.getFullYear(),
       instance.getMonth(),
@@ -337,8 +342,8 @@ function getDTValues(instance, local = true) {
       instance.getMilliseconds()
     ];
   }
-
-  const numbers = instance.format("yyyy-m-d-hh-mmi-ss", `${instance.localeInfo.formatOptions},hrc23:true`)
+  
+  const numbers = dateFormat(instance.value, "yyyy-m-d-hh-mmi-ss", `${instance.localeInfo.formatOptions+`,hrc23:true`}`)
     .split(/-/)
     .map(Number)
     .concat(instance.getMilliseconds());
@@ -407,10 +412,11 @@ function setDateParts(instance, {year, month, date} = {}) {
 }
 
 function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
-  if (isNumeric(hours)) { instance.setHours(parseInt(hours)); }
-  if (isNumeric(minutes)) { instance.setMinutes(parseInt(minutes)); }
-  if (isNumeric(seconds)) { instance.setSeconds(parseInt(seconds)) }
-  if (isNumeric(milliseconds)) { instance.setMilliseconds(parseInt(milliseconds)); }
+  if (Number.isInteger(hours)) { instance.setHours(hours); }
+  if (Number.isInteger(minutes)) { instance.setMinutes(minutes); }
+  if (Number.isInteger(seconds)) { instance.setSeconds(seconds) }
+  if (Number.isInteger(milliseconds)) { instance.setMilliseconds(milliseconds); }
+  
   return instance;
 }
 
@@ -426,14 +432,7 @@ function cloneInstance(instance, date) {
   return xDate.from(...instance.dateTimeValues).relocate(instance.localeInfo);
 }
 
-
-
 function weekdayFactory() {
-  // const dow = {
-  //   short: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
-  //   long: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
-  // };
-
   return function(day) {
     day = `${day}`.toLowerCase();
     let dayNr = wdShort.indexOf(day);
@@ -449,8 +448,7 @@ function offset2Number(offsetString) {
 }
 
 function removeTime(instance) {
-  instance.time = {hours: 0, minutes: 0, seconds: 0, milliseconds: 0};
-  return instance;
+  return instance.revalue(new Date(instance.year, instance.month, instance.dateNr, 0, 0, 0, 0));
 }
 
 function getTimezoneName(dt, timeZone) {
@@ -469,12 +467,27 @@ function hasDST(instance, timeZone) {
   return janTZN !== midYrTZN;
 }
 
-function DSTActive(instance, timeZone) {
-  timeZone = timeZone || instance?.timeZone || localLocaleInfo.timeZone;
-  instance = instance?.hasDST
-    ? instance : instance?.constructor === Date
-      ? xDate(instance, {timeZone}) : xDate({timeZone});
-  return instance.hasDST ? !/standard/i.test(instance.toString()) : false;
+function offsetMinutes(timeZone, date) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone, hourCycle: 'h23',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).formatToParts(date);
+  
+  const p = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  const asUTC = Date.UTC(+p.year, p.month - 1, +p.day, +p.hour, +p.minute, +p.second);
+  
+  // positive = east of UTC, opposite sign convention to getTimezoneOffset()
+  return (asUTC - Math.floor(date.getTime() / 1000) * 1000) / 60000;
+}
+
+function DSTActive(instance) {
+  const timeZone = instance.timeZone || localLocaleInfo.timeZone;
+  const year = instance.getUTCFullYear();
+  const samples = Array.from({ length: 13 }, (_, m) =>
+    offsetMinutes(timeZone, new Date(Date.UTC(year, m, 1)))
+  );
+  return offsetMinutes(timeZone, instance) > Math.min(...samples);
 }
 
 function relocate(instance, {locale, timeZone, l, tz} = {}) {

@@ -155,8 +155,8 @@ function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   const localTZDST =  localDate.DSTActive;
   const remoteTZDST = remoteDate.DSTActive;
   return {
-    remoteTimezone: `${remoteTZ.timeZone} ${localTZDST ? `(DST active)` : ``}`,
-    userTimezone: `${localTZ.timeZone} ${remoteTZDST ? `(DST active)` : ``}`,
+    remoteTimezone: `${remoteTZ.timeZone}${localTZDST ? ` (DST active)` : ``}`,
+    userTimezone: `${localTZ.timeZone}${remoteTZDST ? ` (DST active)` : ``}`,
     timeDifference: timeDiffInWords,
     result: {
       [localTZ.timeZone.replace(/\//, `_`)]: xDate(timeZoneDate).toString({template: `yyyy/mm/dd hh:mmi:ss`, formatOptions: `hrc:23`}),
@@ -289,7 +289,7 @@ function createExtendedCTOR(ctor, customMethods) {
     },
     DSTActive: {
       value({date, timeZone} = {}) {
-        return DSTActive(date, timeZone);
+        return DSTActive(ctor(date, {timeZone}));
       }
     },
     values: {
@@ -333,7 +333,6 @@ function createExtendedCTOR(ctor, customMethods) {
           ...Object.keys(getAggregates()),
           ...Object.keys(customEnumerables),
         ];
-        
         return allKeys.sort( (a,b) => a.localeCompare(b) );
       }
     },

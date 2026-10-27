@@ -44,18 +44,19 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     toString({template, formatOptions, local} = {}) {
       return toStringOverride(instance, {withFormat: template, withFormatOptions: formatOptions, local}); },
     values(local = false) { return local ? instance.dateTime : instance.zoneDateTime; },
-    zoneFormat(formatStr, moreOptions) { return format(instance, {zoneTime: true, formatStr, moreOptions}); },
+    zoneFormat(formatStr, moreOptions) { return format(instance, {zoneFormat: true, formatStr, moreOptions}); },
     
     set date({year, month, date}) { setDateParts(instance, {year, month, date}); },
     set dateNr(n) { setDateParts(instance, {date: n }); },
     set hours(n) { setTimeParts(instance, {hours: n}); },
     set localeInfo({locale, timeZone, l, tz}) { localeInfo = setLocaleInfo({locale, timeZone, l, tz}); },
-    set milliseconds(n) { setTimeParts(instance, {milliseconds: `${n}`}); },
+    set milliseconds(n) { setTimeParts(instance, {milliseconds: n}); },
     set minutes(n) { setTimeParts(instance, {minutes: n}); },
     set month(n) { setDateParts(instance, {month: n}); },
     set seconds(n) { setTimeParts(instance, {seconds: n}); },
     set time({hours, minutes, seconds, milliseconds}) { setTimeParts(instance, {hours, minutes, seconds, milliseconds}); },
     set year(n) { setDateParts(instance, {year: n}); },
+    set value(date) { dateValue = date; },
     
     get age() { return instance.differenceTo(new Date()).years; },
     get ageFull() { return instance.differenceTo(new Date()).clean; },
