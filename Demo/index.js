@@ -484,15 +484,15 @@ function allBlocks() {
       toDetailsBlock($.b({class:"blue"}, `Code used`), fullMonth),
       
       toDetailsBlock(
-        $.div($.code(`monthLocal.join("&lt;br>")`), ` (browser locale: ${$D.localeInformation.locale})`),
+        $.div($.code(`monthLocal`), ` (browser locale: ${$D.localeInformation.locale})`),
         `${local.join(`<br>`)}`),
       
       toDetailsBlock(
-        $.div($.code(`monthPT.join("&lt;br>")`), ` (Portugese)`),
+        $.div($.code(`monthPT`), ` (Portugese)`),
         `${pt.join(`<br>`)}`),
       
       toDetailsBlock(
-        $.div($.code(`monthTH.join("&lt;br>")`), ` (Thai, buddhist year)`),
+        $.div($.code(`monthTH`), ` (Thai, buddhist year)`),
         `${th.join(`<br>`)}`),
       
       $.div(
@@ -506,7 +506,7 @@ function allBlocks() {
       ),
       
       toDetailsBlock(
-        $.div($.code(`monthDeFromStatic.join("&lt;br>")`, ` (German) =>`)),
+        $.div($.code(`monthDeFromStatic`)),
         `${deStatic.join(`<br>`)}`)
     ];
   }
@@ -608,10 +608,6 @@ function allBlocks() {
     },
     namesBlock() {
       return [
-        toDetailsBlock(
-          $.div($.code(`$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")`)),
-          $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
-        
         toDetailsBlock(
           $.div($.code(`$D.localMonthnames("es-CL").long.slice(0, 3).join(" / ")`)),
           $D.localMonthnames("es-CL").long.slice(0, 3).join(` / `) ),
