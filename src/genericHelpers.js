@@ -324,16 +324,9 @@ function createExtendedCTOR(ctor, customMethods) {
     weeksInYear: { value(year) { return getWeeksInYear(year, 31); }  },
     keys: {
       get() {
-        const customEnumerables = Object.fromEntries(
-          Object.entries(customMethods).filter( ([_, v]) => v.enumerable === true )
-        );
-        
-        const allKeys = [
-          ...Object.keys(instanceCreator()),
-          ...Object.keys(getAggregates()),
-          ...Object.keys(customEnumerables),
-        ];
-        return allKeys.sort( (a,b) => a.localeCompare(b) );
+        return Object.getOwnPropertyNames(ctor)
+          .filter( v => !/prototype|length|keys|name/i.test(v) )
+          .sort( (a,b) => a.localeCompare(b) );
       }
     },
   });

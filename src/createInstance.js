@@ -135,6 +135,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
             return String(key).startsWith(`set`)
               ? (...args) => instance.revalue(target[key](...args))
               : target[key].bind(target);
+          case key === `keys`: return Object.keys(customDateExtensions);
           default:
             return Reflect.get(customDateExtensions, key);
         }
