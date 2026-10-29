@@ -13,10 +13,9 @@ import {
 } from "./genericHelpers.js";
 
 const dateDiff = dateDiffFactory();
-const weekdays = weekdayFactory();
+const {weekday2Index, wdLong} = weekdayString2IndexFactory();
 const add2Date = dateAddFactory();
-const wdShort = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-const wdLong = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
 
 export {
   add2Date, addMonth, addParts2Date, cloneInstance, compareDates, daysInMonth, daysUntil,
@@ -53,8 +52,8 @@ function addParts2Date(instance, ...parts2Add) {
   return instance;
 }
 
-function weekFor(instance, sunday = false) {
-  const firstDOW = firstWeekday(instance.clone, {sunday});
+function weekFor(instance, { startDay } = {} ) {
+  const firstDOW = firstWeekday(instance.clone, { startDay });
   const week = [firstDOW];
   return {
     weekStart: firstDOW.zoneFormat(`WD`, `l:en-GB`),
@@ -62,6 +61,22 @@ function weekFor(instance, sunday = false) {
     dates: week.concat([...Array(6)].map((_, i) =>
       firstDOW.clone.addDays(i + 1)))
   };
+}
+
+function maybeFirstWeekdayFromLocale(instance) {
+  let intlLocale = new Intl.Locale(instance.locale);
+  let firstDayFromLocale = intlLocale.weekInfo
+    ? intlLocale.weekInfo.firstDay
+    : intlLocale.getWeekInfo
+      ? intlLocale.getWeekInfo().firstDay
+      : 1;
+  firstDayFromLocale = firstDayFromLocale === 7 ? 0 : firstDayFromLocale;
+  return wdLong[firstDayFromLocale];
+}
+
+function firstWeekday(instance, { startDay } = {}) {
+  const day = startDay ?? maybeFirstWeekdayFromLocale(instance);
+  return nextOrPrevious(instance, { day, preserveTodayWhenEqual: true});
 }
 
 function compareDates(instance, {start, end, future, past, include = {start: false, end: false}} = {}) {
@@ -156,22 +171,6 @@ function getDateValues(instance, inUserTimezone = true) {
   const values = instance.format("yyyy-m-d", instance.localeInfo.formatOptions).split(/-/).map(Number);
   values[1] -= 1;
   return values;
-}
-
-function maybeFirstWeekdayFromLocale(instance) {
-  let intlLocale = new Intl.Locale(instance.locale);
-  let firstDayFromLocale = intlLocale.weekInfo
-    ? intlLocale.weekInfo.firstDay
-    : intlLocale.getWeekInfo
-      ? intlLocale.getWeekInfo().firstDay
-      : 1;
-  firstDayFromLocale = firstDayFromLocale === 7 ? 0 : firstDayFromLocale;
-  return wdLong[firstDayFromLocale];
-}
-
-function firstWeekday(instance, {sunday = false} = {}) {
-  const day = sunday ? `sunday` : maybeFirstWeekdayFromLocale(instance);
-  return nextOrPrevious(instance, { day, preserveTodayWhenEqual: true});
 }
 
 function zoneDiff(start, end) {
@@ -274,7 +273,7 @@ function getDowNumber(instance, remote = false) {
     weekday: "short",
   });
   
-  return weekdays(dayFormat.format(instance));
+  return weekday2Index(dayFormat.format(instance));
 }
 
 function getAggregatedInfo(instance) {
@@ -364,7 +363,7 @@ function fullMonth(instance, forLocale) {
 
 function nextOrPrevious(instance, {day, next = false, preserveTodayWhenEqual = false} = {}) {
   day = day?.toLowerCase() || `-`;
-  const dayNr = weekdays(day);
+  const dayNr = weekday2Index(day);
   
   if (dayNr < 0) {
     console.error(`[TickTock instance].next/previous invalid day value ${day}`);
@@ -432,11 +431,18 @@ function cloneInstance(instance, date) {
   return xDate.from(...instance.dateTimeValues).relocate(instance.localeInfo);
 }
 
-function weekdayFactory() {
-  return function(day) {
-    day = `${day}`.toLowerCase();
-    let dayNr = wdShort.indexOf(day);
-    return dayNr < 0 ? wdLong.indexOf(day) : dayNr;
+function weekdayString2IndexFactory() {
+  const wdShort = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const wdLong = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  
+  return {
+    weekday2Index: function(day) {
+      day = `${day}`.toLowerCase();
+      let dayNr = wdShort.indexOf(day);
+      return dayNr < 0 ? wdLong.indexOf(day) : dayNr;
+    },
+    wdShort,
+    wdLong,
   };
 }
 

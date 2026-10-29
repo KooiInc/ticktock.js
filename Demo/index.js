@@ -119,6 +119,7 @@ $(`#wiy`).data.set({detailBlockId: `weeksInYearBlock`});
 /* region ex:fullMonth */
 print( toDetailChapter(`Full month localized calendar`, `fm` ) );
 $(`#fm`).data.set({detailBlockId: `fullMonthBlock`});
+
 function monthExampleReducer(acc, v) {
   if (v.dateNr < 3  || v.dateNr > 27 ) {
     const formatted  = v.zoneFormat(`WD d MM yyyy hh:mmi:ss dp`);
@@ -129,6 +130,7 @@ function monthExampleReducer(acc, v) {
   
   return acc;
 }
+
 function getFullMonth() {
   const monthLocal = $D(`2000/02/12`)
     .fullMonth()
@@ -838,6 +840,9 @@ function allBlocks() {
           `=> ${$D([2021]).weeksInYear}`
         ),
       ]
+    },
+    fullWeekBlock() {
+    
     },
     fullMonthBlock() { return retrieveFullMonthBlock(); },
     yearCalendarBlock() { return retrieveYearCalendarBlock(); },
