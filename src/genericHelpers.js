@@ -1,4 +1,6 @@
-import {add2Date, addMonth, fullMonth, offset2Number, getWeeksInYear, dateFormat, DSTActive, hasDST} from "./instanceHelpers.js";
+import {
+  add2Date, addMonth, fullMonth, offset2Number, getWeeksInYear,
+  dateFormat, DSTActive, hasDST, timezoneAwareDifferenceTo} from "./instanceHelpers.js";
 import instanceCreator from "./createInstance.js";
 import xDate from "../index.js";
 const localLocaleInfo = addFormatOptions(Intl.DateTimeFormat().resolvedOptions());
@@ -138,6 +140,22 @@ function tryMe({trial, onError = () => undefined} = {}) {
 }
 
 function timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
+  const start = xDate(timeZoneDate, {timeZone: userTimeZoneID});
+  const end = xDate(timeZoneDate).clone.relocate({timeZone: timeZoneID});
+  const diff = timezoneAwareDifferenceTo({start, end});
+  return {
+    remoteTimezone: `${end.timeZone}${end.DSTActive ? ` (DST active)` : ``}`,
+    userTimezone: `${start.timeZone}${start.DSTActive ? ` (DST active)` : ``}`,
+    timeDifference: diff.timeZonesOffsetDifference,
+    result: {
+      [end.timeZone.replace(/\//, `_`)]: xDate(end).zoneFormat(`yyyy/mm/dd hh:mmi:ss`, end.localeInfo.formatOptions + `,hrc:23`),
+      [start.timeZone.replace(/\//, `_`)]: start.zoneFormat(`yyyy/mm/dd hh:mmi:ss`, start.localeInfo.formatOptions + `,hrc:23`),
+    }
+  }
+}
+
+
+function _timeAcrossZones({timeZoneDate, timeZoneID, userTimeZoneID} = {}) {
   const localTZ = {timeZone: localeInfoValidator({timeZone: userTimeZoneID}).timeZone};
   const remoteTZ = {timeZone: localeInfoValidator({timeZone: timeZoneID || ""}).timeZone};
   timeZoneDate = timeZoneDate || new Date();

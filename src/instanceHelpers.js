@@ -38,12 +38,6 @@ function addMonth(instance, negative = false) {
     }
   }
   
-  if (negative && instance.month === initialMonth) {
-    while (instance.month >= initialMonth) {
-      instance.dateNr -= 1;
-    }
-  }
-  
   return instance;
 }
 
@@ -200,6 +194,7 @@ function timezoneAwareDifferenceTo({start, end} = {}) {
   const diff = dateDiff({start, end, diffs: {timeZoneStart: start.timeZone, timeZoneEnd: end.timeZone}});
   const diffZones = zoneDiff(start, end);
   const aheadBehind = diffZones.teken === `+` ? `ahead of` : `behind`;
+  diff.sign = diffZones.teken;
   
   const [hr, mi] = Object.values(diffZones).filter(v => Number.isInteger(v)).map(v => Math.abs(v));
   const [hours, minutes] = [
@@ -226,7 +221,7 @@ function offsetFrom(instance, from) {
     fromTZ: instance.timeZone,
     toTZ: from.timeZone,
     offset,
-    offsetText: `${from.timeZone} ${timeDiffenceInWords(offset)} ${instance.timeZone}`
+    offsetText: diff.timeZonesOffsetDifference,
   };
 }
 
