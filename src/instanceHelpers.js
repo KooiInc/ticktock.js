@@ -178,17 +178,17 @@ function zoneDiff(start, end) {
   let gmt2 = end.toString().match(/GMT([+-])\d+/)?.[0]?.slice(3) ?? `+0000`;
   gmt1 = offset2Number(gmt1.slice(0, 3) + `:` + gmt1.slice(-2), true);
   gmt2 = offset2Number(gmt2.slice(0, 3) + `:` + gmt2.slice(-2), true);
-  const startSign = gmt1[0] > 0 ? `+` : `-`;
-  return {
+  const retVal = {
     uren: -gmt1[0] + gmt2[0],
     minuten: -gmt1[1] + gmt2[1],
-    teken: startSign
   };
+  retVal.teken = retVal.uren > 0 ? `-` : `+`;
+  return retVal;
 }
 
 function timezoneAwareDifferenceTo({start, end} = {}) {
   /* node:coverage disable */
-  end = !end ? start.clone : end;
+  end = !end && !end?.value ? start.clone : end;
   /* node:coverage enable */
   
   if (!end?.clone) {
