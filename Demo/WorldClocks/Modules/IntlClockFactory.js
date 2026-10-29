@@ -51,6 +51,7 @@ function clockFactory($, $D) {
   }
 
   /**
+   * @param {string} locale (a valid locale string, e.g. en-EN)
    * @param {HTMLElement} currentClock (a JQL instance)
    * @returns {number} a unique setTimeout return value (integer)
    */

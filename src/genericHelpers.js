@@ -1,5 +1,5 @@
 import {
-  add2Date, addMonth, fullMonth, offset2Number, getWeeksInYear,
+  add2Date, addMonth, fullMonth, getWeeksInYear,
   dateFormat, DSTActive, hasDST, timezoneAwareDifferenceTo} from "./instanceHelpers.js";
 import instanceCreator from "./createInstance.js";
 import xDate from "../index.js";
