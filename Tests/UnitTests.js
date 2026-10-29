@@ -1187,7 +1187,7 @@ describe(`Setters, methods/getters`, () => {
     // aggregates
     describe(`fullWeek (first weekday sunday)`, () => {
       const now$ = $D.now.relocate({locale: `en-GB`});
-      const weekForNow$ = now$.fullWeek(true);
+      const weekForNow$ = now$.fullWeek(`Sunday`);
       assert.strictEqual(weekForNow$.weekStart, `Sunday`);
       assert.strictEqual(weekForNow$.inputDate.local, now$.local);
       assert.strictEqual(weekForNow$.dates.length, 7);
@@ -1220,6 +1220,15 @@ describe(`Setters, methods/getters`, () => {
       assert.strictEqual(weekForNow$.dates.length, 7);
       assert.strictEqual(weekForNow$.dates[0].zoneDayname, `شنبه`);
       assert.strictEqual(weekForNow$.dates[6].zoneDayname, `جمعه`);
+    });
+    describe(`fullWeek, optional start on friday`, () => {
+      const now$ = $D({locale: `en-EN`});
+      const weekForNow$ = now$.fullWeek(`friday`);
+      assert.strictEqual(weekForNow$.weekStart, `Friday`);
+      assert.strictEqual(weekForNow$.inputDate.local, now$.local);
+      assert.strictEqual(weekForNow$.dates.length, 7);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Friday`);
+      assert.strictEqual(weekForNow$.dates[6].zoneDayname, `Thursday`);
     });
     describe(`fullmonth, february 2000 (leap year)`, () => {
       const month = $D("2000/02/12", {locale: `en-CA`}).fullMonth();
