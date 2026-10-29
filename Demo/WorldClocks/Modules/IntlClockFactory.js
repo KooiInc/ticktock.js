@@ -70,23 +70,27 @@ function clockFactory($, $D) {
 
     // note: using static $D methods for performance
     function runClock(locale) {
-      header.html($D.format({template: clockHeaderTemplate, timeZone, opts: `l:${locale},hrc:23`} ));
-      //              ↳ formats [now] within the given timeZone
-      const [hours, minutes, seconds] = $D.values({timeZone}).slice(-4, -1);
+      const [hours, minutes, seconds, ms] = $D.values({timeZone}).slice(-4);
       //                                   ↳ returns all date/time values for [now] within given timeZone
-
+      hour.transform   = `rotate(${Math.floor(30 * hours + minutes / 2)}deg)`;
+      minute.transform = `rotate(${6 * minutes}deg)`;
+      second.transform = `rotate(${6 * seconds}deg)`;
+      
       if (previousHour !== hours) {
         maybeChangeDSTFooter(dstFooter, timeZone);
         previousHour = hours;
       }
-
-      hour.transform   = `rotate(${Math.floor(30 * hours + minutes / 2)}deg)`;
-      minute.transform = `rotate(${6 * minutes}deg)`;
-      second.transform = `rotate(${6 * seconds}deg)`;
-
+      
+      header.html($D.format({template: clockHeaderTemplate, timeZone, opts: `l:${locale},hrc:23`} ));
+      //              ↳ formats [now] within the given timeZone
+      
       return setTimeout(() => runClock(locale), 1000);
     }
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**

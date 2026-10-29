@@ -128,13 +128,15 @@ function createClock({evt}) {
 
   const locale = !!$.node(`#enOnly:checked`) ? `en-GB` : optSelected.dataset?.locale ?? `en-GB`;
 
-  createTZClock({locale, timeZone, parent: $(`.clockLine`)});
   const designatorSelector = $.node(`#zoneContainers`);
 
   if (designatorSelector.selectedIndex !== +optSelected.dataset.designatorIndex) {
     designatorSelector.selectedIndex = +optSelected.dataset.designatorIndex;
     $(designatorSelector).trigger(`change`);
   }
+  // start as close to a second as possible
+  const msToNextSecond = $D.now.milliseconds;
+  sleep(1000-msToNextSecond).then(_ => createTZClock({locale, timeZone, parent: $(`.clockLine`)}));
 }
 
 /**
@@ -207,6 +209,15 @@ async function fetchDataAndCode() {
       clockModule: `${moduleLines}${clockModule}`
         .replace(/url\((.+)\)`;/, a => a.slice(0, 60) + ` ...\`;` + ` // (abbreviated for code viewer)`)
     }];
+}
+
+/**
+ * wait [ms] seconds
+ * @param ms
+ * @returns {Promise<unknown>}
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
