@@ -275,7 +275,6 @@ function createExtendedCTOR(ctor, customMethods) {
     monthCalendar: {
       value: calendarForMonth,
     },
-    weekCalendar: {},
     from: { value(...input) { return ctor(input); } },
     fromUxTS: { value(ts, localeInfo) {
         ts = isNumeric(ts) ? parseInt(ts) * 1000 : undefined;

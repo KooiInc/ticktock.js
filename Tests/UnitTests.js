@@ -274,18 +274,15 @@ describe(`Constructor ($D) static methods/getters`, () => {
     assert.strictEqual($D(`2000/01/01`).addCentury.year, 2100);
   });
   it(`$D.addCustom added enumerable method "quarterString"`, () => {
-    assert($D.keys.indexOf(`quarterString`) > -1, "quarterString is expected to be in the $D.keys collection");
+    assert($D.now.keys.indexOf(`quarterString`) > -1, "quarterString is expected to be in the $D.keys collection");
     const d = $D(`2000/01/01`, {locale: `en-CA`});
     assert.strictEqual(d.quarterString(), `First quarter`);
     assert.strictEqual(d.quarterString(true), `2000-01-01, 12:00:00 a.m. is in the first quarter`);
   });
-  it(`$D.keys is Array and contains all (enumerable) instance getter/method names`, () => {
+  it(`$D.keys is Array and contains all (enumerable) constructor getter/method names`, () => {
     const keys = $D.keys;
     assert(Array.isArray(keys), `keys must be an Array`);
-    //assert.strictEqual(keys.find(k => k === `clone`), `clone`, "'clone' in $D.keys should not be null");
-    //assert.strictEqual(keys.find(k => k === `daysUntil`), `daysUntil`, "'daysUntil' in $D.keys should not be null");
-    // custom extension quarterString (see top) is enumerable
-    assert.strictEqual(keys.find(k => k === `quarterString`), `quarterString`, "'quarterString' in $D.keys should not be null");
+    assert.strictEqual(keys.find(k => k === `yearCalendar`), `yearCalendar`, "'yearCalendar' in $D.keys should not be null");
   });
   it(`$D.from(2020, 0, 5, 13, 0, 0) should return a TickTock instance with ISOstring "2020-01-05T12:00:00.000Z"`, () => {
     const testD = $D.from(2020, 0, 5, 13, 0, 0);
@@ -770,12 +767,12 @@ describe(`$D instance extensions`, () => {
     });
     it(`.firstWeekday([for sunday]) works as expected`, () => {
       const now$ = $D.now;
-      const fwdSunday = now$.firstWeekday({sunday: true});
+      const fwdSunday = now$.firstWeekday("sunday");
       const prevSunday = now$.previous(`sunday`);
       assert.strictEqual(prevSunday.local, fwdSunday.local, `${fwdSunday.local} !== ${prevSunday.local}`);
     });
-    it(`.firstWeekday([for monday]) works as expected`, () => {
-      const now$ = $D.now;
+    it(`.firstWeekday([for nl-locale = monday]) works as expected`, () => {
+      const now$ = $D({locale: `nl-NL`});
       const fwdMonday = now$.firstWeekday();
       const prevMonday = now$.previous(`monday`, true);
       assert.strictEqual(prevMonday.local, fwdMonday.local, `${fwdMonday.local} !== ${prevMonday.local}`);

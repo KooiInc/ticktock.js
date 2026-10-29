@@ -218,7 +218,7 @@ function offsetFrom(instance, from) {
     ? instance.clone.relocate({timeZone: `UTC`})
     : xDate(instance.value, { timeZone: from.timeZone || localLocaleInfo.timeZone });
   
-  const diff = timezoneAwareDifferenceTo({start: from, end: instance.clone});
+  const diff = timezoneAwareDifferenceTo({start: instance.clone, end: from});
   const sign = diff.sign;
   const offset = `${sign}${pad0(diff.hours)}:${pad0(diff.minutes)}`;
   
@@ -226,7 +226,7 @@ function offsetFrom(instance, from) {
     fromTZ: instance.timeZone,
     toTZ: from.timeZone,
     offset,
-    offsetText: `${instance.timeZone} ${timeDiffenceInWords(offset)} ${from.timeZone}`
+    offsetText: `${from.timeZone} ${timeDiffenceInWords(offset)} ${instance.timeZone}`
   };
 }
 

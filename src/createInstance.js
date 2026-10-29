@@ -23,7 +23,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
     daysUntil(nextDate) { return daysUntil(instance, nextDate); },
     differenceTo(date) { return timezoneAwareDifferenceTo({start: instance, end: date}); },
     differenceUntil(date) { return instance.differenceTo(date).clean; },
-    firstWeekday({sunday = false, midnight = false} = {}) { return firstWeekday(instance, {sunday, midnight}); },
+    firstWeekday(startDay) { return firstWeekday(instance, {startDay}); },
     format(formatStr, moreOptions) { return format(instance, {formatStr, moreOptions}); },
     fullMonth(forLocale) { return fullMonth(instance, forLocale); },
     fullWeek(startDay) { return weekFor(instance, {startDay}); },
