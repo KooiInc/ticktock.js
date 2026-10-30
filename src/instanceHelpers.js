@@ -506,9 +506,22 @@ function revalue(instance, date) {
   return instance;
 }
 
-function getWeeksInYear(year, d) {
-  const currentWeek = getISO8601Weeknr(new Date(year, 11, d || 31));
-  return currentWeek === 1 ? getWeeksInYear(year, (d || 31) - 1) : currentWeek;
+function getWeeksInYear(year) {
+  const currentWeek = getISO8601Weeknr(new Date(year, 11, 31));
+  return currentWeek === 1 ? getWeeksInYear(year, 30) : currentWeek;
+}
+
+function getISO8601Weeknr(date) {
+  const dayn = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - dayn + 3);
+  const firstThursday = date.valueOf();
+  date.setMonth(0, 1);
+  
+  if (date.getDay() !== 4) {
+    date.setMonth(0, 1 + ((4 - date.getDay()) + 7) % 7);
+  }
+  
+  return 1 + Math.ceil((firstThursday - date) / 604800000);
 }
 
 function getQuarter(instance, numeric) {
@@ -520,18 +533,4 @@ function getQuarter(instance, numeric) {
     case currentMonth < 12: return numeric ? 4 : `Fourth`;
     default: return `unknown`;
   }
-}
-
-function getISO8601Weeknr(date) {
-  const clone = new Date(date);
-  const dayn = (clone.getDay() + 6) % 7;
-  clone.setDate(clone.getDate() - dayn + 3);
-  const firstThursday = clone.valueOf();
-  clone.setMonth(0, 1);
-
-  if (clone.getDay() !== 4) {
-    clone.setMonth(0, 1 + ((4 - clone.getDay()) + 7) % 7);
-  }
-
-  return 1 + Math.ceil((firstThursday - clone) / 604800000);
 }
