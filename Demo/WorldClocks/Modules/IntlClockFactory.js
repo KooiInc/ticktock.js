@@ -24,10 +24,10 @@ function clockFactory($, $D) {
    */
   return function({locale, timeZone, parent} = {}) {
     timeZone = $D.validateLocaleInformation({timeZone, locale}).timeZone;
-    const now$ = $D({timeZone});
+    const now4Timezone = $D({timeZone});
     const dst = `
-      <div class="dst" data-offset="${$D.now.offsetFrom(now$).offset}">
-        ${!now$.hasDST ? `No DST` : `DST ${now$.DSTActive ? `active` : `not active`}`}
+      <div class="dst" data-offset="${now4Timezone.offsetFrom($D.now).offset}">
+        ${!now4Timezone.hasDST ? `No DST` : `DST ${now4Timezone.DSTActive ? `active` : `not active`}`}
       </div>`;
     const currentClockContainer = clockElem
       .duplicate(false)
