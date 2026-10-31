@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
+import {getWeeksInYear} from "../src/instanceHelpers.js";
 
 // globally used
 const tzs = {
@@ -337,14 +338,13 @@ describe(`$D instance extensions`, () => {
   describe(`.clone[With]/revalue`, () => {
     it(`.clone is indeed a clone`, () => {
       const now$ = $D.now;
+      const yearNow = now$.year;
       const clone = now$.clone;
       const monthInitial = now$.month;
-      assert.notStrictEqual(now$, clone);
-      const cloneMonth = 12 - monthInitial
-      clone.date = {month: cloneMonth};
-      assert.notStrictEqual(clone, now$);
-      assert.strictEqual(clone.month, cloneMonth);
-      assert.strictEqual(now$.month, monthInitial);
+      assert.notStrictEqual(now$, clone, `now, clone not equal`);
+      clone.add(`1 year`);
+      assert.notStrictEqual(now$.year, clone.year, `clone year changed, initial not`);
+      assert.strictEqual(now$.year, yearNow, `initial date year still the same`);
     });
     it(`.cloneWith without a Date parameter returns instance clone`, () => {
       const now$ = $D.now;
@@ -419,7 +419,7 @@ describe(`$D instance extensions`, () => {
       const dayNr = now$.day === 6 ? 0 : now$.day + 1;
       const nextDayName = now$.zoneNames.dayNames.long[dayNr];
       const next = now$.next(nextDayName);
-      assert.strictEqual(next.dateNr, now$.dateNr + 1, `${next.dateNr}, ${nextDayName}, ${now$.dayName}`);
+      assert.strictEqual(next.dateNr, now$.clone.add(`1 day`).dateNr);
     });
     it(`.previous([day before today]) works as expected`, () => {
       // note: for test we must retrieve the english day name, so relocate
