@@ -220,6 +220,36 @@ function getAggregates(instance, customExtras) {
   return aggregates;
 }
 
+function validateFormatString(format) {
+  return typeof format ===  `string` &&
+    format.length === 3 &&
+    /^[dmy]{3}$/i.test(format) &&
+    format ||
+    `ymd`;
+}
+
+function dtFromStringWarning(dateString, dsArray, ctor) {
+  console.warn(!!!dateString || dsArray?.length < 3
+    ? `dtFromString => "${String(dateString)}" can not be converted to Date`
+    : `dtFromString => invalid input`);
+  return ctor.now;
+}
+
+function dateFromString(ctor, dateString, format) {
+  format = validateFormatString(format);
+  const dsArray = dateString?.split(/[T :\-\/.,]/g).filter(v => !!(v.trim()));
+  const formatMap = [...format].reduce((a, b, i) => ({...a, [b]: i}), {});
+  const datePart = dsArray.slice(0, 3);
+  const timePart = dsArray.slice(3);
+  const [year, month, date, hours, minutes, seconds, milliseconds] =
+    [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
+      .concat([...Array(4)].map( (_, i) => +timePart?.[i] || 0 ) );
+  let maybeDate = new Date(year, month, date, hours, minutes, seconds, milliseconds);
+  maybeDate = !Number.isNaN(+maybeDate) ? ctor(maybeDate) : dtFromStringWarning(dateString, dsArray, ctor);
+  if (year < 100) { maybeDate.setFullYear(year); }
+  return maybeDate;
+}
+
 function createExtendedCTOR(ctor, customMethods) {
   let instanceCount = 0;
   Object.defineProperties(ctor, {
@@ -306,6 +336,11 @@ function createExtendedCTOR(ctor, customMethods) {
         if (name?.constructor === String && method?.constructor === Function && method.length > 0) {
           customMethods[name] = { method, enumerable, isGetter };
         }
+      }
+    },
+    dtFromString: {
+      value(str, format) {
+        return dateFromString(ctor, str, format);
       }
     },
     validateLocaleInformation: { value: localeInfoValidator },

@@ -387,10 +387,10 @@ function findDayRecursive(instance, dayNr, addTerm) {
 function toLocalString(instance, {dateOnly = false, timeOnly = false} = {}) {
   const {locale, timeZone} = instance.localeInfo;
   return dateOnly
-    ? new Date(instance).toLocaleDateString(locale, {timeZone})
+    ? instance.toLocaleDateString(locale, {timeZone})
     : timeOnly
-      ? new Date(instance).toLocaleTimeString(locale, {timeZone})
-      : new Date(instance).toLocaleString(locale, {timeZone});
+      ? instance.toLocaleTimeString(locale, {timeZone})
+      : instance.toLocaleString(locale, {timeZone});
 }
 
 function DTInTimezone(date, timeZoneID) {
