@@ -228,7 +228,7 @@ function validateFormatString(format) {
     `ymd`;
 }
 
-function dtFromStringWarning(dateString, dsArray, ctor) {
+function dtFromStrWarn(dateString, dsArray, ctor) {
   console.warn(!!!dateString || dsArray?.length < 3
     ? `dtFromString => "${String(dateString)}" can not be converted to Date`
     : `dtFromString => invalid input`);
@@ -245,7 +245,7 @@ function dateFromString(ctor, dateString, format) {
     [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
       .concat([...Array(4)].map( (_, i) => +timePart?.[i] || 0 ) );
   let maybeDate = new Date(year, month, date, hours, minutes, seconds, milliseconds);
-  maybeDate = !Number.isNaN(+maybeDate) ? ctor(maybeDate) : dtFromStringWarning(dateString, dsArray, ctor);
+  maybeDate = !Number.isNaN(+maybeDate) ? ctor(maybeDate) : dtFromStrWarn(dateString, dsArray, ctor);
   if (year < 100) { maybeDate.setFullYear(year); }
   return maybeDate;
 }
