@@ -506,9 +506,9 @@ function revalue(instance, date) {
   return instance;
 }
 
-function getWeeksInYear(year) {
-  const currentWeek = getISO8601Weeknr(new Date(year, 11, 31));
-  return currentWeek === 1 ? getWeeksInYear(year, 30) : currentWeek;
+function getWeeksInYear(year, lastDate) {
+  const currentWeek = getISO8601Weeknr(new Date(year, 11, lastDate));
+  return currentWeek === 1 ? getWeeksInYear(year, lastDate-1) : currentWeek;
 }
 
 function getISO8601Weeknr(date) {
