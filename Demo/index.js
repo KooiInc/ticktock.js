@@ -13,7 +13,7 @@ const debug =  /localhost/.test(location.host);
 
 /* region initialVariables */
 const { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-  acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs,
+  acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, fullWeek, yearCalendar, customs,
   customSyntax } = getCodeblocks();
 const browserTZ = $D.localeInformation.timeZone;
 const browserLocale = $D.localeInformation.locale;
@@ -56,7 +56,6 @@ function printHeader() {
 print(
   toDetailChapter(`Instantiation`).data.set({detailBlockId: `instantiationBlocks`})
 );
-//$(`#inst`).data.set({detailBlockId: `instantiationBlock`});
 /* endregion ex:instantiation */
 
 /* region ex:locale/timeZone */
@@ -115,6 +114,11 @@ $(`#dim`).data.set({detailBlockId: `daysInMonthBlock`});
 print( toDetailChapter(`Weeks in year`, `wiy`,) )
 $(`#wiy`).data.set({detailBlockId: `weeksInYearBlock`});
 /* endregion ex:daysInMonth */
+
+/* region ex:fullWeek */
+print( toDetailChapter(`Full week localized calendar`, `fw` ) );
+$(`#fw`).data.set({detailBlockId: `fullWeekBlock`});
+/* endregion ex:fullWeek */
 
 /* region ex:fullMonth */
 print( toDetailChapter(`Full month localized calendar`, `fm` ) );
@@ -278,11 +282,13 @@ function getCodeblocks() {
   const acrossZonesEx1 = toCodeBlock(templates.find$(`#acrossZonesEx1`).HTML.get().trim());
   const acrossZonesEx2 = toCodeBlock(templates.find$(`#acrossZonesEx2`).HTML.get().trim());
   const fullMonth = toCodeBlock(templates.find$(`#fullMonth`).HTML.get().trim());
+  const fullWeek = toCodeBlock(templates.find$(`#fullWeek`).HTML.get().trim());
   const yearCalendar = toCodeBlock(templates.find$(`#yearCalendar`).HTML.get().trim());
   const customs = toCodeBlock(templates.find$(`#custom`).HTML.get().trim());
   const customSyntax = toCodeBlock(templates.find$(`#customSyntax`).HTML.get().trim());
   return { initialCode, performanceCode, aucklandFormatEx, now$FormatEx, aucklandZoneFormatEx,
-    acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, yearCalendar, customs, customSyntax };
+    acrossZonesEx0, acrossZonesEx1, acrossZonesEx2, fullMonth, fullWeek, yearCalendar,
+    customs, customSyntax };
 }
 
 function toCodeBlock(str) {
@@ -471,6 +477,50 @@ function allBlocks() {
       toDetailsBlock($.div($.code(`calendarHU <span class="comment">/* See 'Code used' */`), ` (year 2000, Hungarian locale) =>`), cal)
     ];
   }
+  
+  function fullWeekData() {
+    const local = $D.now.fullWeek();
+    const pt = $D({l:`pt`}).fullWeek();
+    const th = $D({l:`th`}).fullWeek();
+    const localStartingOnTuesday = $D.now.fullWeek(`tuesday`);
+    for (let cal of [local, pt, th, localStartingOnTuesday]) {
+      cal.dates = cal.dates.map(instance => instance.zoneFormat(`WD MM d yyyy`));
+    }
+    return [local, pt, th, localStartingOnTuesday];
+  }
+  
+  function retrieveFullWeekBlock() {
+     const [local, pt, th, localStartingOnTuesday] = fullWeekData();
+      
+      return [
+        $.div(
+          {class: "xtraTxt"},
+          `The instance method `,
+          $.code(`.fullWeek(startDay:string)`), ` delivers
+              an Array of TickTock instances for each day of the
+              week the instance date value is part of, from which one
+              can for example build a calender.`
+        ),
+        toDetailsBlock($.b({class:"blue"}, `Code used`), fullWeek),
+        toDetailsBlock(
+          $.div(`Now, browser locale`),
+          $.div($.pre(JSON.stringify(local, null, 2)))
+        ),
+        toDetailsBlock(
+          $.div(`Now, portugese locale`),
+          $.div($.pre(JSON.stringify(pt, null, 2)))
+        ),
+        toDetailsBlock(
+          $.div(`Now, thai locale`),
+          $.div($.pre(JSON.stringify(th, null, 2)))
+        ),
+        toDetailsBlock(
+          $.div(`Now, browser locale, week starts on tuesday`),
+          $.div($.pre(JSON.stringify(localStartingOnTuesday, null, 2)))
+        ),
+      ];
+  }
+  
   function retrieveFullMonthBlock() {
     const [pt, th, local, deStatic] = getFullMonth();
     return [
@@ -747,6 +797,11 @@ function allBlocks() {
     infoBlock() { return retrieveInfoBlock(); },
     acrossTZSBlock() {
       return [
+        $.div(
+          {class: "xtraTxt"},
+          $.code(`timeAcrossZones`),
+          ` is a static method of the TickTock constructur`,
+        ),
         toDetailsBlock(
           $.div($.code(`$D.timeAcrossZones(...)`), ` browser time vs Los Angeles (US) time`),
           `${acrossZonesEx0}
@@ -778,9 +833,10 @@ function allBlocks() {
       return [
         $.div(
           {class: "xtraTxt"},
-          `Static constructor method `,
-          $.b({class: "note"}),
-          `month number is <b class="red"><i>not</i></b> zero based)`
+          $.code(`timeAcrossZones`),
+          ` is a static method of the TickTock constructur`,
+          $.br(), $.b({class: "note"}),
+          `the month number parameter is <b class="red"><i>not</i></b> zero based`
         ),
         toDetailsBlock(
           $.div($.code(`$D.daysInMonth(<span class=\"comment\">/*monthNr=*/</span>4)`)),
@@ -802,7 +858,7 @@ function allBlocks() {
           `=> ${$D.daysInMonth(2, true)}`
         ),
         
-        $.div( {class: "xtraTxt"}, $.i(`Instance getter`) ),
+        $.div( {class: "xtraTxt"}, `Also available as Instance getter `,  $.code(`[instance].daysThisMonth`)),
         
         toDetailsBlock(
           $.div($.code(`$D("2000/02/01").daysThisMonth`)),
@@ -841,9 +897,7 @@ function allBlocks() {
         ),
       ]
     },
-    fullWeekBlock() {
-    
-    },
+    fullWeekBlock() { return retrieveFullWeekBlock(); },
     fullMonthBlock() { return retrieveFullMonthBlock(); },
     yearCalendarBlock() { return retrieveYearCalendarBlock(); },
     customsBlock() {

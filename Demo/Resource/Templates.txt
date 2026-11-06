@@ -105,6 +105,18 @@ $D.timeAcrossZones( {
 } );
 </template>
 
+<template id="fullWeek">
+const local = $D.now.fullWeek();
+const pt = $D({l:`pt`}).fullWeek();
+const th = $D({l:`th`}).fullWeek(); // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
+const localStartingOnTuesday = $D.now.fullWeek(`tuesday`);
+
+// map the week dates to locale formatted date strings for demo
+for (let week of [local, pt, th, localStartingOnTuesday]) {
+  week.dates = week.dates.map(instance => instance.zoneFormat(`WD MM d yyyy`));
+}
+</template>
+
 <template id="fullMonth">
 function monthExampleReducer(acc, v) {
   if (v.dateNr > 3  || v.dateNr < 27 ) {
