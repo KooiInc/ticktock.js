@@ -109,7 +109,7 @@ $D.timeAcrossZones( {
 const local = $D.now.fullWeek();
 const pt = $D({l:`pt`}).fullWeek();
 const th = $D({l:`th`}).fullWeek(); // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
-const weekOf20000101 = $D.from(2000, 0, 1, 1, 0, 0).fullWeek();
+const localStartingOnTuesday = $D.now.fullWeek(`tuesday`);
 const weekOf20000101 = $D(`2000/01/01 12:00:00`).fullWeek(`monday`);
 
 // map the week dates to locale formatted date strings for demo
