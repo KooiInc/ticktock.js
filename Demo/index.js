@@ -483,40 +483,45 @@ function allBlocks() {
     const pt = $D({l:`pt`}).fullWeek();
     const th = $D({l:`th`}).fullWeek();
     const localStartingOnTuesday = $D.now.fullWeek(`tuesday`);
-    for (let cal of [local, pt, th, localStartingOnTuesday]) {
+    const weekOf20000101 = $D(`2000/01/01 12:00:00`).fullWeek(`monday`);
+    for (let cal of [local, pt, th, localStartingOnTuesday, weekOf20000101]) {
       cal.dates = cal.dates.map(instance => instance.zoneFormat(`WD MM d yyyy`));
     }
-    return [local, pt, th, localStartingOnTuesday];
+    return [local, pt, th, localStartingOnTuesday, weekOf20000101];
   }
   
   function retrieveFullWeekBlock() {
-     const [local, pt, th, localStartingOnTuesday] = fullWeekData();
+     const [local, pt, th, localStartingOnTuesday, weekOf20000101] = fullWeekData();
       
       return [
         $.div(
           {class: "xtraTxt"},
           `The instance method `,
           $.code(`.fullWeek(startDay:string)`), ` delivers
-              an Array of TickTock instances for each day of the
-              week the instance date value is part of, from which one
-              can for example build a calender.`
+              an Object, containing an Array of TickTock instances for each
+              day of the week the instance date value is part of, from which
+              one can - for example - create a calender.`
         ),
         toDetailsBlock($.b({class:"blue"}, `Code used`), fullWeek),
         toDetailsBlock(
-          $.div(`Now, browser locale`),
+          $.div(`Current week, browser locale`),
           $.div($.pre(JSON.stringify(local, null, 2)))
         ),
         toDetailsBlock(
-          $.div(`Now, portugese locale`),
+          $.div(`Current week, portugese locale`),
           $.div($.pre(JSON.stringify(pt, null, 2)))
         ),
         toDetailsBlock(
-          $.div(`Now, thai locale`),
+          $.div(`Current week, thai locale`),
           $.div($.pre(JSON.stringify(th, null, 2)))
         ),
         toDetailsBlock(
-          $.div(`Now, browser locale, week starts on tuesday`),
+          $.div(`Current week, browser locale, week starts on tuesday`),
           $.div($.pre(JSON.stringify(localStartingOnTuesday, null, 2)))
+        ),
+        toDetailsBlock(
+          $.div(`Week of 2000/01/01, browser locale, week starts on monday`),
+          $.div($.pre(JSON.stringify(weekOf20000101, null, 2)))
         ),
       ];
   }

@@ -109,12 +109,14 @@ $D.timeAcrossZones( {
 const local = $D.now.fullWeek();
 const pt = $D({l:`pt`}).fullWeek();
 const th = $D({l:`th`}).fullWeek(); // ◀ Note: Thailand locale, year is auto-formatted to buddhist year
-const localStartingOnTuesday = $D.now.fullWeek(`tuesday`);
+const weekOf20000101 = $D.from(2000, 0, 1, 1, 0, 0).fullWeek();
+const weekOf20000101 = $D(`2000/01/01 12:00:00`).fullWeek(`monday`);
 
 // map the week dates to locale formatted date strings for demo
-for (let week of [local, pt, th, localStartingOnTuesday]) {
-  week.dates = week.dates.map(instance => instance.zoneFormat(`WD MM d yyyy`));
+for (let cal of [local, pt, th, localStartingOnTuesday, weekOf20000101]) {
+  cal.dates = cal.dates.map(instance => instance.zoneFormat(`WD MM d yyyy`));
 }
+return [local, pt, th, localStartingOnTuesday, weekOf20000101];
 </template>
 
 <template id="fullMonth">
