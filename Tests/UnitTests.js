@@ -1227,6 +1227,12 @@ describe(`Setters, methods/getters`, () => {
       assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Friday`);
       assert.strictEqual(weekForNow$.dates[6].zoneDayname, `Thursday`);
     });
+    describe(`fullWeek, time 00:00`, () => {
+      const midNight = $D.from(2000, 0, 1).relocate({l: `en-GB`});
+      const weekForNow$ = midNight.fullWeek(`monday`);
+      assert.strictEqual(weekForNow$.weekStart, `Monday`);
+      assert.strictEqual(weekForNow$.dates[0].zoneDayname, `Monday`);
+    }),
     describe(`fullmonth, february 2000 (leap year)`, () => {
       const month = $D("2000/02/12", {locale: `en-CA`}).fullMonth();
       assert.strictEqual(month.length, 29);
