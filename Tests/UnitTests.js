@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import {describe, it} from 'node:test';
 import $D from "../index.js";
-import {getWeeksInYear} from "../src/instanceHelpers.js";
 
 // globally used
 const tzs = {
