@@ -415,7 +415,7 @@ function setTimeParts(instance, {hours, minutes, seconds, milliseconds} = {}) {
 }
 
 function isDateOrInstance(maybeDate) {
-  return maybeDate?.constructor === Date || maybeDate?.value;
+  return Object.prototype.toString.call(maybeDate?.value || maybeDate) === '[object Date]';
 }
 
 function cloneInstance(instance, date) {
@@ -502,8 +502,7 @@ function relocate(instance, {locale, timeZone, l, tz} = {}) {
 
 function revalue(instance, date) {
   if (!isDateOrInstance(date)) { return instance; }
-  instance = xDate(date.value || date, date.localeInfo || instance.localeInfo);
-  return instance;
+  return xDate(date, date.localeInfo || instance.localeInfo);
 }
 
 function getWeeksInYear(year, lastDate) {

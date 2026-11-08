@@ -33,7 +33,7 @@ function instanceCreator({localeInfo, customMethods, dateValue} = {}) {
       return nextOrPrevious(instance, {day, next: true, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
     offsetFrom(date) { return offsetFrom(instance, date); },
     previous(day, preserveTodayWhenEqual) {
-      return nextOrPrevious(instance, {day, next: false, preserveTodayWhenEqual: !!preserveTodayWhenEqual}); },
+      return nextOrPrevious(instance, {day, next: false, preserveTodayWhenEqual}); },
     relocate({locale, timeZone, l, tz} = {}) { return relocate(instance, {locale, timeZone, l, tz}); },
     revalue(date) { instance = revalue(instance, date); return instance; },
     setDateValues({year, month, date} = {}) { return setDateParts(instance, {year, month, date}); },

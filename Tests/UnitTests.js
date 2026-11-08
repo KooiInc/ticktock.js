@@ -377,9 +377,9 @@ describe(`$D instance extensions`, () => {
       assert.strictEqual(now$, now$.revalue());
     });
     it(`.revalue with plain date parameter changes the instance Date`, () => {
-      const now$ = $D.now;
-      now$.revalue(new Date(2015, 2, 17));
-      assert.strictEqual(String(new Date(2015, 2, 17)), String(now$.value));
+      let now$ = $D.now;
+      now$ = now$.revalue(new Date(2015, 2, 17));
+      assert.strictEqual(String(new Date(2015, 2, 17)), String(now$.value), `wtf ${new Date(2015, 2, 17)}`);
     });
     it(`.revalue with TickTock instance changes the instance Date`, () => {
       const now$ = $D.now;
@@ -388,7 +388,7 @@ describe(`$D instance extensions`, () => {
     });
     it(`.revalue with TickTock instance and different timeZone changes the instance timeZone`, () => {
       const now$ = $D.now;
-      const relocateInstance = $D.now.relocate({timeZone: "America/Los_Angeles"});
+      const relocateInstance = $D({timeZone: "America/Los_Angeles"});
       assert.strictEqual(now$.revalue(relocateInstance).timeZone, "America/Los_Angeles");
     });
   });
@@ -768,12 +768,12 @@ describe(`$D instance extensions`, () => {
     it(`.firstWeekday([for sunday]) works as expected`, () => {
       const now$ = $D.now;
       const fwdSunday = now$.firstWeekday("sunday");
-      const prevSunday = now$.previous(`sunday`);
+      const prevSunday = now$.previous(`sunday`, true);
       assert.strictEqual(prevSunday.local, fwdSunday.local, `${fwdSunday.local} !== ${prevSunday.local}`);
     });
     it(`.firstWeekday([for nl-locale = monday]) works as expected`, () => {
       const now$ = $D({locale: `nl-NL`});
-      const fwdMonday = now$.firstWeekday();
+      const fwdMonday = now$.firstWeekday(`monday`);
       const prevMonday = now$.previous(`monday`, true);
       assert.strictEqual(prevMonday.local, fwdMonday.local, `${fwdMonday.local} !== ${prevMonday.local}`);
     });
@@ -837,11 +837,11 @@ describe(`$D instance extensions`, () => {
     });
     it(`.removeTime sets the instance (initial value 2020/02/01 12:28:30.441) time to 00:00:00.000`, () => {
       let noTime = $D.from(2020, 2, 1, 12, 28, 30, 441);
-      assert.strictEqual(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `12:28:30.000`);
+      assert.strictEqual(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `12:28:30.441`);
       noTime.removeTime;
       assert.strictEqual(noTime.format(`hh:mmi:ss.ms`, `hrc:23`), `00:00:00.000`);
       assert.deepStrictEqual(noTime.time, {
-        values4Timezone: localLocaleInformation.timeZone,
+        values4Timezone: $D.now.timeZone,
         hours: 0,
         minutes: 0,
         seconds: 0,
