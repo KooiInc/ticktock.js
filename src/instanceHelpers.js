@@ -47,8 +47,10 @@ function addParts2Date(instance, ...parts2Add) {
 }
 
 function weekFor(instance, { startDay } = {} ) {
-  const firstDOW = firstWeekday(instance.clone, { startDay });
+  const midDay = instance.clone.setHours(12);
+  const firstDOW = firstWeekday(midDay, { startDay });
   const week = [firstDOW];
+  
   return {
     weekStart: firstDOW.zoneFormat(`WD`, `l:en-GB`),
     inputDate: instance,
